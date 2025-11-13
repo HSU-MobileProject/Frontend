@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "822696885799",
+    "project_id": "mobile-pro-16081",
+    "storage_bucket": "mobile-pro-16081.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:822696885799:android:2be9c8739f8f7afab35802",
+        "android_client_info": {
+          "package_name": "com.toylink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADseWG9STmVUwB6VMm1Oq_H2jpQsoC-Vw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
