@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './ProjectList.styles';
 
 const ProjectListScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>프로젝트 목록 화면</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>메인 화면</Text>
+      </View>
+    </SafeAreaView>
   );
 };
 

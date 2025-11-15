@@ -1,21 +1,20 @@
 import { StyleSheet } from 'react-native';
+import colors from '../../assets/colors';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
+    backgroundColor: colors.beige,
+  },
+
+  content: {
+    flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    alignItems: 'center',
   },
+
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#222',
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 16,
-    color: '#555',
-  },
+  }
 });
