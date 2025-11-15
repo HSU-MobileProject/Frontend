@@ -1,43 +1,76 @@
-/**
- * Sample React Native App (JavaScript version)
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import React from 'react';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import { NewAppScreen } from '@react-native/new-app-screen';
+import ProjectListScreen from './src/screens/project/ProjectListScreen';
+import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
+import NavigationBar from './src/components/NavigationBar';
+import ProjectAddButton from './src/components/ProjectAddButton';
+import Header from './src/components/HeaderBar';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+export const navigationRef = createNavigationContainerRef();
+const Stack = createNativeStackNavigator();
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
+export default function App() {
+  const [activeTab, setActiveTab] = useState('메인');
+  const [navBarHeight, setNavBarHeight] = useState(0);
+  const [hideHeader, setHideHeader] = useState(false);
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+  const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
+  const showAddButton = showAddButtonTabs.includes(activeTab);
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen safeAreaInsets={safeAreaInsets} />
-    </View>
+    <NavigationContainer ref={navigationRef}>
+      <View style={{ flex: 1 }}>
+
+        {!hideHeader && <Header />}
+
+        {/* Stack 화면 */}
+        <View style={{ flex: 1 }}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="ProjectList">
+              {(props) => (
+                <ProjectListScreen 
+                  {...props}
+                  setHideHeader={setHideHeader}
+                />
+              )}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectDetail">
+              {(props) => (
+                <ProjectDetailScreen 
+                  {...props}
+                  setHideHeader={setHideHeader}
+                />
+              )}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </View>
+
+        {/* 플로팅 버튼 */}
+        {showAddButton && (
+          <View
+            style={{
+              position: 'absolute',
+              right: 12,
+              bottom: navBarHeight + 16,
+              zIndex: 99,
+            }}
+          >
+            <ProjectAddButton />
+          </View>
+        )}
+
+        {/* 하단 네비게이션 바 */}
+        <NavigationBar
+          activeTab={activeTab}
+          onPress={setActiveTab}
+          onLayoutNavBar={setNavBarHeight}
+          navigationRef={navigationRef}
+        />
+      </View>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;
