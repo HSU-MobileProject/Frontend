@@ -29,7 +29,7 @@ export default StyleSheet.create({
 
   text: {
     color: colors.white,
-    fontSize: typography.size.button,
-    fontFamily: typography.fontFamily.medium,
+    fontSize: typography.size.subtitle,
+    fontFamily: typography.fontFamily.bold,
   },
 });
