@@ -4,6 +4,7 @@ import { NavigationContainer, createNavigationContainerRef } from '@react-naviga
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import ProjectListScreen from './src/screens/project/ProjectListScreen';
+import ProjectListAllScreen from './src/screens/project/ProjectListAllScreen';
 import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
@@ -32,6 +33,15 @@ export default function App() {
             <Stack.Screen name="ProjectList">
               {(props) => (
                 <ProjectListScreen 
+                  {...props}
+                  setHideHeader={setHideHeader}
+                />
+              )}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectListAll">
+              {(props) => (
+                <ProjectListAllScreen
                   {...props}
                   setHideHeader={setHideHeader}
                 />

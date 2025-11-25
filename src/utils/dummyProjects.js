@@ -1,0 +1,122 @@
+export const dummyProjects = [
+  {
+    id: 1,
+    category: "모바일",
+    title: "스마트 블록 조립 앱",
+    description: "AR 기술을 활용한 블록 조립 가이드 앱",
+    tags: ["React Native", "ARKit", "TypeScript"],
+    likes: 120,
+    views: 230,
+    price: "450,000원",
+    thumbnail: "https://picsum.photos/id/1011/400/300",
+    createdAt: "2025-01-19T10:00:00.000Z"
+  },
+  {
+    id: 2,
+    category: "웹",
+    title: "AI 기반 영화 추천 시스템",
+    description: "사용자 취향 분석 후 영화 자동 추천",
+    tags: ["Next.js", "AI", "TensorFlow"],
+    likes: 145,
+    views: 980,
+    price: "무료",
+    thumbnail: "https://picsum.photos/id/1025/400/300",
+    createdAt: "2025-01-20T09:12:00.000Z"
+  },
+  {
+    id: 3,
+    category: "IoT",
+    title: "실시간 온습도 감지 스마트홈",
+    description: "ESP32 기반 온습도 제어 시스템",
+    tags: ["ESP32", "MQTT", "Firebase"],
+    likes: 140,
+    views: 543,
+    price: "120,000원",
+    thumbnail: "https://picsum.photos/id/103/400/300",
+    createdAt: "2025-01-18T13:40:00.000Z"
+  },
+  {
+    id: 4,
+    category: "AI",
+    title: "음성 기반 번역 비서",
+    description: "음성 인식 및 번역 기능 제공",
+    tags: ["AI", "Speech-to-Text", "Python"],
+    likes: 100,
+    views: 1402,
+    price: "300,000원",
+    thumbnail: "https://picsum.photos/id/1040/400/300",
+    createdAt: "2025-01-21T11:30:00.000Z"
+  },
+  {
+    id: 5,
+    category: "도구",
+    title: "코드 스니펫 저장/공유 플랫폼",
+    description: "개발자용 코드 자동 저장 및 공유 도구",
+    tags: ["React", "Firebase", "Tool"],
+    likes: 85,
+    views: 411,
+    price: "무료",
+    thumbnail: null,
+    createdAt: "2025-01-17T15:22:00.000Z"
+  },
+  {
+    id: 6,
+    category: "기타",
+    title: "스터디 그룹 자동 매칭 서비스",
+    description: "학습 주제 기반 스터디 매칭 플랫폼",
+    tags: ["Matching", "React", "Node"],
+    likes: 115,
+    views: 712,
+    price: "30,000원",
+    thumbnail: "https://picsum.photos/id/237/400/300",
+    createdAt: "2025-01-22T12:10:00.000Z"
+  },
+  {
+    id: 7,
+    category: "웹",
+    title: "실시간 퀴즈 생성 도구",
+    description: "퀴즈 제작 및 실시간 결과 조회",
+    tags: ["Vue", "Firebase", "Quiz"],
+    likes: 99,
+    views: 510,
+    price: "무료",
+    thumbnail: null,
+    createdAt: "2025-01-18T16:05:00.000Z"
+  },
+  {
+    id: 8,
+    category: "모바일",
+    title: "위치 기반 맛집 추천 앱",
+    description: "GPS 기반 주변 맛집 추천 기능 제공",
+    tags: ["React Native", "GPS", "Map"],
+    likes: 150,
+    views: 900,
+    price: "70,000원",
+    thumbnail: "https://picsum.photos/id/1005/400/300",
+    createdAt: "2025-01-23T08:50:00.000Z"
+  },
+  {
+    id: 9,
+    category: "AI",
+    title: "이미지 객체 탐지 모델",
+    description: "YOLO 기반 실시간 물체 인식",
+    tags: ["YOLO", "Python", "AI Model"],
+    likes: 388,
+    views: 2301,
+    price: "150,000원",
+    thumbnail: null,
+    createdAt: "2025-01-19T09:00:00.000Z"
+  },
+  {
+    id: 10,
+    category: "IoT",
+    title: "스마트 램프(음성 제어)",
+    description: "음성 명령으로 제어 가능한 스마트 조명",
+    tags: ["ESP32", "Voice", "SmartHome"],
+    likes: 61,
+    views: 400,
+    price: "40,000원",
+    thumbnail: "https://picsum.photos/id/1084/400/300",
+    createdAt: "2025-01-20T20:00:00.000Z"
+  }
+];

@@ -1,16 +1,38 @@
-import React from 'react';
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from './ProjectList.styles';
+import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView } from "react-native";
 
-const ProjectListScreen = () => {
+import ProjectCard from "./components/ProjectCard";
+import SectionHeader from "./components/SectionHeader";
+import styles from "./ProjectList.styles";
+
+import { dummyProjects } from "../../utils/dummyProjects";
+
+export default function ProjectListScreen() {
+  const recommendedData = [...dummyProjects]
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 3);
+
+  const latestData = [...dummyProjects]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>메인 화면</Text>
-      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <SectionHeader title="추천 프로젝트" buttonText="전체보기 →" type="recommended" />
+        {recommendedData.map((item) => (
+          <ProjectCard key={item.id} {...item} />
+        ))}
+
+        <SectionHeader title="최신 등록 프로젝트" buttonText="전체보기 →" type="latest" />
+        {latestData.map((item) => (
+          <ProjectCard key={item.id} {...item} />
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default ProjectListScreen;
+}

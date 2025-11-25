@@ -1,0 +1,95 @@
+import React, { useState, useMemo, useRef } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { View, ScrollView, TouchableOpacity, Text } from "react-native";
+import ProjectCard from "./components/ProjectCard";
+import styles from "./ProjectList.styles";
+import { dummyProjects } from "../../utils/dummyProjects";
+
+export default function ProjectListAllScreen({ route }) {
+  const { type } = route.params;
+
+  const scrollRef = useRef(null);
+
+  const sortedData = useMemo(() => {
+    if (type === "recommended") {
+      return [...dummyProjects].sort((a, b) => b.likes - a.likes);
+    }
+    return [...dummyProjects].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+  }, [type]);
+
+  const PAGE_SIZE = 5;
+  const totalPages = Math.ceil(sortedData.length / PAGE_SIZE);
+
+  const [page, setPage] = useState(1);
+
+  const currentData = sortedData.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    scrollRef.current?.scrollTo({ y: 0, animated: true }); 
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {currentData.map((item) => (
+          <ProjectCard key={item.id} {...item} />
+        ))}
+
+        {/* 페이지네이션 영역 */}
+        <View style={styles.paginationWrapper}>
+          {/* 이전 버튼 */}
+          <TouchableOpacity
+            disabled={page === 1}
+            onPress={() => handlePageChange(page - 1)}
+          >
+            <Text style={[styles.pageButton, page === 1 && styles.disabledButton]}>
+              이전
+            </Text>
+          </TouchableOpacity>
+
+          {/* 숫자 버튼 */}
+          {Array.from({ length: totalPages }).map((_, idx) => (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => handlePageChange(idx + 1)}
+            >
+              <Text
+                style={[
+                  styles.pageNumber,
+                  page === idx + 1 && styles.pageActive,
+                ]}
+              >
+                {idx + 1}
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          {/* 다음 버튼 */}
+          <TouchableOpacity
+            disabled={page === totalPages}
+            onPress={() => handlePageChange(page + 1)}
+          >
+            <Text
+              style={[
+                styles.pageButton,
+                page === totalPages && styles.disabledButton,
+              ]}
+            >
+              다음
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
