@@ -6,6 +6,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProjectListScreen from './src/screens/project/ProjectListScreen';
 import ProjectListAllScreen from './src/screens/project/ProjectListAllScreen';
 import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
+import ProjectEditScreen from './src/screens/project/ProjectEditScreen';
+import ProjectCreateScreen from './src/screens/project/ProjectCreateScreen';
+
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
 import Header from './src/components/HeaderBar';
@@ -21,10 +24,26 @@ export default function App() {
   const [hideAddButton, setHideAddButton] = useState(false);
 
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
-  const showAddButton = showAddButtonTabs.includes(activeTab);
+
+  const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
+
+  const handleStateChange = () => {
+
+    const route = navigationRef.getCurrentRoute();
+    const routeName = route?.name;
+
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate'].includes(routeName)) {
+      setHideAddButton(true);
+    } else {
+      setHideAddButton(false);
+    }
+  };
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer 
+      ref={navigationRef}
+      onStateChange={handleStateChange}
+    >
       <View style={{ flex: 1 }}>
 
         {!hideHeader && <Header />}
@@ -32,36 +51,24 @@ export default function App() {
         <View style={{ flex: 1 }}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             
-            {/* 메인 리스트 */}
             <Stack.Screen name="ProjectList">
-              {(props) => (
-                <ProjectListScreen
-                  {...props}
-                  setHideHeader={setHideHeader}
-                  setHideAddButton={setHideAddButton} 
-                />
-              )}
+              {(props) => <ProjectListScreen />}
             </Stack.Screen>
 
-            {/* 전체 리스트 */}
             <Stack.Screen name="ProjectListAll">
-              {(props) => (
-                <ProjectListAllScreen
-                  {...props}
-                  setHideHeader={setHideHeader}
-                  setHideAddButton={setHideAddButton} 
-                />
-              )}
+              {(props) => <ProjectListAllScreen {...props}/>}
             </Stack.Screen>
 
-            {/* 상세 페이지 */}
             <Stack.Screen name="ProjectDetail">
-              {(props) => (
-                <ProjectDetailScreen
-                  {...props}
-                  setHideAddButton={setHideAddButton} 
-                />
-              )}
+              {(props) => <ProjectDetailScreen {...props} />}
+            </Stack.Screen>
+            
+            <Stack.Screen name="ProjectEdit">
+              {(props) => <ProjectEditScreen {...props} />}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectCreate">
+              {(props) => <ProjectCreateScreen {...props} />}
             </Stack.Screen>
 
           </Stack.Navigator>

@@ -8,8 +8,8 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.beige,
-    padding: 16 * scale,
-    paddingBottom: 28 * scale,
+    paddingTop: 16 * scale,
+    paddingHorizontal: 16 * scale,
   },
 
   content: {
@@ -28,8 +28,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20 * scale,
-    marginBottom: 40 * scale,
+    marginBottom: 80 * scale,
     flexWrap: "wrap",
   },
 

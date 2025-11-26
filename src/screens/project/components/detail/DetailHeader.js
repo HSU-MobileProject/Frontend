@@ -4,9 +4,10 @@ import { ChevronLeft, Pencil } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./ProjectDetail.styles";
 
-export default function DetailHeader({ project }) {
+export default function DetailHeader({ project, currentUser }) {
   const navigation = useNavigation();
-  const isMyProject = true;
+
+  const isMyProject = currentUser && project.ownerId === currentUser.id;
 
   return (
     <View style={styles.headerWrap}>
@@ -23,7 +24,13 @@ export default function DetailHeader({ project }) {
 
       {/* 수정하기 */}
       {isMyProject && (
-        <TouchableOpacity style={styles.headerEditBtn} activeOpacity={0.8}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("ProjectEdit", { projectId: project.id })
+          }
+          style={styles.headerEditBtn}
+          activeOpacity={0.8}
+        >
           <Pencil size={16} color="#1A1A1A" />
           <Text style={styles.headerEditText}>수정하기</Text>
         </TouchableOpacity>

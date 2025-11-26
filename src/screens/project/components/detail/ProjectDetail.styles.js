@@ -21,12 +21,13 @@ export default StyleSheet.create({
 
   // ---------- Header ----------
   headerWrap: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16 * scale,
-    paddingVertical: 10 * scale,
-    borderBottomColor: "rgba(0,0,0,0.1)",
+    paddingTop: 16 * scale,
+    paddingBottom: 10 * scale,
     backgroundColor: Colors.beige,
   },
 

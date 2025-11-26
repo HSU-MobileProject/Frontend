@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+
 import { View, ScrollView } from "react-native";
 import styles from "./components/detail/ProjectDetail.styles";
 import DetailHeader from "./components/detail/DetailHeader";
@@ -9,25 +10,18 @@ import DetailLeaderCard from "./components/detail/DetailLeaderCard";
 import DetailGitHubCard from "./components/detail/DetailGitHubCard";
 import DetailStatusCard from "./components/detail/DetailStatusCard";
 
-import { usersDummy } from "../../utils/usersDummy";
+import { usersDummy, dummyCurrentUser } from "../../utils/usersDummy";
 
-export default function ProjectDetailScreen({ route, setAddButton }) {
+export default function ProjectDetailScreen({ route }) {
   const project = route?.params?.project || {};
 
   const owner = usersDummy.find((u) => u.id === project.ownerId) || null;
-
-  useEffect(() => {
-    setAddButton && setAddButton(true);
-    return () => {
-      setAddButton && setAddButton(false);
-    };
-  }, [setAddButton]);
 
   if (!project) return null;
 
   return (
     <View style={styles.screenWrapper}>
-      <DetailHeader project={project} />
+      <DetailHeader project={project} currentUser={dummyCurrentUser}/>
 
       <ScrollView
         showsVerticalScrollIndicator={false}

@@ -1,16 +1,21 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text, Dimensions } from 'react-native';
 import { Plus } from 'lucide-react-native';
+import { useNavigation } from "@react-navigation/native";
 import styles from './styles/ProjectAddButton.styles';
 import colors from '../assets/colors'; 
-import { Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-export default function ProjectAddButton({ onPress }) {
+export default function ProjectAddButton() {
+  const navigation = useNavigation();
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => navigation.navigate("ProjectCreate")}
+    >
       <Plus
         size={20 * scale}       
         color={colors.white}     
