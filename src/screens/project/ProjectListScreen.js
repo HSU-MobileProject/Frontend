@@ -7,8 +7,11 @@ import SectionHeader from "./components/SectionHeader";
 import styles from "./ProjectList.styles";
 
 import { dummyProjects } from "../../utils/dummyProjects";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProjectListScreen() {
+  const navigation = useNavigation();
+
   const recommendedData = [...dummyProjects]
     .sort((a, b) => b.likes - a.likes)
     .slice(0, 3);
@@ -24,13 +27,23 @@ export default function ProjectListScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         <SectionHeader title="추천 프로젝트" buttonText="전체보기 →" type="recommended" />
-        {recommendedData.map((item) => (
-          <ProjectCard key={item.id} {...item} />
+
+        {recommendedData.map(item => (
+          <ProjectCard
+            key={item.id}
+            project={item}
+            onPress={() => navigation.navigate("ProjectDetail", { project: item })}
+          />
         ))}
 
         <SectionHeader title="최신 등록 프로젝트" buttonText="전체보기 →" type="latest" />
-        {latestData.map((item) => (
-          <ProjectCard key={item.id} {...item} />
+
+        {latestData.map(item => (
+          <ProjectCard
+            key={item.id}
+            project={item}
+            onPress={() => navigation.navigate("ProjectDetail", { project: item })}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>

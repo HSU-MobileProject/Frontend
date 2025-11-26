@@ -18,6 +18,8 @@ export default function App() {
   const [navBarHeight, setNavBarHeight] = useState(0);
   const [hideHeader, setHideHeader] = useState(false);
 
+  const [hideAddButton, setHideAddButton] = useState(false);
+
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
   const showAddButton = showAddButtonTabs.includes(activeTab);
 
@@ -27,40 +29,46 @@ export default function App() {
 
         {!hideHeader && <Header />}
 
-        {/* Stack 화면 */}
         <View style={{ flex: 1 }}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            
+            {/* 메인 리스트 */}
             <Stack.Screen name="ProjectList">
               {(props) => (
-                <ProjectListScreen 
+                <ProjectListScreen
                   {...props}
                   setHideHeader={setHideHeader}
+                  setHideAddButton={setHideAddButton} 
                 />
               )}
             </Stack.Screen>
 
+            {/* 전체 리스트 */}
             <Stack.Screen name="ProjectListAll">
               {(props) => (
                 <ProjectListAllScreen
                   {...props}
                   setHideHeader={setHideHeader}
+                  setHideAddButton={setHideAddButton} 
                 />
               )}
             </Stack.Screen>
 
+            {/* 상세 페이지 */}
             <Stack.Screen name="ProjectDetail">
               {(props) => (
-                <ProjectDetailScreen 
+                <ProjectDetailScreen
                   {...props}
-                  setHideHeader={setHideHeader}
+                  setHideAddButton={setHideAddButton} 
                 />
               )}
             </Stack.Screen>
+
           </Stack.Navigator>
         </View>
 
-        {/* 플로팅 버튼 */}
-        {showAddButton && (
+        {/* 플로팅 등록 버튼 */}
+        {showAddButton && !hideAddButton && (
           <View
             style={{
               position: 'absolute',
@@ -73,13 +81,14 @@ export default function App() {
           </View>
         )}
 
-        {/* 하단 네비게이션 바 */}
+        {/* 하단 네비게이션 */}
         <NavigationBar
           activeTab={activeTab}
           onPress={setActiveTab}
           onLayoutNavBar={setNavBarHeight}
           navigationRef={navigationRef}
         />
+
       </View>
     </NavigationContainer>
   );

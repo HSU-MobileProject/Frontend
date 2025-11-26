@@ -1,11 +1,14 @@
 import React, { useState, useMemo, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, ScrollView, TouchableOpacity, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import ProjectCard from "./components/ProjectCard";
 import styles from "./ProjectList.styles";
 import { dummyProjects } from "../../utils/dummyProjects";
 
 export default function ProjectListAllScreen({ route }) {
+  const navigation = useNavigation();   
   const { type } = route.params;
 
   const scrollRef = useRef(null);
@@ -31,7 +34,7 @@ export default function ProjectListAllScreen({ route }) {
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-    scrollRef.current?.scrollTo({ y: 0, animated: true }); 
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
   };
 
   return (
@@ -42,7 +45,13 @@ export default function ProjectListAllScreen({ route }) {
         contentContainerStyle={styles.scrollContent}
       >
         {currentData.map((item) => (
-          <ProjectCard key={item.id} {...item} />
+          <ProjectCard
+            key={item.id}
+            project={item}
+            onPress={() =>
+              navigation.navigate("ProjectDetail", { project: item })
+            }
+          />
         ))}
 
         {/* 페이지네이션 영역 */}
