@@ -7,10 +7,15 @@ import ProjectCard from "./components/ProjectCard";
 import styles from "./ProjectList.styles";
 import useProjects from "../../hooks/useProjects";
 
+import PaymentModal from "../payment/PaymentModal";
+
 export default function ProjectListAllScreen({ route }) {
   const navigation = useNavigation();   
   const { type } = route.params;
   const { getAllProjects } = useProjects();
+
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   const scrollRef = useRef(null);
 
@@ -33,6 +38,11 @@ export default function ProjectListAllScreen({ route }) {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   };
 
+  const handlePurchasePress = (project) => {
+    setSelectedProject(project);
+    setIsPaymentModalVisible(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -47,6 +57,7 @@ export default function ProjectListAllScreen({ route }) {
             onPress={() =>
               navigation.navigate("ProjectDetail", { project: item })
             }
+            onPurchasePress={() => handlePurchasePress(item)}
           />
         ))}
 
@@ -95,6 +106,12 @@ export default function ProjectListAllScreen({ route }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <PaymentModal 
+        visible={isPaymentModalVisible} 
+        onClose={() => setIsPaymentModalVisible(false)}
+        project={selectedProject}
+      />
     </SafeAreaView>
   );
 }

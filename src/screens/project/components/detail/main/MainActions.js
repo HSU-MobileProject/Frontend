@@ -3,13 +3,17 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { MessageCircle, Star, Share2 } from "lucide-react-native";
 import styles from "../ProjectDetail.styles";
 
-export default function MainActions({ isFree }) {
+export default function MainActions({ isFree, onPurchasePress }) {
   return (
     <View style={styles.mainActions}>
       {/* 구매 / 다운로드 버튼 */}
       <TouchableOpacity
         style={isFree ? styles.freeMainBtn : styles.mainBuyBtn}
         activeOpacity={0.9}
+        onPress={() => {
+          console.log("MainActions: Purchase button pressed");
+          if (onPurchasePress) onPurchasePress();
+        }}
       >
         <Text style={isFree ? styles.freeMainBtnText : styles.mainBuyBtnText}>
           {isFree ? "다운로드" : "구매하기"}
