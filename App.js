@@ -3,13 +3,13 @@ import { View } from 'react-native';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import ProjectListScreen from './src/screens/project/ProjectListScreen';
-import ProjectListAllScreen from './src/screens/project/ProjectListAllScreen';
-import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
-import ProjectEditScreen from './src/screens/project/ProjectEditScreen';
-import ProjectCreateScreen from './src/screens/project/ProjectCreateScreen';
-import ProjectLikeScreen from './src/screens/project/ProjectLikeScreen';
-import ProjectSearchScreen from './src/screens/project/ProjectSearchScreen';
+import ProjectListScreen from './src/screens/project/list/ProjectListScreen';
+import ProjectListAllScreen from './src/screens/project/list/ProjectListAllScreen';
+import ProjectDetailScreen from './src/screens/project/detail/ProjectDetailScreen';
+import ProjectEditScreen from './src/screens/project/form/ProjectEditScreen';
+import ProjectCreateScreen from './src/screens/project/form/ProjectCreateScreen';
+import ProjectLikeScreen from './src/screens/project/list/ProjectLikeScreen';
+import ProjectSearchScreen from './src/screens/project/list/ProjectSearchScreen';
 
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';

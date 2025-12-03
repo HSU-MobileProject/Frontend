@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
-import { theme } from "../../styles/theme";
+import { theme } from "../../../styles/theme";
 
 const { width } = Dimensions.get("window");
 const scale = width / 375; // Design base width seems to be around 375-400, adjusting scale. User used 371px width in CSS.

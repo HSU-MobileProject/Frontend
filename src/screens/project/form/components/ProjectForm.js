@@ -8,12 +8,12 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 
-import styles from "./ProjectCreate.styles";
+import styles from "../ProjectCreate.styles";
 
-import FormBasicInfo from "./form/FormBasicInfo";
-import FormRecruitment from "./form/FormRecruitment";
-import FormDetailInfo from "./form/FormDetailInfo";
-import FormSalesSettings from "./form/FormSalesSettings";
+import FormBasicInfo from "./FormBasicInfo";
+import FormRecruitment from "./FormRecruitment";
+import FormDetailInfo from "./FormDetailInfo";
+import FormSalesSettings from "./FormSalesSettings";
 
 export default function ProjectForm({ initialValues, onSubmit, submitLabel = "완료" }) {
   // ---- 상태값 세팅 ----

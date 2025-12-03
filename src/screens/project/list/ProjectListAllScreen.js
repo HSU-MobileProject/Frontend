@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import ProjectCard from "./components/ProjectCard";
 import styles from "./ProjectList.styles";
-import useProjects from "../../hooks/useProjects";
+import useProjects from "../../../hooks/useProjects";
 
 export default function ProjectListAllScreen({ route }) {
   const navigation = useNavigation();   

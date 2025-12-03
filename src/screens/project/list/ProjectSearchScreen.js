@@ -1,18 +1,12 @@
 import React, { useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, TextInput, ScrollView, TouchableOpacity} from "react-native";
 import { Search } from "lucide-react-native";
 import styles from "./ProjectSearch.styles";
-import { theme } from "../../styles/theme";
+import { theme } from "../../../styles/theme";
 import ProjectFilter from "./components/ProjectFilter";
 import ProjectCard from "./components/ProjectCard";
-import useProjects from "../../hooks/useProjects";
+import useProjects from "../../../hooks/useProjects";
 
 export default function ProjectSearchScreen({ navigation }) {
   const { allProjects: projects } = useProjects();

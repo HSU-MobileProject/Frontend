@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
-import Colors from "../../../assets/colors";
-import Typography from "../../../assets/typography";
+import Colors from "../../../../assets/colors";
+import Typography from "../../../../assets/typography";
 
 const scale = Dimensions.get("window").width / 409;
 

@@ -1,16 +1,15 @@
 import React from "react";
-
 import { View, ScrollView } from "react-native";
-import styles from "./components/detail/ProjectDetail.styles";
-import DetailHeader from "./components/detail/DetailHeader";
-import DetailMainCard from "./components/detail/DetailMainCard";
-import DetailAboutCard from "./components/detail/DetailAboutCard";
-import DetailPriceCard from "./components/detail/DetailPriceCard";
-import DetailLeaderCard from "./components/detail/DetailLeaderCard";
-import DetailGitHubCard from "./components/detail/DetailGitHubCard";
-import DetailStatusCard from "./components/detail/DetailStatusCard";
+import styles from "./components/ProjectDetail.styles";
+import DetailHeader from "./components/DetailHeader";
+import DetailMainCard from "./components/DetailMainCard";
+import DetailAboutCard from "./components/DetailAboutCard";
+import DetailPriceCard from "./components/DetailPriceCard";
+import DetailLeaderCard from "./components/DetailLeaderCard";
+import DetailGitHubCard from "./components/DetailGitHubCard";
+import DetailStatusCard from "./components/DetailStatusCard";
 
-import { usersDummy, dummyCurrentUser } from "../../utils/usersDummy";
+import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
 export default function ProjectDetailScreen({ route }) {
   const project = route?.params?.project || {};

@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeft } from "lucide-react-native";
-import styles from "./components/ProjectCreate.styles";
-import Colors from "../../assets/colors";
+import styles from "./ProjectCreate.styles";
+import Colors from "../../../assets/colors";
 import ProjectForm from "./components/ProjectForm";
 
 export default function ProjectCreateScreen({ navigation }) {

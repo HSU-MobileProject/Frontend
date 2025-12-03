@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeft } from "lucide-react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import styles from "./components/ProjectCreate.styles"; 
-import Colors from "../../assets/colors";
+import styles from "./ProjectEdit.styles"; 
+import Colors from "../../../assets/colors";
 import ProjectForm from "./components/ProjectForm";
-import { dummyProjects } from "../../utils/dummyProjects";
+import { dummyProjects } from "../../../utils/dummyProjects";
 
 export default function ProjectEditScreen({ route, navigation, setHideAddButton }) {
   const projectId = route?.params?.projectId;

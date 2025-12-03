@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   View,
@@ -9,8 +8,8 @@ import {
   Dimensions,
 } from "react-native";
 import styles from "./ProjectCard.styles";
-import categoryColors from "../../../assets/categoryColors";
-import Colors from "../../../assets/colors";
+import categoryColors from "../../../../assets/categoryColors";
+import Colors from "../../../../assets/colors";
 import { Star, Eye } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");

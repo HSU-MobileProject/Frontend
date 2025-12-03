@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SlidersHorizontal, ChevronDown, ChevronUp } from "lucide-react-native";
 import styles from "./ProjectFilter.styles";
-import { theme } from "../../../styles/theme";
-import categoryColors from "../../../assets/categoryColors";
+import { theme } from "../../../../styles/theme";
+import categoryColors from "../../../../assets/categoryColors";
 
 const CATEGORIES = [
   "전체",
@@ -24,7 +24,6 @@ const TAGS = [
   "Stripe",
   "Python",
   "Raspberry Pi",
-  "Blockly",
   "Three.js",
   "WebGL",
   "TensorFlow",

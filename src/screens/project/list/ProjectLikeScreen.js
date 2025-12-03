@@ -6,8 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import ProjectCard from "./components/ProjectCard";
 import ProjectFilter from "./components/ProjectFilter";
 import styles from "./ProjectList.styles";
-import useProjects from "../../hooks/useProjects";
-import Colors from "../../assets/colors";
+import useProjects from "../../../hooks/useProjects";
+import Colors from "../../../assets/colors";
 
 export default function ProjectLikeScreen() {
   const navigation = useNavigation();
