@@ -1,8 +1,7 @@
-import { StyleSheet, Dimensions } from "react-native";
-import colors from '../../assets/colors';
+import { StyleSheet } from "react-native";
+import { theme } from "../../styles/theme";
 
-const { width } = Dimensions.get("window");
-const scale = width / 409;
+const { scale, colors } = theme;
 
 export default StyleSheet.create({
   container: {

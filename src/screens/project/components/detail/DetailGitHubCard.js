@@ -19,7 +19,7 @@ export default function DetailGitHubCard({ project }) {
         </View>
 
         {/* meta 한 줄 */}
-        <Text style={styles.githubMeta}>sadsadasdas</Text>
+        <Text style={styles.githubMeta}></Text>
       </View>
 
       {/* GitHub 버튼 */}

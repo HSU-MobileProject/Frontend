@@ -19,7 +19,7 @@ import {
 } from "lucide-react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 
-import styles from "./components/create/ProjectCreate.styles";
+import styles from "./components/ProjectCreate.styles";
 import Colors from "../../assets/colors";
 
 

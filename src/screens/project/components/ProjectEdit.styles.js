@@ -1,24 +1,30 @@
-import { StyleSheet } from "react-native";
-import { theme, CommonStyles } from "../../../../../styles/theme";
+import { StyleSheet, Dimensions } from "react-native";
+import Colors from "../../../assets/colors";
+import Typography from "../../../assets/typography";
 
-const { scale, colors, typography } = theme;
+const { width } = Dimensions.get("window");
+const BASE_WIDTH = 413;
+const scale = width / BASE_WIDTH;
 
 export default StyleSheet.create({
-  screenWrapper: CommonStyles.screenWrapper,
+  screenWrapper: {
+    flex: 1,
+    backgroundColor: Colors.beige,
+  },
 
-  createHeader: {
+  editHeader: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16 * scale,
-    backgroundColor: colors.beige,
+    backgroundColor: Colors.beige,
   },
 
   headerTitle: {
-    fontFamily: typography.fontFamily.bold,
+    fontFamily: Typography.fontFamily.bold,
     fontSize: 18 * scale,
-    color: colors.black,
+    color: Colors.black,
     flex: 1,
     textAlign: "center",
   },
@@ -40,9 +46,10 @@ export default StyleSheet.create({
   },
 
   deleteText: {
-    color: "#EF4444",
-    fontWeight: "600",
-    fontSize: 14 * scale,
+    color: Colors.accent,
+    fontWeight: Typography.weight.semibold,
+    fontSize: Typography.size.body2,
+    marginRight: 8 * scale,
   },
 
   rightSpacer: {
@@ -50,23 +57,34 @@ export default StyleSheet.create({
   },
 
   scrollContainer: {
-    ...CommonStyles.scrollContainer,
+    padding: 16 * scale,
     gap: 16 * scale,
     paddingBottom: 40 * scale,
   },
 
-  card: CommonStyles.card,
+  card: {
+    backgroundColor: Colors.white,
+    borderRadius: 12 * scale,
+    padding: 20 * scale,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
+  },
 
   cardTitle: {
-    fontFamily: typography.fontFamily.bold,
+    fontFamily: Typography.fontFamily.bold,
     fontSize: 16 * scale,
-    color: colors.black,
+    color: Colors.black,
     marginBottom: 12 * scale,
   },
 
   subDescription: {
     fontSize: 12 * scale,
-    color: colors.grayDark,
+    color: Colors.grayDark,
     marginBottom: 12 * scale,
   },
 
@@ -78,10 +96,19 @@ export default StyleSheet.create({
     fontSize: 14 * scale,
     color: "#374151",
     marginBottom: 6 * scale,
-    fontFamily: typography.fontFamily.medium,
+    fontFamily: Typography.fontFamily.medium,
   },
 
-  textInput: CommonStyles.textInput,
+  textInput: {
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8 * scale,
+    paddingHorizontal: 12 * scale,
+    paddingVertical: 10 * scale,
+    fontSize: 14 * scale,
+    color: Colors.black,
+  },
 
   multilineInput: {
     minHeight: 100 * scale,
@@ -150,8 +177,8 @@ export default StyleSheet.create({
   },
 
   chipActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primary,
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary,
   },
 
   chipText: {
@@ -174,8 +201,8 @@ export default StyleSheet.create({
   },
 
   chipActiveSmall: {
-    borderColor: colors.yellow,
-    backgroundColor: colors.yellow,
+    borderColor: Colors.yellow,
+    backgroundColor: Colors.yellow,
   },
 
   chipTextSmall: {
@@ -216,7 +243,7 @@ export default StyleSheet.create({
     borderRadius: 8 * scale,
     backgroundColor: "#FFF",
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: Colors.primary,
     minWidth: 70 * scale,
     alignItems: "center",
   },
@@ -228,7 +255,7 @@ export default StyleSheet.create({
 
   roleStatusText: {
     fontSize: 12 * scale,
-    color: colors.primary,
+    color: Colors.primary,
     fontWeight: "600",
   },
 
@@ -267,7 +294,7 @@ export default StyleSheet.create({
   tagChipItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.olive,
+    backgroundColor: Colors.olive,
     paddingVertical: 4 * scale,
     paddingHorizontal: 10 * scale,
     borderRadius: 20 * scale,
@@ -304,7 +331,7 @@ export default StyleSheet.create({
     minWidth: 60 * scale,
     height: 28 * scale,
     borderWidth: 1,
-    borderColor: colors.olive,
+    borderColor: Colors.olive,
     borderRadius: 20 * scale,
     paddingHorizontal: 10 * scale,
     fontSize: 12 * scale,
@@ -320,7 +347,7 @@ export default StyleSheet.create({
 
   progressFill: {
     height: "100%",
-    backgroundColor: colors.green,
+    backgroundColor: Colors.green,
   },
 
   progressButtonsRow: {
@@ -337,8 +364,8 @@ export default StyleSheet.create({
   },
 
   progressBtnActive: {
-    backgroundColor: colors.green,
-    borderColor: colors.green,
+    backgroundColor: Colors.green,
+    borderColor: Colors.green,
   },
 
   progressBtnText: {
@@ -368,7 +395,7 @@ export default StyleSheet.create({
   },
 
   licenseItemActive: {
-    borderColor: colors.green,
+    borderColor: Colors.green,
     backgroundColor: "#F0FDF4",
   },
 
@@ -386,8 +413,8 @@ export default StyleSheet.create({
   },
 
   licenseDotActive: {
-    borderColor: colors.green,
-    backgroundColor: colors.green,
+    borderColor: Colors.green,
+    backgroundColor: Colors.green,
   },
 
   licenseTitle: {
@@ -409,7 +436,21 @@ export default StyleSheet.create({
     marginTop: 10 * scale,
   },
 
-  submitBtn: CommonStyles.primaryButton,
+  submitBtn: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 14 * scale,
+    borderRadius: 10 * scale,
+    alignItems: "center",
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+  },
 
-  submitBtnText: CommonStyles.primaryButtonText,
+  submitBtnText: {
+    fontSize: 16 * scale,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
 });

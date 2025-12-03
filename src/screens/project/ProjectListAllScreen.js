@@ -5,22 +5,18 @@ import { useNavigation } from "@react-navigation/native";
 
 import ProjectCard from "./components/ProjectCard";
 import styles from "./ProjectList.styles";
-import { dummyProjects } from "../../utils/dummyProjects";
+import useProjects from "../../hooks/useProjects";
 
 export default function ProjectListAllScreen({ route }) {
   const navigation = useNavigation();   
   const { type } = route.params;
+  const { getAllProjects } = useProjects();
 
   const scrollRef = useRef(null);
 
   const sortedData = useMemo(() => {
-    if (type === "recommended") {
-      return [...dummyProjects].sort((a, b) => b.likes - a.likes);
-    }
-    return [...dummyProjects].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-  }, [type]);
+    return getAllProjects(type);
+  }, [type, getAllProjects]);
 
   const PAGE_SIZE = 5;
   const totalPages = Math.ceil(sortedData.length / PAGE_SIZE);

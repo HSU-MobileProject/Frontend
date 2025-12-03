@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { theme, CommonStyles } from "../../../../../styles/theme";
+import { theme, CommonStyles } from "../../../styles/theme";
 
 const { scale, colors, typography } = theme;
 

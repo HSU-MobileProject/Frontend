@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeft, Trash2, Plus, X, Upload } from "lucide-react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 
-import styles from "./components/edit/ProjectEdit.styles";
+import styles from "./components/ProjectEdit.styles";
 import Colors from "../../assets/colors";
 import { dummyProjects } from "../../utils/dummyProjects";
 import { usersDummy } from "../../utils/usersDummy";
