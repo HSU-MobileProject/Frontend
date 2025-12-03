@@ -67,10 +67,6 @@ export default StyleSheet.create({
   // ---------- 공통 Card ----------
   card: CommonStyles.card,
 
-  cardContent: {
-    paddingHorizontal: 22 * scale,
-  },
-
   // ---------- Main Card ----------
   mainCard: {
     backgroundColor: colors.white,
@@ -229,8 +225,8 @@ export default StyleSheet.create({
 
   // ---------- 섹션 공통 ----------
   sectionTitle: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: typography.size.body2,
+    fontSize: 14 * scale,
+    fontFamily: typography.fontFamily.medium,
     color: colors.black,
   },
 
@@ -358,7 +354,6 @@ export default StyleSheet.create({
   leaderRow: {
   flexDirection: "row",
   alignItems: "center",
-  paddingHorizontal: 22 * scale,
   paddingVertical: 10 * scale,
   gap: 12 * scale,
   },
@@ -401,7 +396,6 @@ export default StyleSheet.create({
   },
 
   profileBtn: {
-    marginHorizontal: 22 * scale,
     marginTop: 12 * scale,
     height: 33 * scale,
     borderRadius: 7.4 * scale,
@@ -422,7 +416,6 @@ export default StyleSheet.create({
 
   // ---------- GitHub ----------
   sectionLabel: {
-    paddingHorizontal: 22 * scale,
     fontFamily: typography.fontFamily.regular,
     fontSize: typography.size.body2,
     color: colors.black,
@@ -431,7 +424,6 @@ export default StyleSheet.create({
   githubBox: {
     backgroundColor: colors.grayLight,    
     borderRadius: 10 * scale,
-    marginHorizontal: 22 * scale,
     marginTop: 8 * scale,
     padding: 16 * scale,          
   },
@@ -449,13 +441,6 @@ export default StyleSheet.create({
     marginLeft: 8 * scale,
   },
 
-  githubMeta: {
-    marginTop: 4 * scale,
-    fontFamily: typography.fontFamily.regular,
-    fontSize: typography.size.subtitle,                
-    color: colors.grayDark,               
-  },
-
   githubBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -465,7 +450,6 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     backgroundColor: colors.beige,
-    marginHorizontal: 22 * scale,
     marginTop: 10 * scale,
     gap: 6 * scale,
   },
@@ -495,7 +479,6 @@ export default StyleSheet.create({
     color: colors.black,
   },
   progressBar: {
-    marginHorizontal: 22 * scale,
     marginTop: 8 * scale,
     height: 7 * scale,
     backgroundColor: colors.grayLight,
@@ -508,7 +491,6 @@ export default StyleSheet.create({
     borderRadius: 999,
   },
   applyBtn: {
-    marginHorizontal: 22 * scale,
     marginTop: 16 * scale,
     height: 33 * scale,
     borderRadius: 7.4 * scale,
@@ -574,7 +556,6 @@ export default StyleSheet.create({
     height: 1,
     backgroundColor: "rgba(0,0,0,0.1)",
     marginVertical: 16 * scale,
-    marginHorizontal: 22 * scale,
   },
 
   roleRow: {

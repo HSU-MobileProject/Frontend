@@ -1,4 +1,4 @@
-// src/components/project/ProjectCard.jsx
+
 import React from "react";
 import {
   View,

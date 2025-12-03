@@ -8,6 +8,8 @@ import ProjectListAllScreen from './src/screens/project/ProjectListAllScreen';
 import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
 import ProjectEditScreen from './src/screens/project/ProjectEditScreen';
 import ProjectCreateScreen from './src/screens/project/ProjectCreateScreen';
+import ProjectLikeScreen from './src/screens/project/ProjectLikeScreen';
+import ProjectSearchScreen from './src/screens/project/ProjectSearchScreen';
 
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
@@ -57,6 +59,14 @@ export default function App() {
 
             <Stack.Screen name="ProjectListAll">
               {(props) => <ProjectListAllScreen {...props}/>}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectLike">
+              {(props) => <ProjectLikeScreen {...props}/>}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectSearch">
+              {(props) => <ProjectSearchScreen {...props}/>}
             </Stack.Screen>
 
             <Stack.Screen name="ProjectDetail">

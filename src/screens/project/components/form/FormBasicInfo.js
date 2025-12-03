@@ -9,6 +9,7 @@ import {
 import { Upload } from "lucide-react-native";
 import Colors from "../../../../assets/colors";
 import styles from "../ProjectCreate.styles";
+import categoryColors from "../../../../assets/categoryColors";
 
 const CATEGORY_OPTIONS = ["모바일", "웹", "IoT", "AI", "도구", "기타"];
 
@@ -74,22 +75,33 @@ export default function FormBasicInfo({
         <Text style={styles.fieldLabel}>카테고리</Text>
 
         <View style={styles.chipRow}>
-          {CATEGORY_OPTIONS.map((c) => (
-            <TouchableOpacity
-              key={c}
-              style={[styles.chip, category === c && styles.chipActive]}
-              onPress={() => setCategory(c)}
-            >
-              <Text
+          {CATEGORY_OPTIONS.map((c) => {
+            const isActive = category === c;
+            const activeColor = categoryColors[c] || Colors.primary;
+
+            return (
+              <TouchableOpacity
+                key={c}
                 style={[
-                  styles.chipText,
-                  category === c && styles.chipTextActive,
+                  styles.chip,
+                  isActive && {
+                    backgroundColor: activeColor,
+                    borderColor: activeColor,
+                  },
                 ]}
+                onPress={() => setCategory(c)}
               >
-                {c}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={[
+                    styles.chipText,
+                    isActive && { color: "#FFFFFF", fontWeight: "bold" },
+                  ]}
+                >
+                  {c}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
 

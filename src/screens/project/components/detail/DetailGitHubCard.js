@@ -17,9 +17,6 @@ export default function DetailGitHubCard({ project }) {
             <Github size={22} color="#1A1A1A" />
             <Text style={styles.githubRepo}>{project.githubUrl}</Text>
         </View>
-
-        {/* meta 한 줄 */}
-        <Text style={styles.githubMeta}></Text>
       </View>
 
       {/* GitHub 버튼 */}

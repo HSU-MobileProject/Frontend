@@ -7,8 +7,12 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.beige,
-    paddingTop: 16 * scale,
     paddingHorizontal: 16 * scale,
+  },
+
+  scrollContent: {
+    paddingTop: 16 * scale,
+    paddingBottom: 40 * scale,
   },
 
   content: {
@@ -27,7 +31,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 80 * scale,
+    marginBottom: 40 * scale,
     flexWrap: "wrap",
   },
 

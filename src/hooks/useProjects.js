@@ -14,6 +14,10 @@ export default function useProjects() {
       .slice(0, 3);
   }, []);
 
+  const likedProjects = useMemo(() => {
+    return dummyProjects.filter((p) => p.isLiked);
+  }, []);
+
   const getAllProjects = (type) => {
     if (type === "recommended") {
       return [...dummyProjects].sort((a, b) => b.likes - a.likes);
@@ -27,6 +31,8 @@ export default function useProjects() {
   return {
     recommendedProjects,
     latestProjects,
+    likedProjects,
+    allProjects: dummyProjects,
     getAllProjects,
   };
 }
