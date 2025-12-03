@@ -14,8 +14,7 @@ export default StyleSheet.create({
   centerWrap: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'flex-end',
-    paddingRight: 40 * scale,
+    alignItems: 'center',
   },
 
   card: {
