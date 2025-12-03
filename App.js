@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProjectListScreen from './src/screens/project/ProjectListScreen';
 import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
+import SignupScreen from './src/screens/auth/SignupScreen';
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
 import Header from './src/components/HeaderBar';
@@ -35,6 +36,11 @@ export default function App() {
             <Stack.Screen name="Login">
               {props => (
                 <LoginScreen {...props} setHideHeader={setHideHeader} />
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Signup">
+              {props => (
+                <SignupScreen {...props} setHideHeader={setHideHeader} />
               )}
             </Stack.Screen>
             <Stack.Screen name="ProjectList">
