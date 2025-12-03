@@ -53,7 +53,7 @@ export default function LoginScreen({ navigation }) {
                 styles.segment,
                 activeTab === 'signup' && styles.segmentActive,
               ]}
-              onPress={() => setActiveTab('signup')}
+              onPress={() => navigation?.navigate('Signup')}
             >
               <Text
                 style={[
