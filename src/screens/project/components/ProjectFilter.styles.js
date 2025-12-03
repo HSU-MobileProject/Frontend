@@ -6,8 +6,6 @@ const { scale, colors, typography } = theme;
 export default StyleSheet.create({
   container: {
     width: "100%",
-    paddingHorizontal: 16 * scale,
-    paddingBottom: 16 * scale,
     gap: 10 * scale,
     backgroundColor: colors.beige,
   },
@@ -16,6 +14,7 @@ export default StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
     gap: 8 * scale,
     marginBottom: 4 * scale,
   },
@@ -75,6 +74,7 @@ export default StyleSheet.create({
     flexWrap: "wrap",
     gap: 8 * scale,
     marginTop: 4 * scale,
+    paddingBottom: 16 * scale,
   },
   tagBadge: {
     paddingVertical: 2 * scale,

@@ -43,11 +43,6 @@ const styles = StyleSheet.create({
     color: theme.colors.black,
     height: "100%",
   },
-
-  // Filter Section
-  filterSection: {
-    marginBottom: 20 * scale,
-  },
   
   // Results Header
   resultHeader: {

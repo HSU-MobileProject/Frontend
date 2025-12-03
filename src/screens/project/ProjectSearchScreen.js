@@ -15,7 +15,7 @@ import ProjectCard from "./components/ProjectCard";
 import useProjects from "../../hooks/useProjects";
 
 export default function ProjectSearchScreen({ navigation }) {
-  const { projects } = useProjects();
+  const { allProjects: projects } = useProjects();
   
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -81,14 +81,12 @@ export default function ProjectSearchScreen({ navigation }) {
         </View>
 
         {/* Filter */}
-        <View style={styles.filterSection}>
-          <ProjectFilter
-            selectedCategory={selectedCategory}
-            onSelectCategory={handleSelectCategory}
-            selectedTags={selectedTags}
-            onToggleTag={handleToggleTag}
-          />
-        </View>
+        <ProjectFilter
+          selectedCategory={selectedCategory}
+          onSelectCategory={handleSelectCategory}
+          selectedTags={selectedTags}
+          onToggleTag={handleToggleTag}
+        />
 
         {/* Results Header */}
         <View style={styles.resultHeader}>
