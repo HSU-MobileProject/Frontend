@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, ScrollView } from "react-native";
 import styles from "./ProjectDetail.styles";
 import DetailHeader from "./components/DetailHeader";
@@ -9,12 +9,18 @@ import DetailLeaderCard from "./components/DetailLeaderCard";
 import DetailGitHubCard from "./components/DetailGitHubCard";
 import DetailStatusCard from "./components/DetailStatusCard";
 import PaymentModal from "../../payment/PaymentModal";
+import usePaymentModal from "../../../hooks/usePaymentModal";
 
 import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
 export default function ProjectDetailScreen({ route }) {
   const project = route?.params?.project || {};
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
+  const { 
+    isPaymentModalVisible, 
+    paymentProject, 
+    openPaymentModal, 
+    closePaymentModal 
+  } = usePaymentModal();
 
   const owner = usersDummy.find((u) => u.id === project.ownerId) || null;
 
@@ -30,7 +36,7 @@ export default function ProjectDetailScreen({ route }) {
       >
         <DetailMainCard 
           project={project} 
-          onPurchasePress={() => setIsPaymentModalVisible(true)}
+          onPurchasePress={() => openPaymentModal(project)}
         />
         <DetailAboutCard project={project} />
 
@@ -41,14 +47,14 @@ export default function ProjectDetailScreen({ route }) {
 
         <DetailPriceCard 
           project={project} 
-          onPurchasePress={() => setIsPaymentModalVisible(true)}
+          onPurchasePress={() => openPaymentModal(project)}
         />
       </ScrollView>
 
       <PaymentModal 
         visible={isPaymentModalVisible} 
-        onClose={() => setIsPaymentModalVisible(false)}
-        project={project}
+        onClose={closePaymentModal}
+        project={paymentProject}
       />
     </View>
   );

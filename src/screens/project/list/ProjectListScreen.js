@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import ProjectSection from "./components/ProjectSection";
 import styles from "./ProjectList.styles";
 import useProjects from "../../../hooks/useProjects";
+import usePaymentModal from "../../../hooks/usePaymentModal";
 
 import PaymentModal from "../../payment/PaymentModal";
 
@@ -13,16 +14,19 @@ export default function ProjectListScreen() {
   const navigation = useNavigation();
   const { recommendedProjects, latestProjects } = useProjects();
 
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const { 
+    isPaymentModalVisible, 
+    paymentProject, 
+    openPaymentModal, 
+    closePaymentModal 
+  } = usePaymentModal();
 
   const handlePressCard = (project) => {
     navigation.navigate("ProjectDetail", { project });
   };
 
   const handlePurchasePress = (project) => {
-    setSelectedProject(project);
-    setIsPaymentModalVisible(true);
+    openPaymentModal(project);
   };
 
   return (
@@ -50,8 +54,8 @@ export default function ProjectListScreen() {
 
       <PaymentModal 
         visible={isPaymentModalVisible} 
-        onClose={() => setIsPaymentModalVisible(false)}
-        project={selectedProject}
+        onClose={closePaymentModal}
+        project={paymentProject}
       />
     </SafeAreaView>
   );

@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import ProjectCard from "./components/ProjectCard";
 import styles from "./ProjectList.styles";
 import useProjects from "../../../hooks/useProjects";
+import usePaymentModal from "../../../hooks/usePaymentModal"; // Added import
 
 import PaymentModal from "../../payment/PaymentModal";
 
@@ -14,8 +15,12 @@ export default function ProjectListAllScreen({ route }) {
   const { type } = route.params;
   const { getAllProjects } = useProjects();
 
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const { 
+    isPaymentModalVisible, 
+    paymentProject, 
+    openPaymentModal, 
+    closePaymentModal 
+  } = usePaymentModal();
 
   const scrollRef = useRef(null);
 
@@ -39,8 +44,7 @@ export default function ProjectListAllScreen({ route }) {
   };
 
   const handlePurchasePress = (project) => {
-    setSelectedProject(project);
-    setIsPaymentModalVisible(true);
+    openPaymentModal(project);
   };
 
   return (
@@ -109,8 +113,8 @@ export default function ProjectListAllScreen({ route }) {
 
       <PaymentModal 
         visible={isPaymentModalVisible} 
-        onClose={() => setIsPaymentModalVisible(false)}
-        project={selectedProject}
+        onClose={closePaymentModal}
+        project={paymentProject}
       />
     </SafeAreaView>
   );

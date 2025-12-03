@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 import { theme } from "../../styles/theme";
 
 const { width, height } = Dimensions.get("window");
-const scale = width / 375; // Adjusting scale based on design width approx 375-400
+const scale = width / 375; 
 
 const styles = StyleSheet.create({
   overlay: {
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContainer: {
-    width: 340 * scale, // Adjusted from 385px to fit screen with margins
+    width: 340 * scale, 
     backgroundColor: "#FAF8F3",
     borderRadius: 9 * scale,
     borderWidth: 1,
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 7 * scale,
     paddingHorizontal: 10 * scale,
-    paddingVertical: 8 * scale, // Adjusted for height
+    paddingVertical: 8 * scale, 
     fontSize: 14 * scale,
     color: "#1A1A1A",
     height: 32 * scale,
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 20 * scale,
   },
   easyPaymentBtn: {
-    width: "48%", // Approx for 2 columns with gap
+    width: "48%",
     height: 44 * scale,
     backgroundColor: "#FAF8F3",
     borderWidth: 1,
