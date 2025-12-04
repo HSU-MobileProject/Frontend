@@ -1,0 +1,151 @@
+import React from "react";
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
+import { X, Check } from "lucide-react-native";
+import styles from "./PaymentModal.styles";
+import usePaymentForm from "../../hooks/usePaymentForm";
+
+// Sub-components
+import PaymentMethodSelector from "./components/PaymentMethodSelector";
+import PaymentCardForm from "./components/PaymentCardForm";
+import PaymentTransferInfo from "./components/PaymentTransferInfo";
+import PaymentEasyPay from "./components/PaymentEasyPay";
+import PaymentProjectInfo from "./components/PaymentProjectInfo";
+import PaymentPriceSummary from "./components/PaymentPriceSummary";
+
+import { usersDummy } from "../../utils/usersDummy";
+
+export default function PaymentModal({ visible, onClose, project }) {
+  if (!visible) return null;
+  if (!project?.id) return null;
+
+  const owner = usersDummy.find(u => u.id === project.ownerId);
+
+  const {
+    paymentMethod, setPaymentMethod,
+    easyPayProvider, setEasyPayProvider,
+    agreed, setAgreed,
+    isProcessing,
+    cardNumber, setCardNumber,
+    expiry, setExpiry,
+    cvc, setCvc,
+    ownerName, setOwnerName,
+    totalPrice, price, fee,
+    handlePay
+  } = usePaymentForm(project, onClose);
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View style={styles.overlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ width: "100%", alignItems: "center" }}
+        >
+          <View style={styles.modalContainer}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>프로젝트 구매</Text>
+              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                <X size={24} color="#1A1A1A" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView 
+              style={styles.scrollContent} 
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Project Info */}
+              <PaymentProjectInfo 
+                project={project} 
+                totalPrice={totalPrice} 
+                ownerName={owner?.displayName || "알 수 없음"}
+              />
+
+              {/* Payment Method Selector */}
+              <PaymentMethodSelector 
+                paymentMethod={paymentMethod} 
+                setPaymentMethod={setPaymentMethod} 
+              />
+
+              {/* Payment Forms */}
+              {paymentMethod === "card" && (
+                <PaymentCardForm 
+                  cardNumber={cardNumber} setCardNumber={setCardNumber}
+                  expiry={expiry} setExpiry={setExpiry}
+                  cvc={cvc} setCvc={setCvc}
+                  ownerName={ownerName} setOwnerName={setOwnerName}
+                />
+              )}
+
+              {paymentMethod === "transfer" && (
+                <PaymentTransferInfo totalPrice={totalPrice} />
+              )}
+
+              {paymentMethod === "easy" && (
+                <PaymentEasyPay 
+                  easyPayProvider={easyPayProvider} 
+                  setEasyPayProvider={setEasyPayProvider} 
+                />
+              )}
+
+              <View style={styles.divider} />
+
+              {/* Price Summary */}
+              <PaymentPriceSummary 
+                price={price} 
+                fee={fee} 
+                totalPrice={totalPrice} 
+              />
+
+              {/* Terms */}
+              <TouchableOpacity 
+                style={styles.termsContainer} 
+                onPress={() => setAgreed(!agreed)}
+                activeOpacity={1}
+              >
+                <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
+                   {agreed && <Check size={10} color="#FFF" />}
+                </View>
+                <Text style={styles.termsText}>
+                  ToyLink의 <Text style={styles.linkText}>이용약관</Text> 및 <Text style={styles.linkText}>개인정보 처리방침</Text>에{"\n"}동의합니다.
+                </Text>
+              </TouchableOpacity>
+
+              {/* Buttons */}
+              <View style={styles.buttonRow}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
+                  <Text style={styles.cancelText}>취소</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.payBtn, (!agreed || isProcessing) && styles.payBtnDisabled]} 
+                  onPress={handlePay}
+                  disabled={!agreed || isProcessing}
+                >
+                  {isProcessing ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.payText}>{totalPrice.toLocaleString()}원 결제하기</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </Modal>
+  );
+}

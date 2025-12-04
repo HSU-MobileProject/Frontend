@@ -49,9 +49,4 @@ export default StyleSheet.create({
   notificationBtn: {
     marginLeft: 'auto',
   },
-
-  icon: {
-    width: 24 * scale,
-    height: 24 * scale,
-  },
 });
