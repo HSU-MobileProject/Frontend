@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { MessageCircle, Star, Share2 } from "lucide-react-native";
-import styles from "../../ProjectDetail.styles";
+import styles from "../ProjectDetail.styles";
 
-export default function MainActions({ isFree, onPurchasePress }) {
+export default function MainActions({ isFree }) {
   return (
     <View style={styles.mainActions}>
       {/* 구매 / 다운로드 버튼 */}

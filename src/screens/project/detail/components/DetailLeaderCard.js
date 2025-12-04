@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { User } from "lucide-react-native";
-import styles from "../ProjectDetail.styles";
+import styles from "./ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
 export default function DetailLeaderCard({ project, owner }) {

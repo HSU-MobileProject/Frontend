@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import styles from "../ProjectDetail.styles";
+import styles from "./ProjectDetail.styles";
 import AboutIntro from "./about/AboutIntro";
 import AboutTechStack from "./about/AboutTechStack";
 import AboutRoles from "./about/AboutRoles";

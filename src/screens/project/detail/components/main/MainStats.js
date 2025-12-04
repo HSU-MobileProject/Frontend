@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { Star, Eye, Calendar } from "lucide-react-native";
-import styles from "../../ProjectDetail.styles";
+import styles from "../ProjectDetail.styles";
 
 export default function MainStats({ likes, views, createdAt }) {
   const created = createdAt

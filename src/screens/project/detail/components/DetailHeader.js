@@ -2,7 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import { ChevronLeft, Pencil } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
-import styles from "../ProjectDetail.styles";
+import styles from "./ProjectDetail.styles";
 
 export default function DetailHeader({ project, currentUser }) {
   const navigation = useNavigation();
