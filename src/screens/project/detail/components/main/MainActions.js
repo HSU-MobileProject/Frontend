@@ -10,6 +10,10 @@ export default function MainActions({ isFree }) {
       <TouchableOpacity
         style={isFree ? styles.freeMainBtn : styles.mainBuyBtn}
         activeOpacity={0.9}
+        onPress={() => {
+          console.log("MainActions: Purchase button pressed");
+          if (onPurchasePress) onPurchasePress();
+        }}
       >
         <Text style={isFree ? styles.freeMainBtnText : styles.mainBuyBtnText}>
           {isFree ? "다운로드" : "구매하기"}

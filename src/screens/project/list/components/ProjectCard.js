@@ -18,6 +18,7 @@ const scale = width / 409;
 export default function ProjectCard({
   project,
   onPress, // 상세 페이지 이동용 콜백
+  onPurchasePress, // 구매 버튼 콜백
 }) {
   const {
     category,
@@ -103,7 +104,10 @@ export default function ProjectCard({
               <Text style={styles.priceValue}>{price?.toLocaleString()}원</Text>
             )}
 
-            <TouchableOpacity style={styles.buyButton}>
+            <TouchableOpacity 
+              style={styles.buyButton}
+              onPress={onPurchasePress}
+            >
               <Text style={styles.buyButtonText}>구매</Text>
             </TouchableOpacity>
           </View>

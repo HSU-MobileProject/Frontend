@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { ShoppingCart } from "lucide-react-native";
-import styles from "./ProjectDetail.styles";
+import styles from "../ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
-export default function DetailPriceCard({ project }) {
+export default function DetailPriceCard({ project, onPurchasePress }) {
   const isFree =
     project.priceType === "free" ||
     project.price === 0 ||
@@ -28,7 +28,11 @@ export default function DetailPriceCard({ project }) {
         <Text style={styles.priceValue}>{priceText}</Text>
 
         {/* 구매 버튼 */}
-        <TouchableOpacity style={styles.bigBuyBtn} activeOpacity={0.9}>
+        <TouchableOpacity 
+          style={styles.bigBuyBtn} 
+          activeOpacity={0.9}
+          onPress={onPurchasePress}
+        >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <ShoppingCart size={16} color={Colors.white} />
             <Text style={styles.bigBuyBtnText}>
