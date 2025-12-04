@@ -10,10 +10,10 @@ export default function NavigationBar({
 }) {
   const menuItems = [   // ProjectDetail 수정하여 사용
     { key: '메인', label: '메인', screen: 'ProjectList' },
-    { key: '검색', label: '검색', screen: 'ProjectDetail' },
-    { key: '즐겨찾기', label: '즐겨찾기', screen: 'ProjectDetail' },
-    { key: '채팅', label: '채팅', screen: 'ProjectDetail' },
-    { key: '내정보', label: '내정보', screen: 'ProjectDetail' },
+    { key: '검색', label: '검색', screen: 'ProjectSearch' },
+    { key: '즐겨찾기', label: '즐겨찾기', screen: 'ProjectLike' },
+    { key: '채팅', label: '채팅', screen: 'ProjectList' },
+    { key: '내정보', label: '내정보', screen: 'ProjectList' },
   ];
 
   const handlePress = (item) => {

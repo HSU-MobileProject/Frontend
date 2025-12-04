@@ -12,7 +12,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     paddingTop: 24 * scale,
-    paddingBottom: (24 * scale) + 8,
+    paddingBottom: (28 * scale) + 8,
     alignItems: 'center',
     backgroundColor: colors.white,
 
@@ -47,10 +47,10 @@ export default StyleSheet.create({
   },
 
   menuText: {
-    fontSize: typography.size.subtitle,
-    lineHeight: typography.lineHeight.subtitle,
+    fontSize: typography.size.title,
+    lineHeight: typography.lineHeight.title,
     color: colors.grayDark,
-    fontFamily: typography.fontFamily.medium,
+    fontFamily: typography.fontFamily.semibold,
     textAlign: 'center',
   },
 

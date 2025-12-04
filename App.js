@@ -3,8 +3,14 @@ import { View } from 'react-native';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import ProjectListScreen from './src/screens/project/ProjectListScreen';
-import ProjectDetailScreen from './src/screens/project/ProjectDetailScreen';
+import ProjectListScreen from './src/screens/project/list/ProjectListScreen';
+import ProjectListAllScreen from './src/screens/project/list/ProjectListAllScreen';
+import ProjectDetailScreen from './src/screens/project/detail/ProjectDetailScreen';
+import ProjectEditScreen from './src/screens/project/form/ProjectEditScreen';
+import ProjectCreateScreen from './src/screens/project/form/ProjectCreateScreen';
+import ProjectLikeScreen from './src/screens/project/list/ProjectLikeScreen';
+import ProjectSearchScreen from './src/screens/project/list/ProjectSearchScreen';
+
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
 import Header from './src/components/HeaderBar';
@@ -17,40 +23,69 @@ export default function App() {
   const [navBarHeight, setNavBarHeight] = useState(0);
   const [hideHeader, setHideHeader] = useState(false);
 
+  const [hideAddButton, setHideAddButton] = useState(false);
+
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
-  const showAddButton = showAddButtonTabs.includes(activeTab);
+
+  const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
+
+  const handleStateChange = () => {
+
+    const route = navigationRef.getCurrentRoute();
+    const routeName = route?.name;
+
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate'].includes(routeName)) {
+      setHideAddButton(true);
+    } else {
+      setHideAddButton(false);
+    }
+  };
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer 
+      ref={navigationRef}
+      onStateChange={handleStateChange}
+    >
       <View style={{ flex: 1 }}>
 
         {!hideHeader && <Header />}
 
-        {/* Stack 화면 */}
         <View style={{ flex: 1 }}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            
             <Stack.Screen name="ProjectList">
-              {(props) => (
-                <ProjectListScreen 
-                  {...props}
-                  setHideHeader={setHideHeader}
-                />
-              )}
+              {(props) => <ProjectListScreen />}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectListAll">
+              {(props) => <ProjectListAllScreen {...props}/>}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectLike">
+              {(props) => <ProjectLikeScreen {...props}/>}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectSearch">
+              {(props) => <ProjectSearchScreen {...props}/>}
             </Stack.Screen>
 
             <Stack.Screen name="ProjectDetail">
-              {(props) => (
-                <ProjectDetailScreen 
-                  {...props}
-                  setHideHeader={setHideHeader}
-                />
-              )}
+              {(props) => <ProjectDetailScreen {...props} />}
             </Stack.Screen>
+            
+            <Stack.Screen name="ProjectEdit">
+              {(props) => <ProjectEditScreen {...props} />}
+            </Stack.Screen>
+
+            <Stack.Screen name="ProjectCreate">
+              {(props) => <ProjectCreateScreen {...props} />}
+            </Stack.Screen>
+
           </Stack.Navigator>
         </View>
 
-        {/* 플로팅 버튼 */}
-        {showAddButton && (
+        {/* 플로팅 등록 버튼 */}
+        {showAddButton && !hideAddButton && (
           <View
             style={{
               position: 'absolute',
@@ -63,13 +98,14 @@ export default function App() {
           </View>
         )}
 
-        {/* 하단 네비게이션 바 */}
+        {/* 하단 네비게이션 */}
         <NavigationBar
           activeTab={activeTab}
           onPress={setActiveTab}
           onLayoutNavBar={setNavBarHeight}
           navigationRef={navigationRef}
         />
+
       </View>
     </NavigationContainer>
   );

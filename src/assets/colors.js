@@ -7,7 +7,7 @@ export default {
   green: '#00A651',          // 성공/가격/완료 표시
   mint: '#34D7B0',           // 보조 포인트
   olive: '#A8D474',          // 카테고리/태그 색
-  yellow: '#FFE57F',         // 배지/강조 포인트
+  yellow: '#FBC02D',         // 배지/강조 포인트 (가시성 개선)
   brown: '#806B3F',          // 서브 포인트
 
   // Neutral (Text, Background, Divider)

@@ -23,13 +23,9 @@ export default StyleSheet.create({
     elevation: 3,
   },
 
-  icon: {
-    marginRight: 4 * scale,
-  },
-
   text: {
     color: colors.white,
-    fontSize: typography.size.button,
-    fontFamily: typography.fontFamily.medium,
+    fontSize: typography.size.subtitle * scale,
+    fontFamily: typography.fontFamily.bold,
   },
 });
