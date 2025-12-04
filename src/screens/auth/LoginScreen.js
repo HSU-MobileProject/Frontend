@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -53,7 +53,7 @@ export default function LoginScreen({ navigation }) {
                 styles.segment,
                 activeTab === 'signup' && styles.segmentActive,
               ]}
-              onPress={() => navigation?.navigate('Signup')}
+              onPress={() => setShowSignup(true)}
             >
               <Text
                 style={[
@@ -94,7 +94,10 @@ export default function LoginScreen({ navigation }) {
               onChangeText={setPassword}
             />
 
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => setIsLoggedIn(true)}
+            >
               <Text style={styles.loginButtonText}>로그인</Text>
             </TouchableOpacity>
 

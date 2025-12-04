@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-export default function SignupScreen({ navigation }) {
+export default function SignupScreen({ setShowSignup, setIsLoggedIn }) {
   const [userType, setUserType] = useState('personal');
   const [name, setName] = useState('');
   const [companyName, setCompanyName] = useState('');
@@ -30,6 +30,7 @@ export default function SignupScreen({ navigation }) {
     } else {
       console.log('Business Signup:', { name, companyName, email, password });
     }
+    setIsLoggedIn(true);
   };
 
   return (
@@ -197,7 +198,7 @@ export default function SignupScreen({ navigation }) {
                 <Text style={styles.loginLinkText}>
                   이미 계정이 있으신가요?{' '}
                 </Text>
-                <TouchableOpacity onPress={() => navigation?.navigate('Login')}>
+                <TouchableOpacity onPress={() => setShowSignup(false)}>
                   <Text style={styles.loginLink}>로그인</Text>
                 </TouchableOpacity>
               </View>
