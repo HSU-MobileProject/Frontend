@@ -26,7 +26,6 @@ export default function useProjects() {
     if (type === "recommended") {
       return [...dummyProjects].sort((a, b) => b.likes - a.likes);
     }
-    // default: latest
     return [...dummyProjects].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );

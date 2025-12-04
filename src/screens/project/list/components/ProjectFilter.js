@@ -72,8 +72,6 @@ export default function ProjectFilter({
             >
                 {CATEGORIES.map((cat) => {
                     const isActive = selectedCategory === cat;
-                    // "전체" is not in categoryColors, so fallback to primary. 
-                    // Other categories use the imported map.
                     const activeColor = cat === "전체" 
                         ? colors.primary 
                         : (categoryColors[cat] || colors.primary);

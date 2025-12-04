@@ -15,21 +15,18 @@ export default function ProjectSearchScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedTags, setSelectedTags] = useState([]);
 
-  // Filter Logic
+  // Filter
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
-      // 1. Category Filter
       if (selectedCategory !== "전체" && p.category !== selectedCategory) {
         return false;
       }
-
-      // 2. Tag Filter (OR logic: match any selected tag)
+      
       if (selectedTags.length > 0) {
         const hasTag = p.tags.some((t) => selectedTags.includes(t));
         if (!hasTag) return false;
       }
 
-      // 3. Search Text Filter (Title, Description, Tags)
       if (searchText.trim()) {
         const query = searchText.toLowerCase();
         const titleMatch = p.title.toLowerCase().includes(query);
@@ -92,11 +89,14 @@ export default function ProjectSearchScreen({ navigation }) {
         <View style={styles.listContainer}>
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onPress={() => navigation.navigate("ProjectDetail", { project })}
-              />
+            <ProjectCard
+              key={item.id}
+              project={item}
+              onPress={() =>
+                navigation.navigate("ProjectDetail", { project: item })
+              }
+              onPurchasePress={() => handlePurchasePress(item)}
+            />
             ))
           ) : (
             <View style={styles.emptyContainer}>
