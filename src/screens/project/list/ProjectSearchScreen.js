@@ -7,10 +7,19 @@ import { theme } from "../../../styles/theme";
 import ProjectFilter from "./components/ProjectFilter";
 import ProjectCard from "./components/ProjectCard";
 import useProjects from "../../../hooks/useProjects";
+import usePaymentModal from "../../../hooks/usePaymentModal";
+import PaymentModal from "../../payment/PaymentModal";
 
 export default function ProjectSearchScreen({ navigation }) {
   const { allProjects: projects } = useProjects();
   
+  const { 
+    isPaymentModalVisible, 
+    paymentProject, 
+    openPaymentModal, 
+    closePaymentModal 
+  } = usePaymentModal();
+
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedTags, setSelectedTags] = useState([]);
@@ -52,6 +61,10 @@ export default function ProjectSearchScreen({ navigation }) {
     }
   };
 
+  const handlePurchasePress = (project) => {
+    openPaymentModal(project);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView 
@@ -90,12 +103,12 @@ export default function ProjectSearchScreen({ navigation }) {
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
             <ProjectCard
-              key={item.id}
-              project={item}
+              key={project.id}
+              project={project}
               onPress={() =>
-                navigation.navigate("ProjectDetail", { project: item })
+                navigation.navigate("ProjectDetail", { project: project })
               }
-              onPurchasePress={() => handlePurchasePress(item)}
+              onPurchasePress={() => handlePurchasePress(project)}
             />
             ))
           ) : (
@@ -105,6 +118,12 @@ export default function ProjectSearchScreen({ navigation }) {
           )}
         </View>
       </ScrollView>
+
+      <PaymentModal 
+        visible={isPaymentModalVisible} 
+        onClose={closePaymentModal}
+        project={paymentProject}
+      />
     </SafeAreaView>
   );
 }

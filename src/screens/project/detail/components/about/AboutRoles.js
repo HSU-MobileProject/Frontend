@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import styles from "../ProjectDetail.styles";
+import styles from "../../ProjectDetail.styles";
 
 export default function AboutRoles({ roles }) {
   return (
