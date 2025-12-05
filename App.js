@@ -13,6 +13,7 @@ import ProjectEditScreen from './src/screens/project/form/ProjectEditScreen';
 import ProjectCreateScreen from './src/screens/project/form/ProjectCreateScreen';
 import ProjectLikeScreen from './src/screens/project/list/ProjectLikeScreen';
 import ProjectSearchScreen from './src/screens/project/list/ProjectSearchScreen';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
 
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
@@ -31,6 +32,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [hideAddButton, setHideAddButton] = useState(false);
+  const [hideNavBar, setHideNavBar] = useState(false);
 
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
   const showAddButton =
@@ -38,12 +40,20 @@ export default function App() {
 
   const handleStateChange = () => {
     const route = navigationRef.getCurrentRoute();
-    const routeName = route?.name;
+    const routeName = route?.name ?? '';
 
-    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate'].includes(routeName)) {
+    // Add Button 숨김 처리
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(routeName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
+    }
+
+    // NavBar 숨김 처리
+    if (routeName === 'Notification') {
+      setHideNavBar(true);
+    } else {
+      setHideNavBar(false);
     }
   };
 
@@ -106,6 +116,11 @@ export default function App() {
                 <Stack.Screen name="ProjectCreate">
                   {(props) => <ProjectCreateScreen {...props} />}
                 </Stack.Screen>
+
+                <Stack.Screen name="Notification">
+                  {(props) => <NotificationScreen {...props} />}
+                </Stack.Screen>
+
               </Stack.Navigator>
             </View>
 
@@ -124,12 +139,14 @@ export default function App() {
             )}
 
             {/* 하단 네비게이션 */}
-            <NavigationBar
-              activeTab={activeTab}
-              onPress={setActiveTab}
-              onLayoutNavBar={setNavBarHeight}
-              navigationRef={navigationRef}
-            />
+            {!hideNavBar && (
+              <NavigationBar
+                activeTab={activeTab}
+                onPress={setActiveTab}
+                onLayoutNavBar={setNavBarHeight}
+                navigationRef={navigationRef}
+              />
+            )}
           </>
         )}
       </View>
