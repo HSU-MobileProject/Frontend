@@ -19,14 +19,11 @@ export default function ProjectLikeScreen() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedTags, setSelectedTags] = useState([]);
 
-  // Filter Logic
   const filteredData = useMemo(() => {
     return likedProjects.filter((p) => {
-      // 1. Category Filter
       if (selectedCategory !== "전체" && p.category !== selectedCategory) {
         return false;
       }
-      // 2. Tag Filter (AND logic)
       if (selectedTags.length > 0) {
         const hasAllTags = selectedTags.every((tag) => p.tags?.includes(tag));
         if (!hasAllTags) return false;
@@ -68,6 +65,7 @@ export default function ProjectLikeScreen() {
             onPress={() =>
               navigation.navigate("ProjectDetail", { project: item })
             }
+            onPurchasePress={() => handlePurchasePress(item)}
           />
         ))}
 
