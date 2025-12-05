@@ -10,6 +10,7 @@ import ProjectEditScreen from './src/screens/project/form/ProjectEditScreen';
 import ProjectCreateScreen from './src/screens/project/form/ProjectCreateScreen';
 import ProjectLikeScreen from './src/screens/project/list/ProjectLikeScreen';
 import ProjectSearchScreen from './src/screens/project/list/ProjectSearchScreen';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
 
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
@@ -29,20 +30,27 @@ export default function App() {
 
   const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
 
+  const [hideNavBar, setHideNavBar] = useState(false);
+
   const handleStateChange = () => {
+    const currentRoute = navigationRef.getCurrentRoute();
+    const routeName = currentRoute ? currentRoute.name : '';
 
-    const route = navigationRef.getCurrentRoute();
-    const routeName = route?.name;
-
-    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate'].includes(routeName)) {
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(routeName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
     }
+
+    if (routeName === 'Notification') {
+      setHideNavBar(true);
+    } else {
+      setHideNavBar(false);
+    }
   };
 
   return (
-    <NavigationContainer 
+    <NavigationContainer
       ref={navigationRef}
       onStateChange={handleStateChange}
     >
@@ -81,6 +89,10 @@ export default function App() {
               {(props) => <ProjectCreateScreen {...props} />}
             </Stack.Screen>
 
+            <Stack.Screen name="Notification">
+              {(props) => <NotificationScreen {...props} />}
+            </Stack.Screen>
+
           </Stack.Navigator>
         </View>
 
@@ -99,12 +111,14 @@ export default function App() {
         )}
 
         {/* 하단 네비게이션 */}
-        <NavigationBar
-          activeTab={activeTab}
-          onPress={setActiveTab}
-          onLayoutNavBar={setNavBarHeight}
-          navigationRef={navigationRef}
-        />
+        {!hideNavBar && (
+          <NavigationBar
+            activeTab={activeTab}
+            onPress={setActiveTab}
+            onLayoutNavBar={setNavBarHeight}
+            navigationRef={navigationRef}
+          />
+        )}
 
       </View>
     </NavigationContainer>
