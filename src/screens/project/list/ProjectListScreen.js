@@ -6,13 +6,27 @@ import { useNavigation } from "@react-navigation/native";
 import ProjectSection from "./components/ProjectSection";
 import styles from "./ProjectList.styles";
 import useProjects from "../../../hooks/useProjects";
+import usePaymentModal from "../../../hooks/usePaymentModal";
+
+import PaymentModal from "../../payment/PaymentModal";
 
 export default function ProjectListScreen() {
   const navigation = useNavigation();
   const { recommendedProjects, latestProjects } = useProjects();
 
+  const { 
+    isPaymentModalVisible, 
+    paymentProject, 
+    openPaymentModal, 
+    closePaymentModal 
+  } = usePaymentModal();
+
   const handlePressCard = (project) => {
     navigation.navigate("ProjectDetail", { project });
+  };
+
+  const handlePurchasePress = (project) => {
+    openPaymentModal(project);
   };
 
   return (
@@ -26,6 +40,7 @@ export default function ProjectListScreen() {
           data={recommendedProjects}
           type="recommended"
           onPressCard={handlePressCard}
+          onPurchasePress={handlePurchasePress}
         />
 
         <ProjectSection
@@ -33,8 +48,15 @@ export default function ProjectListScreen() {
           data={latestProjects}
           type="latest"
           onPressCard={handlePressCard}
+          onPurchasePress={handlePurchasePress}
         />
       </ScrollView>
+
+      <PaymentModal 
+        visible={isPaymentModalVisible} 
+        onClose={closePaymentModal}
+        project={paymentProject}
+      />
     </SafeAreaView>
   );
 }

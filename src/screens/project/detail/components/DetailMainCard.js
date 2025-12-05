@@ -1,13 +1,13 @@
 import React from "react";
 import { View } from "react-native";
 
-import styles from "./ProjectDetail.styles";
+import styles from "../ProjectDetail.styles";
 import MainThumbnail from "./main/MainThumbnail";
 import MainInfo from "./main/MainInfo";
 import MainStats from "./main/MainStats";
 import MainActions from "./main/MainActions";
 
-export default function DetailMainCard({ project }) {
+export default function DetailMainCard({ project, onPurchasePress }) {
   const isFree =
     project.priceType === "free" ||
     project.price === 0 ||
@@ -32,7 +32,7 @@ export default function DetailMainCard({ project }) {
         createdAt={project.createdAt}
       />
 
-      <MainActions isFree={isFree} />
+      <MainActions isFree={isFree} onPurchasePress={onPurchasePress} />
     </View>
   );
 }
