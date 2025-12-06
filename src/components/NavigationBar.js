@@ -6,18 +6,19 @@ export default function NavigationBar({
   activeTab,
   onPress,
   onLayoutNavBar,
-  navigationRef
+  navigationRef,
 }) {
-  const menuItems = [   // ProjectDetail 수정하여 사용
+  const menuItems = [
+    // ProjectDetail 수정하여 사용
     { key: '메인', label: '메인', screen: 'ProjectList' },
     { key: '검색', label: '검색', screen: 'ProjectSearch' },
     { key: '즐겨찾기', label: '즐겨찾기', screen: 'ProjectLike' },
     { key: '채팅', label: '채팅', screen: 'ProjectList' },
-    { key: '내정보', label: '내정보', screen: 'ProjectList' },
+    { key: '내정보', label: '내정보', screen: 'MyPage' },
   ];
 
-  const handlePress = (item) => {
-    onPress(item.key);       
+  const handlePress = item => {
+    onPress(item.key);
     if (navigationRef?.current) {
       navigationRef.current.navigate(item.screen);
     }
@@ -26,7 +27,7 @@ export default function NavigationBar({
   return (
     <View
       style={styles.container}
-      onLayout={(e) => {
+      onLayout={e => {
         const height = e.nativeEvent.layout.height;
         onLayoutNavBar && onLayoutNavBar(height);
       }}
@@ -44,7 +45,7 @@ export default function NavigationBar({
           <Text
             style={[
               styles.menuText,
-              activeTab === item.key && styles.activeText
+              activeTab === item.key && styles.activeText,
             ]}
           >
             {item.label}
