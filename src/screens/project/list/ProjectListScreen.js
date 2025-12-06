@@ -10,9 +10,12 @@ import usePaymentModal from "../../../hooks/usePaymentModal";
 
 import PaymentModal from "../../payment/PaymentModal";
 
+import { dummyCurrentUser } from "../../../utils/usersDummy";
+
 export default function ProjectListScreen() {
   const navigation = useNavigation();
   const { recommendedProjects, latestProjects } = useProjects();
+  const currentUser = dummyCurrentUser;
 
   const { 
     isPaymentModalVisible, 
@@ -41,6 +44,7 @@ export default function ProjectListScreen() {
           type="recommended"
           onPressCard={handlePressCard}
           onPurchasePress={handlePurchasePress}
+          currentUser={currentUser}
         />
 
         <ProjectSection
@@ -49,6 +53,7 @@ export default function ProjectListScreen() {
           type="latest"
           onPressCard={handlePressCard}
           onPurchasePress={handlePurchasePress}
+          currentUser={currentUser}
         />
       </ScrollView>
 
