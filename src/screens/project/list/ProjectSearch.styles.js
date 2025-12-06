@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 import { theme } from "../../../styles/theme";
 
 const { width } = Dimensions.get("window");
-const scale = width / 375; // Design base width seems to be around 375-400, adjusting scale. User used 371px width in CSS.
+const scale = width / 375;
 
 const styles = StyleSheet.create({
   container: {
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16 * scale,
     paddingTop: 20 * scale,
-    paddingBottom: 80 * scale, // Bottom nav space
+    paddingBottom: 80 * scale, 
   },
   
   // Search Input Area

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { MessageCircle, Star, Share2 } from "lucide-react-native";
-import styles from "../ProjectDetail.styles";
+import styles from "../../ProjectDetail.styles";
 
 export default function MainActions({ isFree, onPurchasePress, isOwner }) {
   if (isOwner) return null;

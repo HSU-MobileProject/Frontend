@@ -15,7 +15,6 @@ export default function ProjectEditScreen({ route, navigation, setHideAddButton 
     [projectId]
   );
 
-  // Button hiding logic
   useFocusEffect(
     useCallback(() => {
       if (setHideAddButton) setHideAddButton(true);

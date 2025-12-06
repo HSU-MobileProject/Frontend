@@ -1,6 +1,6 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import styles from "./components/ProjectDetail.styles";
+import styles from "./ProjectDetail.styles";
 import DetailHeader from "./components/DetailHeader";
 import DetailMainCard from "./components/DetailMainCard";
 import DetailAboutCard from "./components/DetailAboutCard";

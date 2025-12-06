@@ -1,7 +1,6 @@
 // src/screens/project/components/DetailStatusCard.jsx
-import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import styles from "./ProjectDetail.styles";
+import styles from "../ProjectDetail.styles";
 
 export default function DetailStatusCard({ project }) {
   const progress = project.progress ?? 0;

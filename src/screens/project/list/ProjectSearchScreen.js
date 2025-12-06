@@ -7,29 +7,35 @@ import { theme } from "../../../styles/theme";
 import ProjectFilter from "./components/ProjectFilter";
 import ProjectCard from "./components/ProjectCard";
 import useProjects from "../../../hooks/useProjects";
+import usePaymentModal from "../../../hooks/usePaymentModal";
+import PaymentModal from "../../payment/PaymentModal";
 
 export default function ProjectSearchScreen({ navigation }) {
   const { allProjects: projects } = useProjects();
   
+  const { 
+    isPaymentModalVisible, 
+    paymentProject, 
+    openPaymentModal, 
+    closePaymentModal 
+  } = usePaymentModal();
+
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [selectedTags, setSelectedTags] = useState([]);
 
-  // Filter Logic
+  // Filter
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
-      // 1. Category Filter
       if (selectedCategory !== "전체" && p.category !== selectedCategory) {
         return false;
       }
-
-      // 2. Tag Filter (OR logic: match any selected tag)
+      
       if (selectedTags.length > 0) {
         const hasTag = p.tags.some((t) => selectedTags.includes(t));
         if (!hasTag) return false;
       }
 
-      // 3. Search Text Filter (Title, Description, Tags)
       if (searchText.trim()) {
         const query = searchText.toLowerCase();
         const titleMatch = p.title.toLowerCase().includes(query);
@@ -53,6 +59,10 @@ export default function ProjectSearchScreen({ navigation }) {
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
+  };
+
+  const handlePurchasePress = (project) => {
+    openPaymentModal(project);
   };
 
   return (
@@ -92,11 +102,14 @@ export default function ProjectSearchScreen({ navigation }) {
         <View style={styles.listContainer}>
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onPress={() => navigation.navigate("ProjectDetail", { project })}
-              />
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onPress={() =>
+                navigation.navigate("ProjectDetail", { project: project })
+              }
+              onPurchasePress={() => handlePurchasePress(project)}
+            />
             ))
           ) : (
             <View style={styles.emptyContainer}>
@@ -105,6 +118,12 @@ export default function ProjectSearchScreen({ navigation }) {
           )}
         </View>
       </ScrollView>
+
+      <PaymentModal 
+        visible={isPaymentModalVisible} 
+        onClose={closePaymentModal}
+        project={paymentProject}
+      />
     </SafeAreaView>
   );
 }
