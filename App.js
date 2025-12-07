@@ -18,6 +18,9 @@ import NotificationScreen from './src/screens/notification/NotificationScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
 
+import MyPageScreen from './src/screens/mypage/MyPageScreen';
+import SettingsScreen from './src/screens/settings/SettingsScreen';
+
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
 import Header from './src/components/HeaderBar';
@@ -35,8 +38,7 @@ export default function App() {
   const [hideNavBar, setHideNavBar] = useState(false);
 
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
-  const showAddButton =
-    showAddButtonTabs.includes(activeTab) && !hideAddButton;
+  const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
 
   const handleStateChange = () => {
     const route = navigationRef.getCurrentRoute();
@@ -60,7 +62,6 @@ export default function App() {
   return (
     <NavigationContainer ref={navigationRef} onStateChange={handleStateChange}>
       <View style={{ flex: 1 }}>
-
         {/* 로그인 / 회원가입 */}
         {!isLoggedIn ? (
           showSignup ? (
@@ -81,27 +82,29 @@ export default function App() {
             {/* 메인 네비게이션 */}
             <View style={{ flex: 1 }}>
               <Stack.Navigator screenOptions={{ headerShown: false }}>
-
                 <Stack.Screen name="ProjectList">
-                  {(props) => (
-                    <ProjectListScreen {...props} setHideHeader={setHideHeader} />
+                  {props => (
+                    <ProjectListScreen
+                      {...props}
+                      setHideHeader={setHideHeader}
+                    />
                   )}
                 </Stack.Screen>
 
                 <Stack.Screen name="ProjectListAll">
-                  {(props) => <ProjectListAllScreen {...props} />}
+                  {props => <ProjectListAllScreen {...props} />}
                 </Stack.Screen>
 
                 <Stack.Screen name="ProjectLike">
-                  {(props) => <ProjectLikeScreen {...props} />}
+                  {props => <ProjectLikeScreen {...props} />}
                 </Stack.Screen>
 
                 <Stack.Screen name="ProjectSearch">
-                  {(props) => <ProjectSearchScreen {...props} />}
+                  {props => <ProjectSearchScreen {...props} />}
                 </Stack.Screen>
 
                 <Stack.Screen name="ProjectDetail">
-                  {(props) => (
+                  {props => (
                     <ProjectDetailScreen
                       {...props}
                       setHideHeader={setHideHeader}
@@ -110,11 +113,27 @@ export default function App() {
                 </Stack.Screen>
 
                 <Stack.Screen name="ProjectEdit">
-                  {(props) => <ProjectEditScreen {...props} />}
+                  {props => <ProjectEditScreen {...props} />}
                 </Stack.Screen>
 
                 <Stack.Screen name="ProjectCreate">
-                  {(props) => <ProjectCreateScreen {...props} />}
+                  {props => <ProjectCreateScreen {...props} />}
+                </Stack.Screen>
+
+                <Stack.Screen name="MyPage">
+                  {props => (
+                    <MyPageScreen
+                      {...props}
+                      setIsLoggedIn={setIsLoggedIn}
+                      setHideHeader={setHideHeader}
+                    />
+                  )}
+                </Stack.Screen>
+
+                <Stack.Screen name="Settings">
+                  {props => (
+                    <SettingsScreen {...props} setHideHeader={setHideHeader} />
+                  )}
                 </Stack.Screen>
 
                 <Stack.Screen name="Notification">
