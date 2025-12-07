@@ -18,6 +18,7 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
 
 import MyPageScreen from './src/screens/mypage/MyPageScreen';
+import SettingsScreen from './src/screens/settings/SettingsScreen';
 
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
@@ -116,6 +117,12 @@ export default function App() {
                       setIsLoggedIn={setIsLoggedIn}
                       setHideHeader={setHideHeader}
                     />
+                  )}
+                </Stack.Screen>
+
+                <Stack.Screen name="Settings">
+                  {props => (
+                    <SettingsScreen {...props} setHideHeader={setHideHeader} />
                   )}
                 </Stack.Screen>
               </Stack.Navigator>
