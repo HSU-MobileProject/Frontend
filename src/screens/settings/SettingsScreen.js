@@ -13,7 +13,7 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
   const [activeTab, setActiveTab] = useState('profile');
 
   React.useEffect(() => {
-    setHideHeader?.(true);
+    setHideHeader?.(false);
   }, [setHideHeader]);
 
   const tabs = [
@@ -40,19 +40,6 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Text style={styles.logo}>
-            <Text style={styles.logoToy}>Toy</Text>
-            <Text style={styles.logoLink}>Link</Text>
-          </Text>
-        </View>
-        <TouchableOpacity>
-          <Icon name="bell" size={18} color={colors.black} />
-        </TouchableOpacity>
-      </View>
-
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
