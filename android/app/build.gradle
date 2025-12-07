@@ -68,3 +68,5 @@ dependencies {
     // Firebase Analytics
     implementation("com.google.firebase:firebase-analytics")
 }
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

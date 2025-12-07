@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Github } from "lucide-react-native";
-import styles from "./ProjectDetail.styles";
+import styles from "../ProjectDetail.styles";
 
 export default function DetailGitHubCard({ project }) {
   if (!project.githubUrl) return null;

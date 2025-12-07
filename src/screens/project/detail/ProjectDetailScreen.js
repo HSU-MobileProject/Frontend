@@ -1,6 +1,6 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import styles from "./components/ProjectDetail.styles";
+import styles from "./ProjectDetail.styles";
 import DetailHeader from "./components/DetailHeader";
 import DetailMainCard from "./components/DetailMainCard";
 import DetailAboutCard from "./components/DetailAboutCard";
@@ -26,7 +26,10 @@ export default function ProjectDetailScreen({ route }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
-        <DetailMainCard project={project} />
+        <DetailMainCard 
+          project={project} 
+          isOwner={dummyCurrentUser.id === project.ownerId}
+        />
         <DetailAboutCard project={project} />
 
         {project.githubUrl && <DetailGitHubCard project={project} />}
@@ -34,7 +37,10 @@ export default function ProjectDetailScreen({ route }) {
         <DetailLeaderCard project={project} owner={owner} />
         <DetailStatusCard project={project} />
 
-        <DetailPriceCard project={project} />
+        <DetailPriceCard 
+          project={project} 
+          isOwner={dummyCurrentUser.id === project.ownerId}
+        />
       </ScrollView>
     </View>
   );

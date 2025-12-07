@@ -4,7 +4,7 @@ import { ShoppingCart } from "lucide-react-native";
 import styles from "../ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
-export default function DetailPriceCard({ project, onPurchasePress }) {
+export default function DetailPriceCard({ project, onPurchasePress, isOwner }) {
   const isFree =
     project.priceType === "free" ||
     project.price === 0 ||
@@ -17,6 +17,8 @@ export default function DetailPriceCard({ project, onPurchasePress }) {
   // 라이선스 & 포함항목
   const licenseType = project.licenseType || "개인 · 교육용 라이선스";
   const includes = project.includes || ["소스코드", "설치 문서", "기술 자료"];
+
+  if (isOwner) return null;
 
   return (
     <View style={[styles.card, styles.priceCard]}>
@@ -32,7 +34,7 @@ export default function DetailPriceCard({ project, onPurchasePress }) {
           style={styles.bigBuyBtn} 
           activeOpacity={0.9}
           onPress={onPurchasePress}
-        >
+          >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <ShoppingCart size={16} color={Colors.white} />
             <Text style={styles.bigBuyBtnText}>

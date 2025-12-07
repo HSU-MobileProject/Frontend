@@ -14,6 +14,8 @@ import ProjectCreateScreen from './src/screens/project/form/ProjectCreateScreen'
 import ProjectLikeScreen from './src/screens/project/list/ProjectLikeScreen';
 import ProjectSearchScreen from './src/screens/project/list/ProjectSearchScreen';
 
+import NotificationScreen from './src/screens/notification/NotificationScreen';
+
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
 
@@ -37,25 +39,34 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [hideAddButton, setHideAddButton] = useState(false);
+  const [hideNavBar, setHideNavBar] = useState(false);
 
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
   const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
 
   const handleStateChange = () => {
     const route = navigationRef.getCurrentRoute();
-    const routeName = route?.name;
+    const routeName = route?.name ?? '';
 
-    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate'].includes(routeName)) {
+    // 플로팅 버튼 숨김 처리
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(routeName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
     }
 
-    // ChatScreen일 때 네비게이션바와 헤더 숨기기
+    // ChatScreen일 때 헤더 숨기기
     if (routeName === 'ChatDetail') {
       setHideHeader(true);
     } else {
       setHideHeader(false);
+    }
+
+    // Notification 화면에서 NavBar 숨기기
+    if (routeName === 'Notification') {
+      setHideNavBar(true);
+    } else {
+      setHideNavBar(false);
     }
   };
 
@@ -139,19 +150,21 @@ export default function App() {
                 <Stack.Screen
                   name="ChatList"
                   component={ChatListScreen}
-                  options={{ headerShown: false }}
                 />
 
                 <Stack.Screen
                   name="ChatDetail"
                   component={ChatScreen}
-                  options={{ headerShown: false }}
                 />
+
+                <Stack.Screen name="Notification">
+                  {props => <NotificationScreen {...props} />}
+                </Stack.Screen>
               </Stack.Navigator>
             </View>
 
-            {/* 플로팅 등록 버튼 */}
-            {showAddButton && !hideAddButton && (
+            {/* 플로팅 프로젝트 등록 버튼 */}
+            {showAddButton && (
               <View
                 style={{
                   position: 'absolute',
@@ -165,7 +178,7 @@ export default function App() {
             )}
 
             {/* 하단 네비게이션 */}
-            {!hideHeader && (
+            {!hideNavBar && (
               <NavigationBar
                 activeTab={activeTab}
                 onPress={setActiveTab}
