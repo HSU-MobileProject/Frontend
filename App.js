@@ -13,6 +13,7 @@ import ProjectEditScreen from './src/screens/project/form/ProjectEditScreen';
 import ProjectCreateScreen from './src/screens/project/form/ProjectCreateScreen';
 import ProjectLikeScreen from './src/screens/project/list/ProjectLikeScreen';
 import ProjectSearchScreen from './src/screens/project/list/ProjectSearchScreen';
+
 import NotificationScreen from './src/screens/notification/NotificationScreen';
 
 import LoginScreen from './src/screens/auth/LoginScreen';
@@ -20,6 +21,9 @@ import SignupScreen from './src/screens/auth/SignupScreen';
 
 import MyPageScreen from './src/screens/mypage/MyPageScreen';
 import SettingsScreen from './src/screens/settings/SettingsScreen';
+
+import ChatListScreen from './src/screens/chat/ChatListScreen';
+import ChatScreen from './src/screens/chat/ChatScreen';
 
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
@@ -44,14 +48,21 @@ export default function App() {
     const route = navigationRef.getCurrentRoute();
     const routeName = route?.name ?? '';
 
-    // Add Button 숨김 처리
+    // 플로팅 버튼 숨김 처리
     if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(routeName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
     }
 
-    // NavBar 숨김 처리
+    // ChatScreen일 때 헤더 숨기기
+    if (routeName === 'ChatDetail') {
+      setHideHeader(true);
+    } else {
+      setHideHeader(false);
+    }
+
+    // Notification 화면에서 NavBar 숨기기
     if (routeName === 'Notification') {
       setHideNavBar(true);
     } else {
@@ -136,15 +147,24 @@ export default function App() {
                   )}
                 </Stack.Screen>
 
-                <Stack.Screen name="Notification">
-                  {(props) => <NotificationScreen {...props} />}
-                </Stack.Screen>
+                <Stack.Screen
+                  name="ChatList"
+                  component={ChatListScreen}
+                />
 
+                <Stack.Screen
+                  name="ChatDetail"
+                  component={ChatScreen}
+                />
+
+                <Stack.Screen name="Notification">
+                  {props => <NotificationScreen {...props} />}
+                </Stack.Screen>
               </Stack.Navigator>
             </View>
 
-            {/* 플로팅 등록 버튼 */}
-            {showAddButton && !hideAddButton && (
+            {/* 플로팅 프로젝트 등록 버튼 */}
+            {showAddButton && (
               <View
                 style={{
                   position: 'absolute',
