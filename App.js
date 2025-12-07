@@ -20,6 +20,9 @@ import SignupScreen from './src/screens/auth/SignupScreen';
 import MyPageScreen from './src/screens/mypage/MyPageScreen';
 import SettingsScreen from './src/screens/settings/SettingsScreen';
 
+import ChatListScreen from './src/screens/chat/ChatListScreen';
+import ChatScreen from './src/screens/chat/ChatScreen';
+
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
 import Header from './src/components/HeaderBar';
@@ -46,6 +49,13 @@ export default function App() {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
+    }
+
+    // ChatScreen일 때 네비게이션바와 헤더 숨기기
+    if (routeName === 'ChatDetail') {
+      setHideHeader(true);
+    } else {
+      setHideHeader(false);
     }
   };
 
@@ -125,6 +135,18 @@ export default function App() {
                     <SettingsScreen {...props} setHideHeader={setHideHeader} />
                   )}
                 </Stack.Screen>
+
+                <Stack.Screen
+                  name="ChatList"
+                  component={ChatListScreen}
+                  options={{ headerShown: false }}
+                />
+
+                <Stack.Screen
+                  name="ChatDetail"
+                  component={ChatScreen}
+                  options={{ headerShown: false }}
+                />
               </Stack.Navigator>
             </View>
 
@@ -143,12 +165,14 @@ export default function App() {
             )}
 
             {/* 하단 네비게이션 */}
-            <NavigationBar
-              activeTab={activeTab}
-              onPress={setActiveTab}
-              onLayoutNavBar={setNavBarHeight}
-              navigationRef={navigationRef}
-            />
+            {!hideHeader && (
+              <NavigationBar
+                activeTab={activeTab}
+                onPress={setActiveTab}
+                onLayoutNavBar={setNavBarHeight}
+                navigationRef={navigationRef}
+              />
+            )}
           </>
         )}
       </View>
