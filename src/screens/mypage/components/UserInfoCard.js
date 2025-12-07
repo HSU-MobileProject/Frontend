@@ -7,7 +7,7 @@ import styles from './UserInfoCard.styles';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-export default function UserInfoCard({ userInfo, onLogout }) {
+export default function UserInfoCard({ userInfo, onLogout, onSettings }) {
   return (
     <View style={styles.container}>
       {/* 프로필 섹션 */}
@@ -59,11 +59,11 @@ export default function UserInfoCard({ userInfo, onLogout }) {
       {/* 버튼 섹션 */}
       <View style={styles.buttonSection}>
         <TouchableOpacity style={styles.button}>
-          <Icon name="money" size={16 * scale} color={colors.black} />
-          <Text style={styles.buttonText}>거래 내역</Text>
+          <Icon name="history" size={16 * scale} color={colors.black} />
+          <Text style={styles.buttonText}>거래내역</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={onSettings}>
           <Icon name="cog" size={16 * scale} color={colors.black} />
           <Text style={styles.buttonText}>설정</Text>
         </TouchableOpacity>
