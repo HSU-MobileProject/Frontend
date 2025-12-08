@@ -1,16 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, onSnapshot, query, orderBy } from '@react-native-firebase/firestore';
 
 export default function useProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const db = getFirestore();
     // Real-time subscription to 'projects' collection
-    const unsubscribe = firestore()
-      .collection('projects')
-      // .orderBy('createdAt', 'desc') // Optional: default sorting
-      .onSnapshot(querySnapshot => {
+    // const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc')); // Optional sorting
+    const q = collection(db, 'projects');
+
+    const unsubscribe = onSnapshot(q, 
+      (querySnapshot) => {
         const list = [];
         querySnapshot.forEach(doc => {
           list.push({
@@ -20,10 +22,12 @@ export default function useProjects() {
         });
         setProjects(list);
         setLoading(false);
-      }, error => {
+      }, 
+      (error) => {
         console.error("Projects Fetch Error:", error);
         setLoading(false);
-      });
+      }
+    );
 
     return () => unsubscribe();
   }, []);

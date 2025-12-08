@@ -10,7 +10,7 @@ import NotificationSettingsTab from './components/NotificationSettingsTab';
 import PrivacySettingsTab from './components/PrivacySettingsTab';
 
 import { authService } from '../../services/authService';
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, doc, onSnapshot } from '@react-native-firebase/firestore';
 
 export default function SettingsScreen({ navigation, setHideHeader }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -19,17 +19,22 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
   React.useEffect(() => {
     setHideHeader?.(false);
 
-    // 유저 정보 가져오기
-    const fetchUser = async () => {
-      const user = authService.getCurrentUser();
-      if (user) {
-        const doc = await firestore().collection('users').doc(user.uid).get();
-        if (doc.exists) {
-          setUserData(doc.data());
-        }
+    // 유저 정보 실시간 동기화
+    const user = authService.getCurrentUser();
+    if (!user) return;
+
+    const db = getFirestore();
+    const userDocRef = doc(db, 'users', user.uid);
+
+    const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
+      if (docSnapshot.exists) {
+        setUserData(docSnapshot.data());
       }
-    };
-    fetchUser();
+    }, (error) => {
+      console.error("User Fetch Error:", error);
+    });
+
+    return () => unsubscribe();
   }, [setHideHeader]);
 
   const tabs = [

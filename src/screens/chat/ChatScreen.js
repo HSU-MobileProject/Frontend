@@ -6,7 +6,7 @@ import ChatHeader from './components/ChatHeader';
 import ChatMessage from './components/ChatMessage';
 import MessageInput from './components/MessageInput';
 import { authService } from '../../services/authService';
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, serverTimestamp } from '@react-native-firebase/firestore';
 
 export default function ChatScreen({ route, navigation }) {
   const { chatId, userName } = route.params;
@@ -17,25 +17,24 @@ export default function ChatScreen({ route, navigation }) {
   React.useEffect(() => {
     if (!chatId) return;
 
-    const unsubscribe = firestore()
-      .collection('chatRooms')
-      .doc(chatId)
-      .collection('messages')
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(snapshot => {
-        if (!snapshot) return;
-        const msgs = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            sender: data.senderId === currentUser.uid ? 'me' : 'other',
-            text: data.text,
-            timestamp: data.timestamp ? data.timestamp.toDate().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
-            isLink: false // TODO: 링크 처리 필요시 로직 추가
-          };
-        });
-        setMessages(msgs);
+    const db = getFirestore();
+    const messagesRef = collection(db, 'chatRooms', chatId, 'messages');
+    const q = query(messagesRef, orderBy('timestamp', 'asc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot) return;
+      const msgs = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          sender: data.senderId === currentUser.uid ? 'me' : 'other',
+          text: data.text,
+          timestamp: data.timestamp ? data.timestamp.toDate().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
+          isLink: false // TODO: 링크 처리 필요시 로직 추가
+        };
       });
+      setMessages(msgs);
+    });
 
     return () => unsubscribe();
   }, [chatId]);
@@ -44,22 +43,19 @@ export default function ChatScreen({ route, navigation }) {
     if (!text.trim()) return;
 
     try {
-      await firestore()
-        .collection('chatRooms')
-        .doc(chatId)
-        .collection('messages')
-        .add({
-          text: text,
-          senderId: currentUser.uid,
-          timestamp: firestore.FieldValue.serverTimestamp(),
-        });
+      const db = getFirestore();
+      
+      // 메시지 추가
+      await addDoc(collection(db, 'chatRooms', chatId, 'messages'), {
+        text: text,
+        senderId: currentUser.uid,
+        timestamp: serverTimestamp(),
+      });
 
-      // 채팅방 최신 메시지 업데이트 (Trigger가 없다면 클라이언트에서 직접 업데이트 필요)
-      // 현재 Cloud Functions에 updateChatRoomLastMessage 가 있으므로 생략 가능하나, 
-      // 반응속도를 위해 클라이언트에서 같이 업데이트해주는 것이 좋음
-      await firestore().collection('chatRooms').doc(chatId).update({
+      // 채팅방 최신 메시지 업데이트
+      await updateDoc(doc(db, 'chatRooms', chatId), {
         lastMessage: text,
-        updatedAt: firestore.FieldValue.serverTimestamp()
+        updatedAt: serverTimestamp()
       });
 
     } catch (error) {

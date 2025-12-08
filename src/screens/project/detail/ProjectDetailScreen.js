@@ -8,10 +8,11 @@ import DetailPriceCard from "./components/DetailPriceCard";
 import DetailLeaderCard from "./components/DetailLeaderCard";
 import DetailGitHubCard from "./components/DetailGitHubCard";
 import DetailStatusCard from "./components/DetailStatusCard";
+import PaymentModal from "../../payment/PaymentModal";
 
 import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from '@react-native-firebase/firestore';
 import { authService } from "../../../services/authService";
 import { Alert } from "react-native";
 
@@ -32,12 +33,14 @@ export default function ProjectDetailScreen({ route, navigation }) {
     }
 
     try {
+      const db = getFirestore();
       // 중복 지원 확인
-      const snapshot = await firestore()
-        .collection('applications')
-        .where('projectId', '==', project.id)
-        .where('applicantId', '==', user.uid)
-        .get();
+      const q = query(
+        collection(db, 'applications'),
+        where('projectId', '==', project.id),
+        where('applicantId', '==', user.uid)
+      );
+      const snapshot = await getDocs(q);
 
       if (!snapshot.empty) {
         Alert.alert("알림", "이미 지원한 프로젝트입니다.");
@@ -45,13 +48,13 @@ export default function ProjectDetailScreen({ route, navigation }) {
       }
 
       // 지원하기 저장
-      await firestore().collection('applications').add({
+      await addDoc(collection(db, 'applications'), {
         projectId: project.id,
         projectTitle: project.title, // 편의상 저장
         applicantId: user.uid,
         ownerId: project.ownerId,
         status: 'pending',
-        createdAt: firestore.FieldValue.serverTimestamp(),
+        createdAt: serverTimestamp(),
       });
 
       Alert.alert("성공", "프로젝트 지원이 완료되었습니다.");
@@ -62,6 +65,8 @@ export default function ProjectDetailScreen({ route, navigation }) {
   };
 
   if (!project) return null;
+
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = React.useState(false);
 
   return (
     <View style={styles.screenWrapper}>
@@ -86,8 +91,15 @@ export default function ProjectDetailScreen({ route, navigation }) {
         <DetailPriceCard
           project={project}
           isOwner={authService.getCurrentUser()?.uid === project.ownerId}
+          onPurchasePress={() => setIsPaymentModalVisible(true)}
         />
       </ScrollView>
+
+      <PaymentModal
+        visible={isPaymentModalVisible}
+        onClose={() => setIsPaymentModalVisible(false)}
+        project={project}
+      />
     </View>
   );
 }

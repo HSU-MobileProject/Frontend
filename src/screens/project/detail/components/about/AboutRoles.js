@@ -15,11 +15,11 @@ export default function AboutRoles({ roles }) {
             <View
               style={[
                 styles.roleStatus,
-                role.status === "open" ? styles.roleOpen : styles.roleClosed,
+                role.status === "recruiting" ? styles.roleOpen : styles.roleClosed,
               ]}
             >
               <Text style={styles.roleStatusText}>
-                {role.status === "open" ? "모집중" : "마감"}
+                {role.status === "recruiting" ? "모집중" : "마감"}
               </Text>
             </View>
           </View>

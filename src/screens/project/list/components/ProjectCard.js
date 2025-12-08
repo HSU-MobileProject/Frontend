@@ -30,8 +30,9 @@ export default function ProjectCard({
     views,
     priceType,
     price,
-    thumbnailUrl,
   } = project;
+
+  const thumbnailUrl = project.thumbnailUrl || project.thumbnail;
 
   const badgeColor = categoryColors[category] || categoryColors.default;
 

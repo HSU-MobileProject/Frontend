@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './ChatListScreen.styles';
 import ChatListItem from './components/ChatListItem';
 import { authService } from '../../services/authService';
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, query, where, orderBy, onSnapshot, getDoc, doc } from '@react-native-firebase/firestore';
 
 export default function ChatListScreen({ navigation }) {
   const [chatRooms, setChatRooms] = React.useState([]);
@@ -14,38 +14,41 @@ export default function ChatListScreen({ navigation }) {
     if (!user) return;
 
     // 현재 유저가 참여 중인 채팅방 쿼리
-    const unsubscribe = firestore()
-      .collection('chatRooms')
-      .where('participants', 'array-contains', user.uid)
-      .orderBy('updatedAt', 'desc')
-      .onSnapshot(async snapshot => {
-        if (!snapshot) return;
+    const db = getFirestore();
+    const q = query(
+      collection(db, 'chatRooms'),
+      where('participants', 'array-contains', user.uid),
+      orderBy('updatedAt', 'desc')
+    );
 
-        const rooms = await Promise.all(snapshot.docs.map(async doc => {
-          const data = doc.data();
-          // 상대방 정보 찾기 (1:1 채팅 가정)
-          const otherUserId = data.participants.find(uid => uid !== user.uid);
-          let otherUser = { displayName: '알 수 없음' };
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      if (!snapshot) return;
 
-          if (otherUserId) {
-            const userDoc = await firestore().collection('users').doc(otherUserId).get();
-            if (userDoc.exists) otherUser = userDoc.data();
-          }
+      const rooms = await Promise.all(snapshot.docs.map(async docSnap => {
+        const data = docSnap.data();
+        // 상대방 정보 찾기 (1:1 채팅 가정)
+        const otherUserId = data.participants.find(uid => uid !== user.uid);
+        let otherUser = { displayName: '알 수 없음' };
 
-          return {
-            id: doc.id,
-            name: otherUser.displayName,
-            lastMessage: data.lastMessage || '',
-            lastMessageTime: data.updatedAt ? data.updatedAt.toDate().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
-            unreadCount: 0, // TODO: 실제 안 읽은 메시지 수 계산 필요
-            avatarColor: '#34C3F1', // 임시 색상
-            otherUserId,
-          };
-        }));
-        setChatRooms(rooms);
-      }, error => {
-        console.error("ChatList Error:", error);
-      });
+        if (otherUserId) {
+          const userDoc = await getDoc(doc(db, 'users', otherUserId));
+          if (userDoc.exists()) otherUser = userDoc.data();
+        }
+
+        return {
+          id: docSnap.id,
+          name: otherUser.displayName,
+          lastMessage: data.lastMessage || '',
+          lastMessageTime: data.updatedAt ? data.updatedAt.toDate().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
+          unreadCount: 0, // TODO: 실제 안 읽은 메시지 수 계산 필요
+          avatarColor: '#34C3F1', // 임시 색상
+          otherUserId,
+        };
+      }));
+      setChatRooms(rooms);
+    }, error => {
+      console.error("ChatList Error:", error);
+    });
 
     return () => unsubscribe();
   }, []);

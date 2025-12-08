@@ -168,12 +168,12 @@ export default StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 16 * scale,
-    justifyContent: "space-between", 
+    justifyContent: "flex-start",
   },
 
   mainBuyBtn: {
-    height: 34 * scale,
-    paddingHorizontal: 32 * scale,
+    height: 40 * scale,
+    paddingHorizontal: 10 * scale,
     borderRadius: 7.4 * scale,
     backgroundColor: colors.green,
     alignItems: "center",
@@ -186,13 +186,27 @@ export default StyleSheet.create({
     fontSize: 13 * scale,
   },
 
+  freeMainBtn: {
+    height: 40 * scale,
+    paddingHorizontal: 10 * scale,
+    borderRadius: 7.4 * scale,
+    backgroundColor: colors.green,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8 * scale,
+  },
+  freeMainBtnText: {
+    color: colors.white,
+    fontFamily: typography.fontFamily.regular,
+    fontSize: 13 * scale,
+  },
+
   mainChatBtn: {
     flexDirection: "row",   
     alignItems: "center",
     justifyContent: "center",
-
-    height: 34 * scale,
-    paddingHorizontal: 32 * scale, 
+    height: 40 * scale,
+    paddingHorizontal: 20 * scale, 
     borderRadius: 7.4 * scale,
     borderWidth: 1,
     borderColor: "rgba(0,0,0,0.1)",
@@ -207,15 +221,16 @@ export default StyleSheet.create({
   },
 
   mainIconBtn: {
-    paddingHorizontal: 8 * scale, 
-    height: 34 * scale,
+    paddingHorizontal: 12 * scale, 
+    height: 40 * scale,
     borderRadius: 7.4 * scale,
     borderWidth: 1,
     borderColor: "rgba(0,0,0,0.1)",
     backgroundColor: colors.beige,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 8 * scale,
+    marginLeft: 0, // Reset margin since we use gap or explicit margin right
+    marginRight: 8 * scale,
   },
   mainIconBtnText: {
     fontSize: 15 * scale,
@@ -465,7 +480,6 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 22 * scale,
     marginTop: 10 * scale,
   },
   grayText: {
