@@ -14,7 +14,7 @@ import ProjectManageModal from "./components/ProjectManageModal";
 
 import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, setDoc, deleteDoc, onSnapshot, getDoc } from '@react-native-firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, setDoc, deleteDoc, onSnapshot, getDoc, updateDoc, increment } from '@react-native-firebase/firestore';
 import { authService } from "../../../services/authService";
 import { Alert } from "react-native";
 
@@ -254,6 +254,16 @@ export default function ProjectDetailScreen({ route, navigation }) {
           setRealtimeProject({ id: docSnapshot.id, ...docSnapshot.data() });
         }
      });
+     
+     // [추가] 조회수 증가 (Mount 시 1회)
+     try {
+       updateDoc(doc(db, 'projects', project.id), {
+         views: increment(1)
+       });
+     } catch (e) {
+       console.error("View Increment Error:", e);
+     }
+
      return () => unsubscribe();
   }, [project.id]);
 
