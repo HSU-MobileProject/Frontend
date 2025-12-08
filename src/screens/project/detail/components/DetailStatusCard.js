@@ -2,7 +2,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import styles from "../ProjectDetail.styles";
 
-export default function DetailStatusCard({ project }) {
+export default function DetailStatusCard({ project, isOwner, onManagePress }) {
   const progress = project.progress ?? 0;
   const teamMemberCount = project.teamMemberCount ?? 0;
   const applicantCount = project.applicantCount ?? 0;
@@ -34,10 +34,21 @@ export default function DetailStatusCard({ project }) {
         <Text style={styles.boldText}>{applicantCount}명</Text>
       </View>
 
-      {/* 지원하기 버튼 */}
-      {isRecruiting && (
+      {/* 지원하기 버튼 (모집중이고 참여자가 아닐 때) */}
+      {!isOwner && isRecruiting && (
         <TouchableOpacity style={styles.applyBtn} activeOpacity={0.9}>
           <Text style={styles.applyBtnText}>지원하기</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* 관리 버튼 (소유자일 때) */}
+      {isOwner && (
+        <TouchableOpacity 
+          style={[styles.applyBtn, { backgroundColor: '#333' }]} 
+          activeOpacity={0.9}
+          onPress={onManagePress}
+        >
+          <Text style={styles.applyBtnText}>지원자 관리 ({applicantCount})</Text>
         </TouchableOpacity>
       )}
     </View>

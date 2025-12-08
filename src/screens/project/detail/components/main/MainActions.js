@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { MessageCircle, Star, Share2 } from "lucide-react-native";
 import styles from "../../ProjectDetail.styles";
 
-export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress }) {
+export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress, myApplication }) {
   if (isOwner) return null;
 
   return (
@@ -22,15 +22,23 @@ export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyP
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.mainBuyBtn, { flex: 1, backgroundColor: '#00C853' }]} // Green for Apply
-          activeOpacity={0.9}
-          onPress={onApplyPress}
-        >
-          <Text style={styles.mainBuyBtnText}>
-            지원하기
-          </Text>
-        </TouchableOpacity>
+        {myApplication ? (
+          <View style={[styles.mainBuyBtn, { flex: 1, backgroundColor: '#E0E0E0' }]}>
+            <Text style={[styles.mainBuyBtnText, { color: '#666', fontSize: 13 }]}>
+              {myApplication.role} ({myApplication.status === 'pending' ? '심사중' : myApplication.status})
+            </Text>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={[styles.mainBuyBtn, { flex: 1, backgroundColor: '#00C853' }]} // Green for Apply
+            activeOpacity={0.9}
+            onPress={onApplyPress}
+          >
+            <Text style={styles.mainBuyBtnText}>
+              지원하기
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* 채팅 아이콘 */}

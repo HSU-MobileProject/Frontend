@@ -7,7 +7,7 @@ import MainInfo from "./main/MainInfo";
 import MainStats from "./main/MainStats";
 import MainActions from "./main/MainActions";
 
-export default function DetailMainCard({ project, onPurchasePress, isOwner, onApplyPress }) {
+export default function DetailMainCard({ project, onPurchasePress, isOwner, onApplyPress, myApplication }) {
   const isFree =
     project.priceType === "free" ||
     project.price === 0 ||
@@ -37,6 +37,7 @@ export default function DetailMainCard({ project, onPurchasePress, isOwner, onAp
         onPurchasePress={onPurchasePress}
         isOwner={isOwner}
         onApplyPress={onApplyPress}
+        myApplication={myApplication}
       />
     </View>
   );

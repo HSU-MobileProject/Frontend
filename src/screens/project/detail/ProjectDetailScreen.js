@@ -9,6 +9,8 @@ import DetailLeaderCard from "./components/DetailLeaderCard";
 import DetailGitHubCard from "./components/DetailGitHubCard";
 import DetailStatusCard from "./components/DetailStatusCard";
 import PaymentModal from "../../payment/PaymentModal";
+import ApplicationModal from "./components/ApplicationModal";
+import ProjectManageModal from "./components/ProjectManageModal";
 
 import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
@@ -21,7 +23,35 @@ export default function ProjectDetailScreen({ route, navigation }) {
 
   const owner = usersDummy.find((u) => u.id === project.ownerId) || null;
 
-  const handleApply = async () => {
+  const [isAppModalVisible, setIsAppModalVisible] = React.useState(false);
+  const [isManageModalVisible, setIsManageModalVisible] = React.useState(false);
+  const [myApplication, setMyApplication] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchApplication = async () => {
+      const user = authService.getCurrentUser();
+      if (!user) return;
+
+      try {
+        const db = getFirestore();
+        const q = query(
+          collection(db, 'applications'),
+          where('projectId', '==', project.id),
+          where('applicantId', '==', user.uid)
+        );
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          setMyApplication(snapshot.docs[0].data());
+        }
+      } catch (e) {
+        console.error("Fetch Application Error:", e);
+      }
+    };
+    fetchApplication();
+  }, [project]);
+
+  // 1. 지원 버튼 클릭 (유효성 검사 후 모달 오픈)
+  const handleApplyPress = async () => {
     const user = authService.getCurrentUser();
     if (!user) {
       Alert.alert("알림", "로그인이 필요한 서비스입니다.");
@@ -33,8 +63,8 @@ export default function ProjectDetailScreen({ route, navigation }) {
     }
 
     try {
+      // 중복 지원 확인 (여기서 미리 체크)
       const db = getFirestore();
-      // 중복 지원 확인
       const q = query(
         collection(db, 'applications'),
         where('projectId', '==', project.id),
@@ -47,17 +77,37 @@ export default function ProjectDetailScreen({ route, navigation }) {
         return;
       }
 
-      // 지원하기 저장
-      await addDoc(collection(db, 'applications'), {
+      // 모든 검사 통과 시 모달 오픈
+      setIsAppModalVisible(true);
+
+    } catch (e) {
+      console.error("Check Apply Error:", e);
+      Alert.alert("오류", "정보를 확인하는 중 문제가 발생했습니다.");
+    }
+  };
+
+  // 2. 모달에서 역할 선택 후 지원 확정
+  const handleConfirmApply = async (selectedRole) => {
+    setIsAppModalVisible(false);
+    const user = authService.getCurrentUser();
+    if (!user) return; // Should not happen
+
+    try {
+      const db = getFirestore();
+      const newApplication = {
         projectId: project.id,
-        projectTitle: project.title, // 편의상 저장
+        projectTitle: project.title,
         applicantId: user.uid,
         ownerId: project.ownerId,
+        role: selectedRole.name, // 선택한 역할 저장
         status: 'pending',
         createdAt: serverTimestamp(),
-      });
+      };
+      
+      await addDoc(collection(db, 'applications'), newApplication);
+      setMyApplication(newApplication);
 
-      Alert.alert("성공", "프로젝트 지원이 완료되었습니다.");
+      Alert.alert("성공", `${selectedRole.name} 역할로 지원이 완료되었습니다.`);
     } catch (e) {
       console.error("Apply Error:", e);
       Alert.alert("오류", "지원 중 문제가 발생했습니다.");
@@ -79,14 +129,19 @@ export default function ProjectDetailScreen({ route, navigation }) {
         <DetailMainCard
           project={project}
           isOwner={authService.getCurrentUser()?.uid === project.ownerId}
-          onApplyPress={handleApply}
+          onApplyPress={handleApplyPress}
+          myApplication={myApplication}
         />
         <DetailAboutCard project={project} />
 
         {project.githubUrl && <DetailGitHubCard project={project} />}
 
         <DetailLeaderCard project={project} owner={owner} />
-        <DetailStatusCard project={project} />
+        <DetailStatusCard 
+          project={project} 
+          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
+          onManagePress={() => setIsManageModalVisible(true)}
+        />
 
         <DetailPriceCard
           project={project}
@@ -98,6 +153,19 @@ export default function ProjectDetailScreen({ route, navigation }) {
       <PaymentModal
         visible={isPaymentModalVisible}
         onClose={() => setIsPaymentModalVisible(false)}
+        project={project}
+      />
+
+      <ApplicationModal
+        visible={isAppModalVisible}
+        onClose={() => setIsAppModalVisible(false)}
+        roles={project.roles || []}
+        onApply={handleConfirmApply}
+      />
+
+      <ProjectManageModal
+        visible={isManageModalVisible}
+        onClose={() => setIsManageModalVisible(false)}
         project={project}
       />
     </View>
