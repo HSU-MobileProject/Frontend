@@ -9,49 +9,57 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../../assets/colors';
 import styles from './ProjectTabPanel.styles';
+import { authService } from '../../../services/authService';
+import firestore from '@react-native-firebase/firestore';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-// 더미 데이터
-const REGISTERED_PROJECTS = [
-  {
-    id: 1,
-    title: '스마트 블록 조립 앱',
-    status: '진행중',
-    statusColor: colors.green,
-    members: 3,
-    likes: 45,
-    views: 230,
-  },
-  {
-    id: 2,
-    title: '장난감 리뷰 커뮤니티',
-    status: '완료',
-    statusColor: colors.grayDark,
-    members: 2,
-    likes: 23,
-    views: 156,
-  },
-];
-
-const SUPPORTED_PROJECTS = [
-  {
-    id: 3,
-    title: '스마트 홈 시스템',
-    status: '진행중',
-    statusColor: colors.green,
-    members: 4,
-    likes: 32,
-    views: 180,
-  },
-];
-
-export default function ProjectTabPanel() {
+export default function ProjectTabPanel({ navigation }) {
   const [activeTab, setActiveTab] = useState('registered'); // 'registered' or 'supported'
+  const [projects, setProjects] = useState([]);
 
-  const projects =
-    activeTab === 'registered' ? REGISTERED_PROJECTS : SUPPORTED_PROJECTS;
+  React.useEffect(() => {
+    const fetchProjects = async () => {
+      const user = authService.getCurrentUser();
+      if (!user) {
+        setProjects([]);
+        return;
+      }
+
+      if (activeTab === 'registered') {
+        try {
+          // Index Error 방지를 위해 orderBy 제거 후 Client-side sort
+          const snapshot = await firestore()
+            .collection('projects')
+            .where('ownerId', '==', user.uid)
+            .get();
+
+          const data = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            statusColor: doc.data().status === '완료' ? colors.grayDark : colors.green,
+            status: doc.data().status || '진행중'
+          }));
+
+          // 최신순 정렬
+          data.sort((a, b) => {
+            const tA = a.createdAt?.seconds ?? 0;
+            const tB = b.createdAt?.seconds ?? 0;
+            return tB - tA;
+          });
+
+          setProjects(data);
+        } catch (e) {
+          console.error("MyProjects Fetch Error:", e);
+        }
+      } else {
+        setProjects([]);
+      }
+    };
+
+    fetchProjects();
+  }, [activeTab]);
 
   return (
     <View style={styles.container}>
@@ -145,7 +153,10 @@ export default function ProjectTabPanel() {
       </ScrollView>
 
       {/* 새 프로젝트 등록 버튼 */}
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation?.navigate('ProjectCreate')}
+      >
         <Text style={styles.addButtonText}>+ 새 프로젝트 등록</Text>
       </TouchableOpacity>
     </View>

@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import styles from './styles/NavigationBar.styles';
 
 export default function NavigationBar({
   activeTab,
   onPress,
   onLayoutNavBar,
-  navigationRef,
 }) {
+  const navigation = useNavigation();
+
   const menuItems = [
     // ProjectDetail 수정하여 사용
     { key: '메인', label: '메인', screen: 'ProjectList' },
@@ -19,8 +21,14 @@ export default function NavigationBar({
 
   const handlePress = item => {
     onPress(item.key);
-    if (navigationRef?.current) {
-      navigationRef.current.navigate(item.screen);
+    // Stack reset logic for Main to ensure fresh state
+    if (item.key === '메인') {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ProjectList' }],
+      });
+    } else {
+      navigation.navigate(item.screen);
     }
   };
 

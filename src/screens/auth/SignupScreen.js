@@ -6,11 +6,13 @@ import {
   TextInput,
   Dimensions,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './SignupScreen.styles';
 import colors from '../../assets/colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { authService } from '../../services/authService';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
@@ -24,13 +26,45 @@ export default function SignupScreen({ setShowSignup, setIsLoggedIn }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agreedTerms, setAgreedTerms] = useState(false);
 
-  const handleSignup = () => {
-    if (userType === 'personal') {
-      console.log('Personal Signup:', { name, email, password });
-    } else {
-      console.log('Business Signup:', { name, companyName, email, password });
+  const handleSignup = async () => {
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert('알림', '모든 필드를 입력해주세요.');
+      return;
     }
-    setIsLoggedIn(true);
+
+    if (userType === 'business' && !companyName) {
+      Alert.alert('알림', '회사명을 입력해주세요.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('알림', '비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    try {
+      await authService.signup({
+        email,
+        password,
+        name,
+        userType,
+        companyName: userType === 'business' ? companyName : '',
+        role: userType === 'personal' ? '개인 개발자' : '기업 담당자'
+      });
+
+      Alert.alert('가입 성공', '회원가입이 완료되었습니다.', [
+        { text: '확인', onPress: () => setIsLoggedIn(true) }
+      ]);
+    } catch (error) {
+      console.error(error);
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('오류', '이미 사용 중인 이메일입니다.');
+      } else if (error.code === 'auth/weak-password') {
+        Alert.alert('오류', '비밀번호는 6자리 이상이어야 합니다.');
+      } else {
+        Alert.alert('오류', '회원가입 중 문제가 발생했습니다: ' + error.message);
+      }
+    }
   };
 
   return (
@@ -184,7 +218,17 @@ export default function SignupScreen({ setShowSignup, setIsLoggedIn }) {
                 <View style={styles.dividerLine} />
               </View>
 
-              <TouchableOpacity style={styles.oauthButton}>
+              <TouchableOpacity
+                style={styles.oauthButton}
+                onPress={async () => {
+                  try {
+                    await authService.loginWithGithub();
+                    setIsLoggedIn(true);
+                  } catch (e) {
+                    Alert.alert("GitHub 로그인 실패", e.message);
+                  }
+                }}
+              >
                 <Icon
                   name="github"
                   size={14 * scale}

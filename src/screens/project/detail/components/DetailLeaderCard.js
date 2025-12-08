@@ -1,19 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { User } from "lucide-react-native";
+import firestore from '@react-native-firebase/firestore'; // Import Firestore
 import styles from "../ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
 export default function DetailLeaderCard({ project, owner }) {
-  const initial = owner?.displayName?.[0] ?? "유";
+  // If 'owner' is passed from parent (e.g. dummy), use it.
+  // Otherwise fetch from Firestore using project.ownerId
+  const [leader, setLeader] = useState(owner || null);
+
+  useEffect(() => {
+    // If owner is already provided or no project, skip
+    if (owner || !project?.ownerId) return;
+
+    const fetchLeader = async () => {
+      try {
+        const userDoc = await firestore().collection('users').doc(project.ownerId).get();
+        if (userDoc.exists) {
+          setLeader(userDoc.data());
+        } else {
+          setLeader({ displayName: "알 수 없음", role: "" });
+        }
+      } catch (e) {
+        console.error("Leader Fetch Error:", e);
+      }
+    };
+    fetchLeader();
+  }, [owner, project]);
+
+  const displayUser = leader || {};
+  const initial = displayUser.displayName?.[0] ?? "유";
 
   return (
     <View style={styles.card}>
       <View style={styles.leaderRow}>
         {/* 프로필 이미지가 있을 때 */}
-        {owner?.profileImage ? (
+        {displayUser.profileImage ? (
           <Image
-            source={{ uri: owner.profileImage }}
+            source={{ uri: displayUser.profileImage }}
             style={styles.leaderAvatarImage}
           />
         ) : (
@@ -25,8 +50,8 @@ export default function DetailLeaderCard({ project, owner }) {
 
         {/* 이름/역할 */}
         <View style={{ marginLeft: 4 }}>
-          <Text style={styles.leaderName}>{owner?.displayName}</Text>
-          <Text style={styles.leaderRole}>{owner?.role}</Text>
+          <Text style={styles.leaderName}>{displayUser.displayName}</Text>
+          <Text style={styles.leaderRole}>{displayUser.role}</Text>
         </View>
       </View>
 
