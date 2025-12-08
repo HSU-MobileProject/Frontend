@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../../assets/colors';
 import styles from './ProjectTabPanel.styles';
 import { authService } from '../../../services/authService';
-import { getFirestore, collection, query, where, getDocs } from '@react-native-firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from '@react-native-firebase/firestore';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
@@ -53,7 +53,42 @@ export default function ProjectTabPanel({ navigation }) {
           console.error("MyProjects Fetch Error:", e);
         }
       } else {
-        setProjects([]);
+        // [수정] 지원한 프로젝트 조회
+        try {
+          const db = getFirestore();
+          const q = query(collection(db, 'applications'), where('applicantId', '==', user.uid));
+          const appSnapshot = await getDocs(q);
+
+          // Application에서 projectId 추출 후 프로젝트 정보 조회
+          const projectPromises = appSnapshot.docs.map(async (appDoc) => {
+             const appData = appDoc.data();
+             const pDoc = await getDoc(doc(db, 'projects', appData.projectId));
+             if (pDoc.exists()) {
+                 return {
+                     id: pDoc.id,
+                     ...pDoc.data(),
+                     statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
+                     status: pDoc.data().status || '진행중',
+                     applicationStatus: appData.status // 지원 상태 표시용 (필요시)
+                 };
+             }
+             return null;
+          });
+
+          const pResults = await Promise.all(projectPromises);
+          const validProjects = pResults.filter(p => p !== null);
+
+           // 최신순 정렬 (지원일 기준이 좋겠지만, 여기선 프로젝트 생성일 기준 fallback)
+           validProjects.sort((a, b) => {
+            const tA = a.createdAt?.seconds ?? 0;
+            const tB = b.createdAt?.seconds ?? 0;
+            return tB - tA;
+          });
+
+          setProjects(validProjects);
+        } catch (e) {
+          console.error("Supported Projects Fetch Error:", e);
+        }
       }
     };
 
