@@ -7,7 +7,7 @@ import colors from '../../../assets/colors';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-export default function MessageInput({ onSendMessage }) {
+export default function MessageInput({ onSendMessage, onSendImage }) {
   const [message, setMessage] = useState('');
 
   const handleSend = () => {
@@ -23,7 +23,7 @@ export default function MessageInput({ onSendMessage }) {
         <Icon name="plus" size={17 * scale} color={colors.black} />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.iconButton}>
+      <TouchableOpacity style={styles.iconButton} onPress={onSendImage}>
         <Icon name="image" size={17 * scale} color={colors.black} />
       </TouchableOpacity>
 

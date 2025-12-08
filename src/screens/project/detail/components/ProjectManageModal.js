@@ -18,7 +18,10 @@ export default function ProjectManageModal({ visible, onClose, project }) {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  console.log("ProjectManageModal Render: visible=", visible, "project=", project?.id);
+
   useEffect(() => {
+    console.log("ProjectManageModal Effect: visible=", visible);
     if (visible && project?.id) {
       fetchApplications();
     }
@@ -34,16 +37,32 @@ export default function ProjectManageModal({ visible, onClose, project }) {
         where('status', '==', 'pending') // 대기 중인 지원자만 표시
       );
       const snapshot = await getDocs(q);
-      
+
       const apps = await Promise.all(snapshot.docs.map(async docSnapshot => {
         const data = docSnapshot.data();
-        // 지원자 정보 가져오기
-        const userDoc = await getDoc(doc(db, 'users', data.applicantId));
+        let appName = 'Unknown';
+        let appPhoto = null;
+
+        try {
+          const userRef = doc(db, 'users', data.applicantId);
+          const userSnap = await getDoc(userRef);
+          // Check if exists using method or properties safely
+          if (userSnap && typeof userSnap.data === 'function') {
+            const userData = userSnap.data();
+            if (userData) {
+              appName = userData.displayName || 'Unknown User';
+              appPhoto = userData.photoURL || null;
+            }
+          }
+        } catch (err) {
+          console.log("Fetch User Error:", err);
+        }
+
         return {
           id: docSnapshot.id,
           ...data,
-          applicantName: userDoc.exists() ? (userDoc.data().displayName || 'Unknown') : 'Unknown',
-          applicantPhoto: userDoc.exists() ? userDoc.data().photoURL : null,
+          applicantName: appName,
+          applicantPhoto: appPhoto,
         };
       }));
 
@@ -61,7 +80,7 @@ export default function ProjectManageModal({ visible, onClose, project }) {
       await updateDoc(doc(db, 'applications', appId), {
         status: newStatus
       });
-      
+
       Alert.alert("알림", newStatus === 'accepted' ? "승인되었습니다." : "거절되었습니다.");
       fetchApplications(); // 목록 갱신
     } catch (e) {
@@ -106,7 +125,7 @@ export default function ProjectManageModal({ visible, onClose, project }) {
                       <Image source={{ uri: app.applicantPhoto }} style={styles.avatar} />
                     ) : (
                       <View style={styles.avatarPlaceholder}>
-                         <Text style={styles.avatarText}>{app.applicantName[0]}</Text>
+                        <Text style={styles.avatarText}>{app.applicantName ? app.applicantName[0] : 'U'}</Text>
                       </View>
                     )}
                     <View style={{ marginLeft: 12 }}>
@@ -135,11 +154,12 @@ export default function ProjectManageModal({ visible, onClose, project }) {
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyText}>대기 중인 지원자가 없습니다.</Text>
               </View>
-            )}
-          </ScrollView>
+            )
+            }
+          </ScrollView >
         )}
-      </View>
-    </Modal>
+      </View >
+    </Modal >
   );
 }
 

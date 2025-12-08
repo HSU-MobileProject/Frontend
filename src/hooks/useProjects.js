@@ -14,7 +14,7 @@ export default function useProjects() {
 
     // 1. Projects Listener
     const q = collection(db, 'projects');
-    const unsubscribeProjects = onSnapshot(q, 
+    const unsubscribeProjects = onSnapshot(q,
       (querySnapshot) => {
         const list = [];
         querySnapshot.forEach(doc => {
@@ -25,7 +25,7 @@ export default function useProjects() {
         });
         setProjects(list);
         setLoading(false);
-      }, 
+      },
       (error) => {
         console.error("Projects Fetch Error:", error);
         setLoading(false);
@@ -33,13 +33,20 @@ export default function useProjects() {
     );
 
     // 2. User Likes Listener (if logged in)
-    let unsubscribeLikes = () => {};
+    let unsubscribeLikes = () => { };
     if (user) {
-      unsubscribeLikes = onSnapshot(collection(db, 'userLikes', user.uid, 'projects'), (snapshot) => {
-        const ids = new Set();
-        snapshot.forEach(doc => ids.add(doc.id));
-        setLikedProjectIds(ids);
-      });
+      unsubscribeLikes = onSnapshot(collection(db, 'userLikes', user.uid, 'projects'),
+        (snapshot) => {
+          if (!snapshot) return; // Safety check
+          const ids = new Set();
+          snapshot.forEach(doc => ids.add(doc.id));
+          setLikedProjectIds(ids);
+        },
+        (error) => {
+          console.log("User Likes Fetch Error:", error);
+          // Don't crash, just ignore or handle gracefully
+        }
+      );
     }
 
     return () => {

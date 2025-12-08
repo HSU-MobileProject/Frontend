@@ -5,6 +5,8 @@ import styles from './ChatListItem.styles';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
+import ChatUnreadBadge from './ChatUnreadBadge';
+
 export default function ChatListItem({
   name,
   lastMessage,
@@ -12,6 +14,7 @@ export default function ChatListItem({
   unreadCount,
   avatarColor,
   onPress,
+  chatId,
 }) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
@@ -34,12 +37,10 @@ export default function ChatListItem({
         </Text>
       </View>
 
-      {/* Unread Badge */}
-      {unreadCount > 0 && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{unreadCount}</Text>
-        </View>
-      )}
+      {/* Unread Badge (via Component) */}
+      <View style={styles.badgeContainer}>
+        <ChatUnreadBadge count={unreadCount} />
+      </View>
     </TouchableOpacity>
   );
 }

@@ -1,55 +1,48 @@
 import { useState } from "react";
 import { Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { paymentService } from "../services/paymentService";
 
 export default function usePaymentForm(project, onClose) {
+  // Debug Log
+  console.log("💰 usePaymentForm Project:", JSON.stringify(project, null, 2));
+
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [easyPayProvider, setEasyPayProvider] = useState(null);
   const [agreed, setAgreed] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Card Inputs
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCvc] = useState("");
+  // Card inputs removed as they are handled by PG
   const [ownerName, setOwnerName] = useState("");
 
-  const price = typeof project?.price === 'number' ? project.price : 0;
+  // Fix: Parse price safely. Explicitly handle strings or undefined.
+  const rawPrice = project?.price;
+  const parsedPrice = Number(rawPrice);
+  const price = !isNaN(parsedPrice) ? parsedPrice : 0;
   const fee = 0;
   const totalPrice = price + fee;
 
-  const handlePay = async () => {
+  const navigation = useNavigation();
+
+  const handlePay = () => {
     if (!agreed) {
       Alert.alert("알림", "약관에 동의해주세요.");
       return;
     }
 
-    setIsProcessing(true);
+    // Close modal first
+    onClose();
 
-    try {
-      const paymentData = {
-        method: paymentMethod,
-        amount: totalPrice,
-        project: {
-          id: project.id,
-          title: project.title,
-        },
-        details: {
-          card: paymentMethod === 'card' ? { cardNumber, expiry } : null,
-          easyPayProvider: paymentMethod === 'easy' ? easyPayProvider : null,
-        }
-      };
-
-      const result = await paymentService.processPayment(paymentData);
-
-      Alert.alert("결제 완료", result.message, [
-        { text: "확인", onPress: onClose }
-      ]);
-    } catch (error) {
-      Alert.alert("결제 실패", error.message || "알 수 없는 오류가 발생했습니다.");
-    } finally {
-      setIsProcessing(false);
-    }
+    // Navigate to Iamport Payment Screen
+    navigation.navigate('Payment', {
+      project,
+      amount: totalPrice,
+      buyerName: ownerName,
+      buyerEmail: "",
+      buyerTel: "",
+      paymentMethod,
+      easyPayProvider,
+    });
   };
 
   return {
@@ -57,9 +50,6 @@ export default function usePaymentForm(project, onClose) {
     easyPayProvider, setEasyPayProvider,
     agreed, setAgreed,
     isProcessing,
-    cardNumber, setCardNumber,
-    expiry, setExpiry,
-    cvc, setCvc,
     ownerName, setOwnerName,
     totalPrice, price, fee,
     handlePay

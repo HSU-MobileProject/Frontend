@@ -13,7 +13,9 @@ import colors from '../../../assets/colors';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
-export default function ChatMessage({ sender, text, timestamp, isLink }) {
+import { Image } from 'react-native';
+
+export default function ChatMessage({ sender, text, timestamp, isLink, type, imageUrl }) {
   const isMe = sender === 'me';
 
   const handleLinkPress = () => {
@@ -32,14 +34,20 @@ export default function ChatMessage({ sender, text, timestamp, isLink }) {
       ]}
     >
       <TouchableOpacity
-        disabled={!isLink}
-        onPress={handleLinkPress}
+        disabled={!isLink && type !== 'image'}
+        onPress={handleLinkPress} // TODO: Handle image press (view full screen)
         style={[
           styles.messageBubble,
           isMe ? styles.messageBubbleMe : styles.messageBubbleOther,
         ]}
       >
-        {isLink ? (
+        {type === 'image' && imageUrl ? (
+          <Image
+            source={{ uri: imageUrl }}
+            style={{ width: 200 * scale, height: 200 * scale, borderRadius: 10, marginBottom: text ? 5 : 0 }}
+            resizeMode="cover"
+          />
+        ) : isLink ? (
           <View style={styles.linkContainer}>
             <Icon
               name="link"

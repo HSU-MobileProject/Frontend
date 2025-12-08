@@ -63,6 +63,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 12.7 * scale,
   },
+  badgeContainer: {
+    marginLeft: 12.7 * scale,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   badgeText: {
     fontFamily: typography.fontFamily.regular,
     fontSize: 17 * scale,

@@ -2,10 +2,10 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import styles from "../ProjectDetail.styles";
 
-export default function DetailStatusCard({ project, isOwner, onManagePress }) {
+export default function DetailStatusCard({ project, applicantCount, isOwner, onManagePress }) {
   const progress = project.progress ?? 0;
   const teamMemberCount = project.teamMemberCount ?? 0;
-  const applicantCount = project.applicantCount ?? 0;
+  // applicantCount is passed from parent realtime
   const isRecruiting = project.isRecruiting ?? false;
 
   return (
@@ -43,12 +43,24 @@ export default function DetailStatusCard({ project, isOwner, onManagePress }) {
 
       {/* 관리 버튼 (소유자일 때) */}
       {isOwner && (
-        <TouchableOpacity 
-          style={[styles.applyBtn, { backgroundColor: '#333' }]} 
+        <TouchableOpacity
+          style={[styles.applyBtn, { backgroundColor: '#333', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}
           activeOpacity={0.9}
           onPress={onManagePress}
         >
-          <Text style={styles.applyBtnText}>지원자 관리 ({applicantCount})</Text>
+          <Text style={[styles.applyBtnText, { marginRight: 4 }]}>지원자 관리</Text>
+          {applicantCount > 0 && (
+            <View style={{
+              backgroundColor: '#FF4D4D',
+              borderRadius: 10,
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>{applicantCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       )}
     </View>
