@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 
 import styles from "../ProjectDetail.styles";
 import MainThumbnail from "./main/MainThumbnail";
@@ -7,7 +7,7 @@ import MainInfo from "./main/MainInfo";
 import MainStats from "./main/MainStats";
 import MainActions from "./main/MainActions";
 
-export default function DetailMainCard({ project, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress, onChatPress }) {
+export default function DetailMainCard({ project, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress, onChatPress, onEditPress }) {
   const isFree =
     project.priceType === "free" ||
     project.price === 0 ||
@@ -42,6 +42,26 @@ export default function DetailMainCard({ project, onPurchasePress, isOwner, onAp
         onLikePress={onLikePress}
         onChatPress={onChatPress}
       />
+
+      {isOwner && (
+        <View style={{ marginTop: 10 }}>
+          {/* Using a secondary style for Edit button to distinguish from primary actions or just adding it to MainActions? 
+                MainActions handles the row of buttons. Let's inspect MainActions or put it below.
+                The user requested "Edit" button to be visible. 
+                Ideally, inside MainActions is better, but seeing MainActions content might be cleaner.
+                Let's put it here for now as a separate block or pass it to MainActions. 
+                Wait, MainActions takes 'isOwner' but doesn't seem to use it for an Edit button based on previous readings?
+                Checking MainActions content (I haven't read it but I can guess).
+                Actually, simpler to just add it below MainActions for visibility.
+             */}
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
+            <TouchableOpacity onPress={onEditPress} style={{ padding: 10 }}>
+              <Text style={{ color: '#888', textDecorationLine: 'underline' }}>프로젝트 수정</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
     </View>
   );
 }

@@ -34,6 +34,7 @@ export default function MyPageScreen({
           const unsubscribe = onSnapshot(doc(db, 'users', currentUser.uid), async (docSnap) => {
             if (docSnap.exists()) {
               const data = docSnap.data();
+              console.log("MyPage User Data:", JSON.stringify(data, null, 2)); // Debug Log
               if (!data) return;
 
               // 1. 등록된 프로젝트 수 및 받은 좋아요 수 계산

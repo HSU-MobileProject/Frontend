@@ -52,7 +52,7 @@ export default function ProjectTabPanel({ navigation }) {
         } catch (e) {
           console.error("MyProjects Fetch Error:", e);
         }
-      } else {
+      } else if (activeTab === 'supported') {
         // [수정] 지원한 프로젝트 조회
         try {
           const db = getFirestore();
@@ -61,25 +61,25 @@ export default function ProjectTabPanel({ navigation }) {
 
           // Application에서 projectId 추출 후 프로젝트 정보 조회
           const projectPromises = appSnapshot.docs.map(async (appDoc) => {
-             const appData = appDoc.data();
-             const pDoc = await getDoc(doc(db, 'projects', appData.projectId));
-             if (pDoc.exists()) {
-                 return {
-                     id: pDoc.id,
-                     ...pDoc.data(),
-                     statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
-                     status: pDoc.data().status || '진행중',
-                     applicationStatus: appData.status // 지원 상태 표시용 (필요시)
-                 };
-             }
-             return null;
+            const appData = appDoc.data();
+            const pDoc = await getDoc(doc(db, 'projects', appData.projectId));
+            if (pDoc.exists()) {
+              return {
+                id: pDoc.id,
+                ...pDoc.data(),
+                statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
+                status: pDoc.data().status || '진행중',
+                applicationStatus: appData.status // 지원 상태 표시용 (필요시)
+              };
+            }
+            return null;
           });
 
           const pResults = await Promise.all(projectPromises);
           const validProjects = pResults.filter(p => p !== null);
 
-           // 최신순 정렬 (지원일 기준이 좋겠지만, 여기선 프로젝트 생성일 기준 fallback)
-           validProjects.sort((a, b) => {
+          // 최신순 정렬 (지원일 기준이 좋겠지만, 여기선 프로젝트 생성일 기준 fallback)
+          validProjects.sort((a, b) => {
             const tA = a.createdAt?.seconds ?? 0;
             const tB = b.createdAt?.seconds ?? 0;
             return tB - tA;
@@ -88,6 +88,42 @@ export default function ProjectTabPanel({ navigation }) {
           setProjects(validProjects);
         } catch (e) {
           console.error("Supported Projects Fetch Error:", e);
+        }
+      } else if (activeTab === 'liked') {
+        try {
+          // [찜한 프로젝트 조회]
+          const db = getFirestore();
+          // userLikes/{userId}/projects 컬렉션 조회
+          const likesSnapshot = await getDocs(collection(db, 'userLikes', user.uid, 'projects'));
+
+          const projectPromises = likesSnapshot.docs.map(async (likeDoc) => {
+            const projectId = likeDoc.id; // 문서 ID가 projectId임
+            const pDoc = await getDoc(doc(db, 'projects', projectId));
+            if (pDoc.exists()) {
+              return {
+                id: pDoc.id,
+                ...pDoc.data(),
+                statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
+                status: pDoc.data().status || '진행중'
+              };
+            }
+            return null;
+          });
+
+          const pResults = await Promise.all(projectPromises);
+          const validProjects = pResults.filter(p => p !== null);
+
+          // 정렬이 필요하면 여기서 수행 (예: 최근 찜한 순서? 하지만 timestamp가 userLikes에 있는지 확인 필요)
+          // 여기선 단순 프로젝트 생성일 순으로 정렬
+          validProjects.sort((a, b) => {
+            const tA = a.createdAt?.seconds ?? 0;
+            const tB = b.createdAt?.seconds ?? 0;
+            return tB - tA;
+          });
+
+          setProjects(validProjects);
+        } catch (e) {
+          console.error("Liked Projects Fetch Error:", e);
         }
       }
     };
@@ -124,6 +160,20 @@ export default function ProjectTabPanel({ navigation }) {
             ]}
           >
             지원한 프로젝트
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'liked' && styles.tabActive]}
+          onPress={() => setActiveTab('liked')}
+        >
+          <Text
+            style={[
+              styles.tabText,
+              activeTab === 'liked' && styles.tabTextActive,
+            ]}
+          >
+            찜한 프로젝트
           </Text>
         </TouchableOpacity>
       </View>
@@ -166,17 +216,31 @@ export default function ProjectTabPanel({ navigation }) {
 
               {/* 우측: 액션 버튼 */}
               <View style={styles.actionButtons}>
+                {/* 'registered' 탭과 달리 '찜한 프로젝트'는 내가 주인이 아닐 수도 있음. 
+                    하지만 로직상 registered 탭에서만 편집 버튼을 보여주는 게 안전함. 
+                    혹은 ownerId 체크를 해서 보여줘도 됨. 
+                    여기서는 탭 기준 분기 유지.
+                */}
                 {activeTab === 'registered' ? (
                   <>
-                    <TouchableOpacity style={styles.editButton}>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() => navigation?.navigate('ProjectEdit', { project })}
+                    >
                       <Text style={styles.editButtonText}>수정</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.manageButton}>
+                    <TouchableOpacity
+                      style={styles.manageButton}
+                      onPress={() => navigation?.navigate('ProjectDetail', { project })}
+                    >
                       <Text style={styles.manageButtonText}>관리</Text>
                     </TouchableOpacity>
                   </>
-                ) : (
-                  <TouchableOpacity style={styles.detailButton}>
+                ) : ( // supported or liked
+                  <TouchableOpacity
+                    style={styles.detailButton}
+                    onPress={() => navigation?.navigate('ProjectDetail', { project })}
+                  >
                     <Text style={styles.detailButtonText}>상세보기</Text>
                   </TouchableOpacity>
                 )}

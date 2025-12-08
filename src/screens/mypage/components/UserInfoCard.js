@@ -7,7 +7,10 @@ import styles from './UserInfoCard.styles';
 const { width } = Dimensions.get('window');
 const scale = width / 409;
 
+import { useNavigation } from '@react-navigation/native';
+
 export default function UserInfoCard({ userInfo, onLogout, onSettings }) {
+  const navigation = useNavigation();
   // 데이터가 없거나 로딩 중일 때도 로그아웃 버튼은 보여줘야 함
   if (!userInfo) {
     return (
@@ -81,7 +84,10 @@ export default function UserInfoCard({ userInfo, onLogout, onSettings }) {
 
       {/* 버튼 섹션 */}
       <View style={styles.buttonSection}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('PaymentHistory')}
+        >
           <Icon name="history" size={16 * scale} color={colors.black} />
           <Text style={styles.buttonText}>거래내역</Text>
         </TouchableOpacity>
