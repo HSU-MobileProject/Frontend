@@ -7,7 +7,7 @@ import MainInfo from "./main/MainInfo";
 import MainStats from "./main/MainStats";
 import MainActions from "./main/MainActions";
 
-export default function DetailMainCard({ project, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress }) {
+export default function DetailMainCard({ project, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress, onChatPress }) {
   const isFree =
     project.priceType === "free" ||
     project.price === 0 ||
@@ -40,6 +40,7 @@ export default function DetailMainCard({ project, onPurchasePress, isOwner, onAp
         myApplication={myApplication}
         isLiked={isLiked}
         onLikePress={onLikePress}
+        onChatPress={onChatPress}
       />
     </View>
   );

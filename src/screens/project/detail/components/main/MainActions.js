@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { MessageCircle, Star, Share2 } from "lucide-react-native";
 import styles from "../../ProjectDetail.styles";
 
-export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress }) {
+export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress, onChatPress }) {
   if (isOwner) return null;
 
   return (
@@ -42,7 +42,11 @@ export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyP
       </View>
 
       {/* 채팅 아이콘 */}
-      <TouchableOpacity style={styles.mainChatBtn} activeOpacity={0.9}>
+      <TouchableOpacity 
+          style={styles.mainChatBtn} 
+          activeOpacity={0.9}
+          onPress={onChatPress}
+      >
         <MessageCircle size={18} color="#1A1A1A" />
         <Text style={styles.mainChatBtnText}>채팅</Text>
       </TouchableOpacity>
