@@ -62,6 +62,7 @@ export default function ProjectListAllScreen({ route }) {
               navigation.navigate("ProjectDetail", { project: item })
             }
             onPurchasePress={() => handlePurchasePress(item)}
+            isLiked={item.isLiked}
           />
         ))}
 

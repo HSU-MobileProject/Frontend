@@ -109,6 +109,7 @@ export default function ProjectSearchScreen({ navigation }) {
                 navigation.navigate("ProjectDetail", { project: project })
               }
               onPurchasePress={() => handlePurchasePress(project)}
+              isLiked={project.isLiked}
             />
             ))
           ) : (

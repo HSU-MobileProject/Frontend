@@ -1,17 +1,20 @@
 import { useState, useEffect, useMemo } from "react";
 import { getFirestore, collection, onSnapshot, query, orderBy } from '@react-native-firebase/firestore';
 
+import { authService } from "../services/authService";
+
 export default function useProjects() {
   const [projects, setProjects] = useState([]);
+  const [likedProjectIds, setLikedProjectIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const db = getFirestore();
-    // Real-time subscription to 'projects' collection
-    // const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc')); // Optional sorting
-    const q = collection(db, 'projects');
+    const user = authService.getCurrentUser();
 
-    const unsubscribe = onSnapshot(q, 
+    // 1. Projects Listener
+    const q = collection(db, 'projects');
+    const unsubscribeProjects = onSnapshot(q, 
       (querySnapshot) => {
         const list = [];
         querySnapshot.forEach(doc => {
@@ -29,17 +32,38 @@ export default function useProjects() {
       }
     );
 
-    return () => unsubscribe();
+    // 2. User Likes Listener (if logged in)
+    let unsubscribeLikes = () => {};
+    if (user) {
+      unsubscribeLikes = onSnapshot(collection(db, 'userLikes', user.uid, 'projects'), (snapshot) => {
+        const ids = new Set();
+        snapshot.forEach(doc => ids.add(doc.id));
+        setLikedProjectIds(ids);
+      });
+    }
+
+    return () => {
+      unsubscribeProjects();
+      unsubscribeLikes();
+    };
   }, []);
 
+  // Merge isLiked into projects
+  const projectsWithLike = useMemo(() => {
+    return projects.map(p => ({
+      ...p,
+      isLiked: likedProjectIds.has(p.id)
+    }));
+  }, [projects, likedProjectIds]);
+
   const recommendedProjects = useMemo(() => {
-    return [...projects]
+    return [...projectsWithLike]
       .sort((a, b) => (b.likes || 0) - (a.likes || 0))
       .slice(0, 3);
-  }, [projects]);
+  }, [projectsWithLike]);
 
   const latestProjects = useMemo(() => {
-    return [...projects]
+    return [...projectsWithLike]
       .sort((a, b) => {
         // Handle Firestore Timestamp or ISO string
         const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
@@ -47,21 +71,21 @@ export default function useProjects() {
         return dateB - dateA;
       })
       .slice(0, 3);
-  }, [projects]);
+  }, [projectsWithLike]);
 
   const likedProjects = useMemo(() => {
-    return projects.filter((p) => p.isLiked); // Note: isLiked might need local management or subcollection check
-  }, [projects]);
+    return projectsWithLike.filter((p) => p.isLiked);
+  }, [projectsWithLike]);
 
   const deadlineProjects = useMemo(() => {
-    return [...projects].reverse().slice(0, 3); // Simplified logic
-  }, [projects]);
+    return [...projectsWithLike].reverse().slice(0, 3); // Simplified logic
+  }, [projectsWithLike]);
 
   const getAllProjects = (type) => {
     if (type === "recommended") {
-      return [...projects].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      return [...projectsWithLike].sort((a, b) => (b.likes || 0) - (a.likes || 0));
     }
-    return [...projects].sort((a, b) => {
+    return [...projectsWithLike].sort((a, b) => {
       const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
       const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
       return dateB - dateA;
@@ -73,7 +97,7 @@ export default function useProjects() {
     latestProjects,
     likedProjects,
     deadlineProjects,
-    allProjects: projects,
+    allProjects: projectsWithLike,
     getAllProjects,
     loading,
   };

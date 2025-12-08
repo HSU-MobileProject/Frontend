@@ -11,6 +11,8 @@ import usePaymentModal from "../../../hooks/usePaymentModal";
 import PaymentModal from "../../payment/PaymentModal";
 
 import { dummyCurrentUser } from "../../../utils/usersDummy";
+import { getFirestore, collection, onSnapshot } from '@react-native-firebase/firestore';
+import { authService } from "../../../services/authService";
 
 export default function ProjectListScreen() {
   const navigation = useNavigation();
@@ -23,6 +25,22 @@ export default function ProjectListScreen() {
     openPaymentModal, 
     closePaymentModal 
   } = usePaymentModal();
+
+  const [likedProjectIds, setLikedProjectIds] = React.useState(new Set());
+
+  React.useEffect(() => {
+    const user = authService.getCurrentUser();
+    if (!user) return;
+
+    const db = getFirestore();
+    const unsubscribe = onSnapshot(collection(db, 'userLikes', user.uid, 'projects'), (snapshot) => {
+      const ids = new Set();
+      snapshot.forEach(doc => ids.add(doc.id));
+      setLikedProjectIds(ids);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handlePressCard = (project) => {
     navigation.navigate("ProjectDetail", { project });
@@ -45,6 +63,7 @@ export default function ProjectListScreen() {
           onPressCard={handlePressCard}
           onPurchasePress={handlePurchasePress}
           currentUser={currentUser}
+          likedProjectIds={likedProjectIds}
         />
 
         <ProjectSection
@@ -54,6 +73,7 @@ export default function ProjectListScreen() {
           onPressCard={handlePressCard}
           onPurchasePress={handlePurchasePress}
           currentUser={currentUser}
+          likedProjectIds={likedProjectIds}
         />
       </ScrollView>
 

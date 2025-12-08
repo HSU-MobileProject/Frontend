@@ -2,7 +2,7 @@ import React from "react";
 import ProjectCard from "./ProjectCard";
 import SectionHeader from "./SectionHeader";
 
-export default function ProjectSection({ title, data, type, onPressCard, onPurchasePress, currentUser }) {
+export default function ProjectSection({ title, data, type, onPressCard, onPurchasePress, currentUser, likedProjectIds }) {
   return (
     <>
       <SectionHeader title={title} buttonText="전체보기 →" type={type} />
@@ -13,6 +13,7 @@ export default function ProjectSection({ title, data, type, onPressCard, onPurch
           onPress={() => onPressCard(item)}
           onPurchasePress={() => onPurchasePress(item)}
           isOwner={currentUser?.id === item.ownerId}
+          isLiked={likedProjectIds?.has(item.id)}
         />
       ))}
     </>

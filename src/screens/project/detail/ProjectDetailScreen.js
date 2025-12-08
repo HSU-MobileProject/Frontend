@@ -14,7 +14,7 @@ import ProjectManageModal from "./components/ProjectManageModal";
 
 import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from '@react-native-firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, doc, setDoc, deleteDoc, onSnapshot } from '@react-native-firebase/firestore';
 import { authService } from "../../../services/authService";
 import { Alert } from "react-native";
 
@@ -86,6 +86,52 @@ export default function ProjectDetailScreen({ route, navigation }) {
     }
   };
 
+  const [isLiked, setIsLiked] = React.useState(project.isLiked || false);
+
+  // 좋아요 상태 리스너
+  React.useEffect(() => {
+    const user = authService.getCurrentUser();
+    if (!user || !project.id) return;
+
+    const db = getFirestore();
+    const likeDocRef = doc(db, 'userLikes', user.uid, 'projects', project.id);
+
+    const unsubscribe = onSnapshot(likeDocRef, (docSnapshot) => {
+      if (docSnapshot && docSnapshot.exists) {
+        setIsLiked(docSnapshot.exists);
+      } else {
+        setIsLiked(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [project.id]);
+
+  const handleLikePress = async () => {
+    const user = authService.getCurrentUser();
+    if (!user) {
+      Alert.alert("알림", "로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      const db = getFirestore();
+      const likeDocRef = doc(db, 'userLikes', user.uid, 'projects', project.id);
+
+      if (isLiked) {
+        await deleteDoc(likeDocRef);
+      } else {
+        await setDoc(likeDocRef, {
+            likedAt: serverTimestamp(),
+            projectTitle: project.title, // Optional: for user's like history
+            thumbnail: project.thumbnail || null
+        });
+      }
+    } catch (e) {
+      console.error("Like Toggle Error:", e);
+    }
+  };
+
   // 2. 모달에서 역할 선택 후 지원 확정
   const handleConfirmApply = async (selectedRole) => {
     setIsAppModalVisible(false);
@@ -114,38 +160,54 @@ export default function ProjectDetailScreen({ route, navigation }) {
     }
   };
 
-  if (!project) return null;
+  // 3. 프로젝트 실시간 업데이트 (좋아요 카운트 등 반영)
+  const [realtimeProject, setRealtimeProject] = React.useState(project);
+
+  React.useEffect(() => {
+     if (!project.id) return;
+     const db = getFirestore();
+     const unsubscribe = onSnapshot(doc(db, 'projects', project.id), (docSnapshot) => {
+        if (docSnapshot.exists) {
+          setRealtimeProject({ id: docSnapshot.id, ...docSnapshot.data() });
+        }
+     });
+     return () => unsubscribe();
+  }, [project.id]);
+
+  if (!realtimeProject) return null;
 
   const [isPaymentModalVisible, setIsPaymentModalVisible] = React.useState(false);
 
   return (
     <View style={styles.screenWrapper}>
-      <DetailHeader project={project} currentUser={dummyCurrentUser} />
+      <DetailHeader project={realtimeProject} currentUser={dummyCurrentUser} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
         <DetailMainCard
-          project={project}
-          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
+          project={realtimeProject}
+          isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
           onApplyPress={handleApplyPress}
           myApplication={myApplication}
+          isLiked={isLiked}
+          onLikePress={handleLikePress}
         />
-        <DetailAboutCard project={project} />
+        <DetailAboutCard project={realtimeProject} />
 
-        {project.githubUrl && <DetailGitHubCard project={project} />}
+        {realtimeProject.githubUrl && <DetailGitHubCard project={realtimeProject} />}
 
-        <DetailLeaderCard project={project} owner={owner} />
+        <DetailLeaderCard project={realtimeProject} owner={owner} />
         <DetailStatusCard 
-          project={project} 
-          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
+          project={realtimeProject} 
+          isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
           onManagePress={() => setIsManageModalVisible(true)}
         />
 
         <DetailPriceCard
-          project={project}
-          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
+          project={realtimeProject}
+          isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
           onPurchasePress={() => setIsPaymentModalVisible(true)}
         />
       </ScrollView>
@@ -153,20 +215,20 @@ export default function ProjectDetailScreen({ route, navigation }) {
       <PaymentModal
         visible={isPaymentModalVisible}
         onClose={() => setIsPaymentModalVisible(false)}
-        project={project}
+        project={realtimeProject}
       />
 
       <ApplicationModal
         visible={isAppModalVisible}
         onClose={() => setIsAppModalVisible(false)}
-        roles={project.roles || []}
+        roles={realtimeProject.roles || []}
         onApply={handleConfirmApply}
       />
 
       <ProjectManageModal
         visible={isManageModalVisible}
         onClose={() => setIsManageModalVisible(false)}
-        project={project}
+        project={realtimeProject}
       />
     </View>
   );

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { MessageCircle, Star, Share2 } from "lucide-react-native";
 import styles from "../../ProjectDetail.styles";
 
-export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress, myApplication }) {
+export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress }) {
   if (isOwner) return null;
 
   return (
@@ -48,8 +48,16 @@ export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyP
       </TouchableOpacity>
 
       {/* 좋아요 아이콘 */}
-      <TouchableOpacity style={styles.mainIconBtn} activeOpacity={0.8}>
-        <Star size={18} color="#1A1A1A" />
+      <TouchableOpacity 
+        style={styles.mainIconBtn} 
+        activeOpacity={0.8}
+        onPress={onLikePress}
+      >
+        <Star 
+          size={18} 
+          color={isLiked ? "#FFD700" : "#1A1A1A"} 
+          fill={isLiked ? "#FFD700" : "transparent"}
+        />
       </TouchableOpacity>
     </View>
   );
