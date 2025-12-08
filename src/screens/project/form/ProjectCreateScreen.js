@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from "./ProjectCreate.styles";
 import Colors from "../../../assets/colors";
 import ProjectForm from "./components/ProjectForm";
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { authService } from '../../../services/authService';
 
@@ -39,11 +39,11 @@ export default function ProjectCreateScreen({ navigation }) {
         }
       }
 
-      await firestore().collection('projects').add({
+      await addDoc(collection(getFirestore(), 'projects'), {
         ...data,
         thumbnail: thumbnailUrl, // URL로 교체
         ownerId: currentUser.uid,
-        createdAt: firestore.FieldValue.serverTimestamp(),
+        createdAt: serverTimestamp(),
         status: '진행중',
         likes: 0,
         views: 0,

@@ -12,6 +12,7 @@ import {
 import { X, Check } from "lucide-react-native";
 import styles from "./PaymentModal.styles";
 import usePaymentForm from "../../hooks/usePaymentForm";
+import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore';
 
 // Sub-components
 import PaymentMethodSelector from "./components/PaymentMethodSelector";
@@ -24,11 +25,41 @@ import PaymentPriceSummary from "./components/PaymentPriceSummary";
 import { usersDummy } from "../../utils/usersDummy";
 
 export default function PaymentModal({ visible, onClose, project }) {
-  if (!visible) return null;
-  if (!project?.id) return null;
+  const [owner, setOwner] = React.useState(null);
 
-  const owner = usersDummy.find(u => u.id === project.ownerId);
+  React.useEffect(() => {
+    // Only fetch if project exists
+    if (!project?.ownerId) {
+      setOwner(null);
+      return;
+    }
 
+    const fetchOwner = async () => {
+      try {
+        // 1. Try to find in dummy data first (optional, maybe skip if fully migrating)
+        const dummy = usersDummy.find(u => u.id === project.ownerId);
+        if (dummy) {
+          setOwner(dummy);
+          return;
+        }
+
+        // 2. Fetch from Firestore
+        const db = getFirestore();
+        const userDoc = await getDoc(doc(db, 'users', project.ownerId));
+        if (userDoc.exists()) {
+          setOwner(userDoc.data());
+        } else {
+          setOwner({ displayName: "알 수 없음" });
+        }
+      } catch (e) {
+        console.error("Owner Fetch Error:", e);
+        setOwner({ displayName: "알 수 없음" });
+      }
+    };
+    fetchOwner();
+  }, [project]);
+
+  // Always call hooks
   const {
     paymentMethod, setPaymentMethod,
     easyPayProvider, setEasyPayProvider,
@@ -40,7 +71,10 @@ export default function PaymentModal({ visible, onClose, project }) {
     ownerName, setOwnerName,
     totalPrice, price, fee,
     handlePay
-  } = usePaymentForm(project, onClose);
+  } = usePaymentForm(project || {}, onClose);
+
+  // Conditional rendering for UI ONLY
+  if (!visible || !project?.id) return null;
 
   return (
     <Modal

@@ -30,8 +30,8 @@ export const dummyProjects = [
 
     githubUrl: "toylink/ar-block-app",
     roles: [
-      { name: "프론트엔드 개발자", status: "open" },
-      { name: "UI/UX 디자이너", status: "open" },
+      { name: "프론트엔드 개발자", status: "recruiting" },
+      { name: "UI/UX 디자이너", status: "recruiting" },
     ],
 
     deliverInfo: "다운로드 가능, 소스코드 포함",
@@ -57,7 +57,7 @@ export const dummyProjects = [
     createdAt: "2025-01-20T09:12:00.000Z",
 
     intro: "사용자 취향을 학습하여 자동으로 영화를 추천해주는 시스템입니다.",
-    roles: [{ name: "백엔드 개발자", status: "open" }],
+    roles: [{ name: "백엔드 개발자", status: "recruiting" }],
 
     githubUrl: "toylink/movie-ai",
     githubMeta: "develop branch • 23 commits",
@@ -146,7 +146,7 @@ export const dummyProjects = [
     teamMemberCount: 1,
     applicantCount: 0,
 
-    roles: [{ name: "프론트엔드 개발자", status: "open" }],
+    roles: [{ name: "프론트엔드 개발자", status: "recruiting" }],
     deliverInfo: "무료 사용 가능",
     githubUrl: null,
     isRecruiting: true,
@@ -176,7 +176,7 @@ export const dummyProjects = [
     teamMemberCount: 3,
     applicantCount: 7,
 
-    roles: [{ name: "백엔드 개발자", status: "open" }],
+    roles: [{ name: "백엔드 개발자", status: "recruiting" }],
     deliverInfo: "서버 코드 및 배포 스크립트 제공",
     githubUrl: "https://github.com/example/study-matching",
     isRecruiting: true,
@@ -266,7 +266,7 @@ export const dummyProjects = [
     teamMemberCount: 2,
     applicantCount: 0,
 
-    roles: [{ name: "AI 엔지니어", status: "open" }],
+    roles: [{ name: "AI 엔지니어", status: "recruiting" }],
     deliverInfo: "YOLO 모델 및 학습 코드 포함",
     githubUrl: "https://github.com/example/yolo-object",
     isRecruiting: true,

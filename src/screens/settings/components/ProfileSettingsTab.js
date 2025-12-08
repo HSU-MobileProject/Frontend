@@ -15,7 +15,7 @@ import colors from '../../../assets/colors';
 
 import { launchImageLibrary } from 'react-native-image-picker';
 import { authService } from '../../../services/authService';
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, doc, updateDoc } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
 export default function ProfileSettingsTab({ user, navigation }) {
@@ -34,7 +34,9 @@ export default function ProfileSettingsTab({ user, navigation }) {
     if (user) {
       setFormData(prev => ({
         ...prev,
-        name: user.displayName || '',
+        // 기존 입력값이 있으면 유지하지 않고, DB 값으로 덮어씁니다 (불러오기 기능)
+        // 단, DB 값이 null/undefined일 때만 빈 문자열 처리
+        name: user.displayName || user.nickname || '',
         email: user.email || '',
         bio: user.bio || '',
         website: user.website || '',
@@ -99,7 +101,9 @@ export default function ProfileSettingsTab({ user, navigation }) {
       };
 
       // 1. Firestore 업데이트
-      await firestore().collection('users').doc(currentUser.uid).update(updateData);
+      const db = getFirestore();
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, updateData);
 
       // 2. Auth Profile 업데이트 (이름, 사진)
       await currentUser.updateProfile({

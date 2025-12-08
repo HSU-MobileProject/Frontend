@@ -38,7 +38,6 @@ export default StyleSheet.create({
   topImage: {
     width: "100%",
     height: 128 * scale,
-    backgroundColor: Colors.green,
   },
 
   /* --- 카드 내용 --- */

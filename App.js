@@ -64,25 +64,56 @@ export default function App() {
   const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
 
   const handleStateChange = () => {
-    const route = navigationRef.getCurrentRoute();
-    const routeName = route?.name ?? '';
+    const state = navigationRef.getRootState();
+    if (!state || !state.routes) return;
 
-    // 플로팅 버튼 숨김 처리
-    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(routeName)) {
+    // 현재 라우트 (맨 위)
+    const currentRoute = navigationRef.getCurrentRoute();
+    const currentRouteName = currentRoute?.name ?? '';
+
+    // 1. 탭 상태 동기화 (스택 역추적)
+    // 스택을 뒤에서부터 탐색하여 탭과 매핑되는 첫 번째 라우트를 찾음
+    const tabMapping = {
+      'ProjectList': '메인',
+      'ProjectListAll': '메인',
+      'ProjectSearch': '검색',
+      'ProjectLike': '즐겨찾기',
+      'ChatList': '채팅',
+      'ChatDetail': '채팅',
+      'MyPage': '내정보',
+      'Settings': '내정보',
+    };
+
+    let newTab = activeTab; // 기본값: 현재 탭 유지
+    const routes = state.routes; // Root Stack routes
+
+    for (let i = routes.length - 1; i >= 0; i--) {
+      const route = routes[i];
+      if (tabMapping[route.name]) {
+        newTab = tabMapping[route.name];
+        break;
+      }
+    }
+    
+    // 만약 스택에 매핑되는 게 하나도 없다면(초기화 등), 변경하지 않음
+    setActiveTab(newTab);
+
+    // 2. 플로팅 버튼 숨김 처리
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(currentRouteName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
     }
 
-    // ChatScreen일 때 헤더 숨기기
-    if (routeName === 'ChatDetail') {
+    // 3. ChatScreen일 때 헤더 숨기기
+    if (currentRouteName === 'ChatDetail') {
       setHideHeader(true);
     } else {
       setHideHeader(false);
     }
 
-    // Notification 화면에서 NavBar 숨기기
-    if (routeName === 'Notification') {
+    // 4. Notification 화면에서 NavBar 숨기기
+    if (currentRouteName === 'Notification') {
       setHideNavBar(true);
     } else {
       setHideNavBar(false);

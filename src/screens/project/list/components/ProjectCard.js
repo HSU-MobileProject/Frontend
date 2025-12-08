@@ -20,6 +20,7 @@ export default function ProjectCard({
   onPress, // 상세 페이지 이동용 콜백
   onPurchasePress, // 구매 버튼 콜백
   isOwner, // 본인 프로젝트 여부
+  isLiked, // 좋아요 여부 (bookmark)
 }) {
   const {
     category,
@@ -30,8 +31,9 @@ export default function ProjectCard({
     views,
     priceType,
     price,
-    thumbnailUrl,
   } = project;
+
+  const thumbnailUrl = project.thumbnailUrl || project.thumbnail;
 
   const badgeColor = categoryColors[category] || categoryColors.default;
 
@@ -60,7 +62,11 @@ export default function ProjectCard({
 
             <View style={styles.statsRow}>
               <View style={styles.statItem}>
-                <Star size={16 * scale} color={Colors.grayDark} />
+                <Star 
+                  size={16 * scale} 
+                  color={isLiked ? "#FFD700" : Colors.grayDark} 
+                  fill={isLiked ? "#FFD700" : "transparent"}
+                />
                 <Text style={styles.statTextOutline}>{likes}</Text>
               </View>
 

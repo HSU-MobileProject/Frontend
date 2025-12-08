@@ -33,7 +33,10 @@ export default function MessageInput({ onSendMessage }) {
         placeholderTextColor={colors.grayDark}
         value={message}
         onChangeText={setMessage}
-        multiline
+        multiline={true}
+        blurOnSubmit={true}
+        onSubmitEditing={handleSend}
+        returnKeyType="send"
         maxHeight={100 * scale}
       />
 

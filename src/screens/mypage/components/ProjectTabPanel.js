@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../../assets/colors';
 import styles from './ProjectTabPanel.styles';
 import { authService } from '../../../services/authService';
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, query, where, getDocs } from '@react-native-firebase/firestore';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
@@ -30,10 +30,9 @@ export default function ProjectTabPanel({ navigation }) {
       if (activeTab === 'registered') {
         try {
           // Index Error 방지를 위해 orderBy 제거 후 Client-side sort
-          const snapshot = await firestore()
-            .collection('projects')
-            .where('ownerId', '==', user.uid)
-            .get();
+          const db = getFirestore();
+          const q = query(collection(db, 'projects'), where('ownerId', '==', user.uid));
+          const snapshot = await getDocs(q);
 
           const data = snapshot.docs.map(doc => ({
             id: doc.id,

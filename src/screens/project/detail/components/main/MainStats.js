@@ -4,9 +4,11 @@ import { Star, Eye, Calendar } from "lucide-react-native";
 import styles from "../../ProjectDetail.styles";
 
 export default function MainStats({ likes, views, createdAt }) {
-  const created = createdAt
-    ? new Date(createdAt).toLocaleDateString("ko-KR")
-    : "";
+  let created = "";
+  if (createdAt) {
+    const dateObj = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+    created = dateObj.toLocaleDateString("ko-KR");
+  }
 
   return (
     <View style={styles.mainStatsRow}>

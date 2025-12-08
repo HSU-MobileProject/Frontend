@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { User } from "lucide-react-native";
-import firestore from '@react-native-firebase/firestore'; // Import Firestore
+import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore'; // Import Firestore Modular SDK
 import styles from "../ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
@@ -16,8 +16,11 @@ export default function DetailLeaderCard({ project, owner }) {
 
     const fetchLeader = async () => {
       try {
-        const userDoc = await firestore().collection('users').doc(project.ownerId).get();
-        if (userDoc.exists) {
+        const db = getFirestore();
+        const userDocRef = doc(db, 'users', project.ownerId);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
           setLeader(userDoc.data());
         } else {
           setLeader({ displayName: "알 수 없음", role: "" });
@@ -48,10 +51,10 @@ export default function DetailLeaderCard({ project, owner }) {
           </View>
         )}
 
-        {/* 이름/역할 */}
+        {/* 이름/이메일 */}
         <View style={{ marginLeft: 4 }}>
           <Text style={styles.leaderName}>{displayUser.displayName}</Text>
-          <Text style={styles.leaderRole}>{displayUser.role}</Text>
+          <Text style={styles.leaderRole}>{displayUser.email}</Text>
         </View>
       </View>
 
