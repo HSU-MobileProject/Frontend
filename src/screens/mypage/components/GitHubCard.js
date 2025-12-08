@@ -10,6 +10,7 @@ const scale = width / 409;
 export default function GitHubCard({
   onOpenGitHubModal,
   isGitHubConnected = true,
+  gitHubUsername,
 }) {
   const handleConnect = () => {
     onOpenGitHubModal?.();
@@ -32,7 +33,7 @@ export default function GitHubCard({
 
           <View style={styles.infoText}>
             <Text style={styles.username}>
-              {isGitHubConnected ? '@kimdev' : 'GitHub'}
+              {isGitHubConnected ? (gitHubUsername || 'GitHub User') : 'GitHub'}
             </Text>
             <Text style={styles.status}>
               {isGitHubConnected ? '연동됨' : '연동하지 않음'}

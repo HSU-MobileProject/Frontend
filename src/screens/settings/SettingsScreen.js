@@ -9,11 +9,27 @@ import SecuritySettingsTab from './components/SecuritySettingsTab';
 import NotificationSettingsTab from './components/NotificationSettingsTab';
 import PrivacySettingsTab from './components/PrivacySettingsTab';
 
+import { authService } from '../../services/authService';
+import firestore from '@react-native-firebase/firestore';
+
 export default function SettingsScreen({ navigation, setHideHeader }) {
   const [activeTab, setActiveTab] = useState('profile');
+  const [userData, setUserData] = useState(null);
 
   React.useEffect(() => {
     setHideHeader?.(false);
+
+    // 유저 정보 가져오기
+    const fetchUser = async () => {
+      const user = authService.getCurrentUser();
+      if (user) {
+        const doc = await firestore().collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          setUserData(doc.data());
+        }
+      }
+    };
+    fetchUser();
   }, [setHideHeader]);
 
   const tabs = [
@@ -26,7 +42,7 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'profile':
-        return <ProfileSettingsTab />;
+        return <ProfileSettingsTab user={userData} navigation={navigation} />;
       case 'security':
         return <SecuritySettingsTab />;
       case 'notification':

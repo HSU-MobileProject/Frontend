@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Alert } from "react-native";
-import { paymentService } from "../screens/payment/services/paymentService";
+import { paymentService } from "../services/paymentService";
 
 export default function usePaymentForm(project, onClose) {
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [easyPayProvider, setEasyPayProvider] = useState(null);
   const [agreed, setAgreed] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Card Inputs
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
@@ -41,7 +41,7 @@ export default function usePaymentForm(project, onClose) {
       };
 
       const result = await paymentService.processPayment(paymentData);
-      
+
       Alert.alert("결제 완료", result.message, [
         { text: "확인", onPress: onClose }
       ]);

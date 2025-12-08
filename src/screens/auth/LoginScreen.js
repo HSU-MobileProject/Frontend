@@ -5,11 +5,13 @@ import {
   TouchableOpacity,
   TextInput,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './LoginScreen.styles';
 import colors from '../../assets/colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { authService } from '../../services/authService';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
@@ -18,6 +20,27 @@ export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('알림', '이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    try {
+      await authService.login(email, password);
+      setIsLoggedIn(true); // App.js state update
+    } catch (error) {
+      console.error(error);
+      let message = '로그인에 실패했습니다.';
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        message = '이메일 또는 비밀번호가 올바르지 않습니다.';
+      } else if (error.code === 'auth/invalid-email') {
+        message = '유효하지 않은 이메일 형식입니다.';
+      }
+      Alert.alert('오류', message);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,7 +119,7 @@ export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
 
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={() => setIsLoggedIn(true)}
+              onPress={handleLogin}
             >
               <Text style={styles.loginButtonText}>로그인</Text>
             </TouchableOpacity>
@@ -107,7 +130,17 @@ export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
               <View style={styles.dividerLine} />
             </View>
 
-            <TouchableOpacity style={styles.oauthButton}>
+            <TouchableOpacity
+              style={styles.oauthButton}
+              onPress={async () => {
+                try {
+                  await authService.loginWithGithub();
+                  setIsLoggedIn(true);
+                } catch (e) {
+                  Alert.alert("GitHub 로그인 실패", e.message);
+                }
+              }}
+            >
               <Icon
                 name="github"
                 size={14 * scale}

@@ -41,6 +41,25 @@ export default function App() {
   const [hideAddButton, setHideAddButton] = useState(false);
   const [hideNavBar, setHideNavBar] = useState(false);
 
+  // Authentication Persistence
+  React.useEffect(() => {
+    // Dynamically import auth to avoid initialization issues if not used
+    const checkAuth = async () => {
+      const { authService } = require('./src/services/authService');
+      const unsubscribe = authService.onAuthStateChanged(user => {
+        setIsLoggedIn(!!user);
+      });
+      return unsubscribe;
+    };
+
+    let unsubscribe;
+    checkAuth().then(unsub => { unsubscribe = unsub; });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
   const showAddButtonTabs = ['메인', '검색', '즐겨찾기'];
   const showAddButton = showAddButtonTabs.includes(activeTab) && !hideAddButton;
 
@@ -183,7 +202,6 @@ export default function App() {
                 activeTab={activeTab}
                 onPress={setActiveTab}
                 onLayoutNavBar={setNavBarHeight}
-                navigationRef={navigationRef}
               />
             )}
           </>

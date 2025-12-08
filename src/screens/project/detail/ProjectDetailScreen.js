@@ -11,24 +11,70 @@ import DetailStatusCard from "./components/DetailStatusCard";
 
 import { usersDummy, dummyCurrentUser } from "../../../utils/usersDummy";
 
-export default function ProjectDetailScreen({ route }) {
+import firestore from '@react-native-firebase/firestore';
+import { authService } from "../../../services/authService";
+import { Alert } from "react-native";
+
+export default function ProjectDetailScreen({ route, navigation }) {
   const project = route?.params?.project || {};
 
   const owner = usersDummy.find((u) => u.id === project.ownerId) || null;
+
+  const handleApply = async () => {
+    const user = authService.getCurrentUser();
+    if (!user) {
+      Alert.alert("알림", "로그인이 필요한 서비스입니다.");
+      return;
+    }
+    if (user.uid === project.ownerId) {
+      Alert.alert("알림", "자신의 프로젝트에는 지원할 수 없습니다.");
+      return;
+    }
+
+    try {
+      // 중복 지원 확인
+      const snapshot = await firestore()
+        .collection('applications')
+        .where('projectId', '==', project.id)
+        .where('applicantId', '==', user.uid)
+        .get();
+
+      if (!snapshot.empty) {
+        Alert.alert("알림", "이미 지원한 프로젝트입니다.");
+        return;
+      }
+
+      // 지원하기 저장
+      await firestore().collection('applications').add({
+        projectId: project.id,
+        projectTitle: project.title, // 편의상 저장
+        applicantId: user.uid,
+        ownerId: project.ownerId,
+        status: 'pending',
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+
+      Alert.alert("성공", "프로젝트 지원이 완료되었습니다.");
+    } catch (e) {
+      console.error("Apply Error:", e);
+      Alert.alert("오류", "지원 중 문제가 발생했습니다.");
+    }
+  };
 
   if (!project) return null;
 
   return (
     <View style={styles.screenWrapper}>
-      <DetailHeader project={project} currentUser={dummyCurrentUser}/>
+      <DetailHeader project={project} currentUser={dummyCurrentUser} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
-        <DetailMainCard 
-          project={project} 
-          isOwner={dummyCurrentUser.id === project.ownerId}
+        <DetailMainCard
+          project={project}
+          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
+          onApplyPress={handleApply}
         />
         <DetailAboutCard project={project} />
 
@@ -37,9 +83,9 @@ export default function ProjectDetailScreen({ route }) {
         <DetailLeaderCard project={project} owner={owner} />
         <DetailStatusCard project={project} />
 
-        <DetailPriceCard 
-          project={project} 
-          isOwner={dummyCurrentUser.id === project.ownerId}
+        <DetailPriceCard
+          project={project}
+          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
         />
       </ScrollView>
     </View>
