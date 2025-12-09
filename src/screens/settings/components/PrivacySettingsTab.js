@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,16 +9,61 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './PrivacySettingsTab.styles';
-import colors from '../../../assets/colors';
+import { authService } from '../../../services/authService';
+import { getFirestore, doc, updateDoc, getDoc, deleteDoc } from '@react-native-firebase/firestore';
 
 export default function PrivacySettingsTab() {
+  const [loading, setLoading] = useState(true);
   const [privacy, setPrivacy] = useState({
     emailPublic: false,
     projectListPublic: true,
   });
 
-  const handleToggle = field => {
-    setPrivacy(prev => ({ ...prev, [field]: !prev[field] }));
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const user = authService.getCurrentUser();
+        if (user) {
+          const db = getFirestore();
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.privacySettings) {
+              setPrivacy(prev => ({ ...prev, ...data.privacySettings }));
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load privacy settings:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleToggle = async (field) => {
+    const newVal = !privacy[field];
+    const newSettings = { ...privacy, [field]: newVal };
+    
+    // Optimistic Update
+    setPrivacy(newSettings);
+
+    try {
+      const user = authService.getCurrentUser();
+      if (user) {
+        const db = getFirestore();
+        await updateDoc(doc(db, 'users', user.uid), {
+           privacySettings: newSettings
+        });
+      }
+    } catch (e) {
+      console.error("Failed to save privacy settings:", e);
+      // Revert on error
+      setPrivacy(prev => ({ ...prev, [field]: !newVal }));
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -29,7 +74,22 @@ export default function PrivacySettingsTab() {
         { text: '취소', onPress: () => {} },
         {
           text: '삭제',
-          onPress: () => Alert.alert('계정이 삭제되었습니다'),
+          onPress: async () => {
+             try {
+                const user = authService.getCurrentUser();
+                if (user) {
+                    const db = getFirestore();
+                    // 1. 유저 문서 삭제
+                    await deleteDoc(doc(db, 'users', user.uid));
+                    // 2. Auth 계정 삭제
+                    await user.delete();
+                    Alert.alert('알림', '계정이 성공적으로 삭제되었습니다.');
+                }
+             } catch(e) {
+                 console.error("Delete Account Error:", e);
+                 Alert.alert('오류', '계정 삭제 중 문제가 발생했습니다. (재로그인 후 다시 시도해주세요)');
+             }
+          },
           style: 'destructive',
         },
       ],

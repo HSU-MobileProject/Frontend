@@ -40,7 +40,7 @@ export default function NotificationItem({ item }) {
   const getTitle = () => {
     switch (item.type) {
       case "message": return "새로운 메시지";
-      case "like": return "좋아요";
+      case "like": return "즐겨찾기";
       case "system": return "GitHub 업데이트";
       case "apply": return "새로운 지원자";
       case "approve": return "지원 승인";

@@ -88,7 +88,7 @@ export default function UserInfoCard({ userInfo, onLogout, onSettings }) {
         </View>
 
         <View style={styles.statRow}>
-          <Text style={styles.statLabel}>받은 좋아요</Text>
+          <Text style={styles.statLabel}>받은 즐겨찾기</Text>
           <Text style={styles.statValue}>{userInfo.totalLikes}개</Text>
         </View>
       </View>

@@ -63,7 +63,7 @@ export default function ProjectTabPanel({ navigation }) {
             statusColor:
               doc.data().status === '완료' ? colors.grayDark : colors.green,
             status: doc.data().status || '진행중',
-            isLiked: likedIds.includes(doc.id), // 좋아요 여부 반영
+            isLiked: likedIds.includes(doc.id), // 즐겨찾기 여부 반영
           }));
 
           // 최신순 정렬
@@ -100,7 +100,7 @@ export default function ProjectTabPanel({ navigation }) {
                     : colors.green,
                 status: pDoc.data().status || '진행중',
                 applicationStatus: appData.status, // 지원 상태 표시용 (필요시)
-                isLiked: likedIds.includes(pDoc.id), // 좋아요 여부 반영
+                isLiked: likedIds.includes(pDoc.id), // 즐겨찾기 여부 반영
               };
             }
             return null;
@@ -231,7 +231,7 @@ export default function ProjectTabPanel({ navigation }) {
                 {/* 프로젝트 제목 */}
                 <Text style={styles.projectTitle}>{project.title}</Text>
 
-                {/* 좋아요 및 조회수 */}
+                {/* 즐겨찾기 및 조회수 */}
                 <View style={styles.statsRow}>
                   <View style={styles.stat}>
                     <Heart 

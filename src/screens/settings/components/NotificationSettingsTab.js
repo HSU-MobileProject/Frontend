@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Switch, ScrollView } from 'react-native';
 import styles from './NotificationSettingsTab.styles';
-import colors from '../../../assets/colors';
+import { authService } from '../../../services/authService';
+import { getFirestore, doc, updateDoc, getDoc } from '@react-native-firebase/firestore';
 
 export default function NotificationSettingsTab() {
+  const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState({
     receive: true,
     projectUpdate: true,
@@ -11,8 +13,51 @@ export default function NotificationSettingsTab() {
     newMessage: true,
   });
 
-  const handleToggle = field => {
-    setNotifications(prev => ({ ...prev, [field]: !prev[field] }));
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const user = authService.getCurrentUser();
+        if (user) {
+          const db = getFirestore();
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.notificationSettings) {
+              setNotifications(prev => ({ ...prev, ...data.notificationSettings }));
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load settings:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleToggle = async (field) => {
+    const newVal = !notifications[field];
+    const newSettings = { ...notifications, [field]: newVal };
+    
+    // Optimistic Update
+    setNotifications(newSettings);
+
+    try {
+      const user = authService.getCurrentUser();
+      if (user) {
+        const db = getFirestore();
+        await updateDoc(doc(db, 'users', user.uid), {
+           notificationSettings: newSettings
+        });
+      }
+    } catch (e) {
+      console.error("Failed to save settings:", e);
+      // Revert on error
+      setNotifications(prev => ({ ...prev, [field]: !newVal }));
+    }
   };
 
   const renderToggle = (field, label, description) => (
@@ -41,23 +86,25 @@ export default function NotificationSettingsTab() {
         <View style={styles.divider} />
 
         {/* Notification Preferences */}
-        <View style={styles.preferencesSection}>
-          {renderToggle(
-            'projectUpdate',
-            '프로젝트 업데이트',
-            '참여 중인 프로젝트의 새 소식',
-          )}
-          {renderToggle(
-            'projectFavorite',
-            '프로젝트 즐겨찾기',
-            '내 프로젝트가 즐겨찾기 받았을 때',
-          )}
-          {renderToggle(
-            'newMessage',
-            '새 메시지',
-            '다른 사용자로부터 받은 메시지',
-          )}
-        </View>
+        {notifications.receive && (
+          <View style={styles.preferencesSection}>
+            {renderToggle(
+              'projectUpdate',
+              '프로젝트 업데이트',
+              '참여 중인 프로젝트의 새 소식',
+            )}
+            {renderToggle(
+              'projectFavorite',
+              '프로젝트 즐겨찾기',
+              '내 프로젝트가 즐겨찾기 받았을 때',
+            )}
+            {renderToggle(
+              'newMessage',
+              '새 메시지',
+              '다른 사용자로부터 받은 메시지',
+            )}
+          </View>
+        )}
       </View>
     </ScrollView>
   );

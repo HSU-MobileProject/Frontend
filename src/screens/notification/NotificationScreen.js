@@ -19,7 +19,7 @@ export default function NotificationScreen() {
     if (activeTab === "전체") return true;
     if (activeTab === "읽지않음") return !n.isRead;
     if (activeTab === "메시지") return n.type === 'message';
-    if (activeTab === "좋아요") return n.type === 'like' || n.type === 'interest';
+    if (activeTab === "즐겨찾기") return n.type === 'like' || n.type === 'interest';
     if (activeTab === "시스템") return !['message', 'like', 'interest'].includes(n.type);
     return true;
   });

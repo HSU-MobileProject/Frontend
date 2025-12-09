@@ -37,7 +37,7 @@ export default function MyPageScreen({
               console.log("MyPage User Data:", JSON.stringify(data, null, 2)); // Debug Log
               if (!data) return;
 
-              // 1. 등록된 프로젝트 수 및 받은 좋아요 수 계산
+              // 1. 등록된 프로젝트 수 및 받은 즐겨찾기 수 계산
               let regCount = 0;
               let likesCount = 0;
               try {

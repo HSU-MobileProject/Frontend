@@ -51,7 +51,7 @@ export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyP
         <Text style={styles.mainChatBtnText}>채팅</Text>
       </TouchableOpacity>
 
-      {/* 좋아요 아이콘 */}
+      {/* 즐겨찾기 아이콘 */}
       <TouchableOpacity 
         style={styles.mainIconBtn} 
         activeOpacity={0.8}

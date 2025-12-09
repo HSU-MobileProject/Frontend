@@ -20,7 +20,7 @@ export default function ProjectCard({
   onPress, // 상세 페이지 이동용 콜백
   onPurchasePress, // 구매 버튼 콜백
   isOwner, // 본인 프로젝트 여부
-  isLiked, // 좋아요 여부 (bookmark)
+  isLiked, // 즐겨찾기 여부 (bookmark)
 }) {
   const {
     category,

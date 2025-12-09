@@ -9,7 +9,7 @@ export default function NotificationFilter({ activeTab, onSelectTab, counts }) {
     { key: "읽지않음", label: "읽지않음", count: counts.unread, color: "#00B26B" },
     { key: "메시지", label: "메시지", count: 0, color: null },
     { key: "시스템", label: "시스템", count: 0, color: null },
-    { key: "좋아요", label: "좋아요", count: 0, color: null },
+    { key: "즐겨찾기", label: "즐겨찾기", count: 0, color: null },
   ];
 
   return (
