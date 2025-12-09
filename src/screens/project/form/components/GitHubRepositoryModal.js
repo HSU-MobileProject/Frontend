@@ -191,10 +191,15 @@ export default function GitHubRepositoryModal({ visible, onClose, onSelect }) {
             {/* 1. Header */}
             <View style={styles.header}>
                 <View style={styles.headerTop}>
-                    <View style={styles.headerIconContainer}>
-                         <Github size={18} color="#1A1A1A" />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={styles.headerIconContainer}>
+                             <Github size={18} color="#1A1A1A" />
+                        </View>
+                        <Text style={styles.headerTitle}>GitHub 연동</Text>
                     </View>
-                    <Text style={styles.headerTitle}>GitHub 연동</Text>
+                    <TouchableOpacity onPress={onClose} style={{ padding: 4 }}>
+                        <X size={20} color="#1A1A1A" />
+                    </TouchableOpacity>
                 </View>
                 <Text style={styles.headerSubtitle}>GitHub 계정을 연동하여 저장소를 쉽게 관리하세요</Text>
             </View>
@@ -268,9 +273,6 @@ export default function GitHubRepositoryModal({ visible, onClose, onSelect }) {
 
                         {/* Footer Buttons */}
                         <View style={styles.footer}>
-                            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                                <Text style={styles.cancelButtonText}>취소</Text>
-                            </TouchableOpacity>
                             <TouchableOpacity 
                                 style={[styles.completeButton, !selectedRepo && styles.disabledButton]} 
                                 onPress={handleComplete}
@@ -316,6 +318,7 @@ const styles = StyleSheet.create({
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 8,
   },
   headerIconContainer: {
