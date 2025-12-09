@@ -69,10 +69,15 @@ const GITHUB_REPOSITORIES = [
   },
 ];
 
-export default function GitHubConnectModal({ visible, onClose, scale = 1 }) {
+import { authService } from '../../../../services/authService';
+
+// ... (GitHub Repositories data preserved if needed, or moved)
+
+export default function GitHubConnectModal({ visible, onClose, scale = 1, isConnected, username }) {
   const [searchText, setSearchText] = useState('');
   const [selectedRepos, setSelectedRepos] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false); // Used prop instead
 
   const filteredRepos = GITHUB_REPOSITORIES.filter(
     repo =>
@@ -88,8 +93,23 @@ export default function GitHubConnectModal({ visible, onClose, scale = 1 }) {
     );
   };
 
-  const handleDisconnect = () => {
-    setIsConnected(false);
+  const handleConnect = async () => {
+    try {
+      setLoading(true);
+      await authService.linkGitHub();
+      // 연동 성공 시 MyPageScreen의 onSnapshot이 감지하여 isConnected 업데이트됨
+      setLoading(false);
+    } catch (error) {
+      console.error('GitHub Link Error:', error);
+      setLoading(false);
+      const { Alert } = require('react-native');
+      Alert.alert("오류", "GitHub 연동 페이지를 여는 중 문제가 발생했습니다.\n" + error.message);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    // TODO: Implement disconnect if needed
+    // setIsConnected(false);
     setSelectedRepos([]);
   };
 
@@ -129,8 +149,8 @@ export default function GitHubConnectModal({ visible, onClose, scale = 1 }) {
             contentContainerStyle={{ paddingBottom: 20 * scale }}
             showsVerticalScrollIndicator={false}
           >
-            {/* GitHub Account Info */}
-            {isConnected && (
+            {/* GitHub Account Info or Connect Button */}
+            {isConnected ? (
               <View style={[styles.connectedCard, { padding: 16 * scale }]}>
                 <View style={styles.accountInfo}>
                   <View
@@ -152,30 +172,18 @@ export default function GitHubConnectModal({ visible, onClose, scale = 1 }) {
                     <Text
                       style={[styles.accountName, { fontSize: 16 * scale }]}
                     >
-                      toylink-dev
+                      {username || 'GitHub User'}
                     </Text>
                     <Text
                       style={[styles.accountStatus, { fontSize: 14 * scale }]}
                     >
-                      6개 저장소
+                      연동됨
                     </Text>
                   </View>
                 </View>
 
                 <View style={[styles.accountActions, { gap: 8 * scale }]}>
-                  <TouchableOpacity
-                    style={[
-                      styles.iconButton,
-                      { width: 36 * scale, height: 36 * scale },
-                    ]}
-                  >
-                    <Icon
-                      name="refresh"
-                      size={16 * scale}
-                      color={colors.black}
-                    />
-                  </TouchableOpacity>
-
+                  {/*
                   <TouchableOpacity
                     style={[
                       styles.disconnectButton,
@@ -194,118 +202,139 @@ export default function GitHubConnectModal({ visible, onClose, scale = 1 }) {
                       연동 해제
                     </Text>
                   </TouchableOpacity>
+                  */}
                 </View>
               </View>
+            ) : (
+                 <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                     <Text style={{ marginBottom: 15, color: colors.grayDark }}>
+                         아직 GitHub 계정이 연동되지 않았습니다.
+                     </Text>
+                     <TouchableOpacity
+                         style={[styles.button, { backgroundColor: '#333', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8 }]}
+                         onPress={handleConnect}
+                         disabled={loading}
+                     >
+                         <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                            {loading ? '연동 중...' : 'GitHub 계정 연동하기'}
+                         </Text>
+                     </TouchableOpacity>
+                 </View>
             )}
 
-            {/* Search */}
-            <View style={styles.searchSection}>
-              <Text style={[styles.searchLabel, { fontSize: 14 * scale }]}>
-                저장소 검색
-              </Text>
-
-              <View style={styles.searchInput}>
-                <Icon name="search" size={14 * scale} color={colors.grayDark} />
-                <TextInput
-                  placeholder="저장소 이름이나 설명으로 검색..."
-                  placeholderTextColor={colors.grayDark}
-                  value={searchText}
-                  onChangeText={setSearchText}
-                  style={[styles.searchInputText, { marginLeft: 8 * scale }]}
-                />
-              </View>
-            </View>
-
-            {/* Repository List */}
-            <View style={styles.repoListSection}>
-              <View style={styles.repoListHeader}>
-                <Text style={[styles.repoListTitle, { fontSize: 14 * scale }]}>
-                  저장소 선택
+            {/* Repository List - Only show if connected */}
+            {isConnected && (
+                <>
+                {/* Search */}
+                <View style={styles.searchSection}>
+                <Text style={[styles.searchLabel, { fontSize: 14 * scale }]}>
+                    저장소 검색
                 </Text>
-                <Text style={[styles.repoListCount, { fontSize: 14 * scale }]}>
-                  {filteredRepos.length}개의 저장소
-                </Text>
-              </View>
 
-              {filteredRepos.map(repo => (
-                <TouchableOpacity
-                  key={repo.id}
-                  style={[styles.repoCard, { padding: 16 * scale }]}
-                  onPress={() => toggleRepoSelection(repo.id)}
-                >
-                  <View style={styles.repoHeader}>
-                    <View style={styles.repoInfo}>
-                      <Text style={[styles.repoName, { fontSize: 16 * scale }]}>
-                        {repo.name}
-                      </Text>
-
-                      {repo.isPrivate && (
-                        <View style={styles.privateBadge}>
-                          <Text style={styles.privateBadgeText}>Private</Text>
-                        </View>
-                      )}
-
-                      <Text
-                        style={[
-                          styles.repoDescription,
-                          { fontSize: 14 * scale },
-                        ]}
-                      >
-                        {repo.description}
-                      </Text>
-                    </View>
-
-                    <Icon
-                      name={
-                        selectedRepos.includes(repo.id)
-                          ? 'check-square'
-                          : 'square-o'
-                      }
-                      size={20 * scale}
-                      color={colors.primary}
+                <View style={styles.searchInput}>
+                    <Icon name="search" size={14 * scale} color={colors.grayDark} />
+                    <TextInput
+                    placeholder="저장소 이름이나 설명으로 검색..."
+                    placeholderTextColor={colors.grayDark}
+                    value={searchText}
+                    onChangeText={setSearchText}
+                    style={[styles.searchInputText, { marginLeft: 8 * scale }]}
                     />
-                  </View>
+                </View>
+                </View>
 
-                  <View style={styles.repoMeta}>
-                    <View style={styles.languageTag}>
-                      <View
-                        style={[
-                          styles.languageDot,
-                          { backgroundColor: repo.languageColor },
-                        ]}
-                      />
-                      <Text
-                        style={[styles.languageText, { fontSize: 14 * scale }]}
-                      >
-                        {repo.language}
-                      </Text>
+                {/* Repository List */}
+                <View style={styles.repoListSection}>
+                <View style={styles.repoListHeader}>
+                    <Text style={[styles.repoListTitle, { fontSize: 14 * scale }]}>
+                    저장소 선택
+                    </Text>
+                    <Text style={[styles.repoListCount, { fontSize: 14 * scale }]}>
+                    {filteredRepos.length}개의 저장소
+                    </Text>
+                </View>
+
+                {filteredRepos.map(repo => (
+                    <TouchableOpacity
+                    key={repo.id}
+                    style={[styles.repoCard, { padding: 16 * scale }]}
+                    onPress={() => toggleRepoSelection(repo.id)}
+                    >
+                    <View style={styles.repoHeader}>
+                        <View style={styles.repoInfo}>
+                        <Text style={[styles.repoName, { fontSize: 16 * scale }]}>
+                            {repo.name}
+                        </Text>
+
+                        {repo.isPrivate && (
+                            <View style={styles.privateBadge}>
+                            <Text style={styles.privateBadgeText}>Private</Text>
+                            </View>
+                        )}
+
+                        <Text
+                            style={[
+                            styles.repoDescription,
+                            { fontSize: 14 * scale },
+                            ]}
+                        >
+                            {repo.description}
+                        </Text>
+                        </View>
+
+                        <Icon
+                        name={
+                            selectedRepos.includes(repo.id)
+                            ? 'check-square'
+                            : 'square-o'
+                        }
+                        size={20 * scale}
+                        color={colors.primary}
+                        />
                     </View>
 
-                    {repo.stars > 0 && (
-                      <View style={styles.metaItem}>
-                        <Icon
-                          name="star-o"
-                          size={14 * scale}
-                          color={colors.grayDark}
+                    <View style={styles.repoMeta}>
+                        <View style={styles.languageTag}>
+                        <View
+                            style={[
+                            styles.languageDot,
+                            { backgroundColor: repo.languageColor },
+                            ]}
                         />
-                        <Text style={[styles.metaText]}>{repo.stars}</Text>
-                      </View>
-                    )}
+                        <Text
+                            style={[styles.languageText, { fontSize: 14 * scale }]}
+                        >
+                            {repo.language}
+                        </Text>
+                        </View>
 
-                    {repo.forks > 0 && (
-                      <View style={styles.metaItem}>
-                        <Icon
-                          name="code-fork"
-                          size={14 * scale}
-                          color={colors.grayDark}
-                        />
-                        <Text style={[styles.metaText]}>{repo.forks}</Text>
-                      </View>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
+                        {repo.stars > 0 && (
+                        <View style={styles.metaItem}>
+                            <Icon
+                            name="star-o"
+                            size={14 * scale}
+                            color={colors.grayDark}
+                            />
+                            <Text style={[styles.metaText]}>{repo.stars}</Text>
+                        </View>
+                        )}
+
+                        {repo.forks > 0 && (
+                        <View style={styles.metaItem}>
+                            <Icon
+                            name="code-fork"
+                            size={14 * scale}
+                            color={colors.grayDark}
+                            />
+                            <Text style={[styles.metaText]}>{repo.forks}</Text>
+                        </View>
+                        )}
+                    </View>
+                    </TouchableOpacity>
+                ))}
+                </View>
+                </>
+            )}
           </ScrollView>
         </View>
       </View>
