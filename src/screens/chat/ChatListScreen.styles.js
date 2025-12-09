@@ -9,52 +9,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.beige,
+    paddingHorizontal: 17 * scale,
+    paddingVertical: 17 * scale,
   },
-  scrollContent: {
-    flexGrow: 1,
-    paddingVertical: 0,
-  },
-  header: {
-    height: 60 * scale,
-    backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16 * scale,
-  },
-  logo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoToy: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 20 * scale,
-    fontWeight: 'bold',
-    color: '#ffe57f',
-  },
-  logoLink: {
-    fontFamily: typography.fontFamily.regular,
-    fontSize: 20 * scale,
-    fontWeight: 'bold',
-    color: colors.primary,
-    marginLeft: 4 * scale,
-  },
-  headerButton: {
-    padding: 8 * scale,
-  },
-  content: {
+  card: {
     flex: 1,
-    paddingHorizontal: 20 * scale,
-    paddingVertical: 20 * scale,
+    backgroundColor: colors.white,
+    borderRadius: 14.9 * scale,
+    borderWidth: 0.75,
+    borderColor: 'rgba(0,0,0,0.1)',
+    padding: 17 * scale,
+    overflow: 'hidden',
+    // Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   title: {
     fontFamily: typography.fontFamily.regular,
-    fontSize: 24 * scale,
+    fontSize: 21.2 * scale,
     fontWeight: 'bold',
     color: colors.black,
-    marginBottom: 20 * scale,
+    marginBottom: 17 * scale,
+  },
+  chatListScroll: {
+    flex: 1,
+  },
+  chatListContainer: {
+    gap: 8.5 * scale,
   },
 });
 

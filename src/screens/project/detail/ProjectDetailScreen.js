@@ -23,14 +23,53 @@ export default function ProjectDetailScreen({ route, navigation }) {
 
   const owner = usersDummy.find((u) => u.id === project.ownerId) || null;
 
+  if (!project || !project.id) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>프로젝트 정보를 불러올 수 없습니다.</Text>
+      </View>
+    );
+  }
+
   const [isAppModalVisible, setIsAppModalVisible] = React.useState(false);
   const [isManageModalVisible, setIsManageModalVisible] = React.useState(false);
   const [myApplication, setMyApplication] = React.useState(null);
 
+  const [applicantCount, setApplicantCount] = React.useState(project.applicantCount || 0);
+
+  React.useEffect(() => {
+    if (!project?.id) return;
+
+    // 0. 실시간 지원자 수 카운트 (대기중인 지원자만)
+    const db = getFirestore();
+    // 복합 쿼리 인덱스가 필요할 수 있음 (projectId + status).
+    // 인덱스 에러 발생 시 console에 링크가 뜸.
+    // 우선 클라이언트 사이드 필터링으로 처리하여 인덱스 문제 회피 가능하나, 
+    // 지원자 수가 많지 않으므로 쿼리로 시도.
+    // 만약 에러나면 snapshot에서 필터링하는 방식으로 변경.
+    const q = query(
+      collection(db, 'applications'),
+      where('projectId', '==', project.id),
+      where('status', '==', 'pending')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setApplicantCount(snapshot.size);
+    }, (error) => {
+      console.log("App Count Error (Index might be missing):", error);
+      // Fallback: If index error, fetch all and filter client side
+      if (error.code === 'failed-precondition') {
+        // Re-subscribe without status filter? Or just ignore real-time count for now?
+        // Let's try simple filter.
+      }
+    });
+    return () => unsubscribe();
+  }, [project.id]);
+
   React.useEffect(() => {
     const fetchApplication = async () => {
       const user = authService.getCurrentUser();
-      if (!user) return;
+      if (!user || !project?.id) return;
 
       try {
         const db = getFirestore();
@@ -122,9 +161,9 @@ export default function ProjectDetailScreen({ route, navigation }) {
         await deleteDoc(likeDocRef);
       } else {
         await setDoc(likeDocRef, {
-            likedAt: serverTimestamp(),
-            projectTitle: project.title, // Optional: for user's like history
-            thumbnail: project.thumbnail || null
+          likedAt: serverTimestamp(),
+          projectTitle: project.title, // Optional: for user's like history
+          thumbnail: project.thumbnail || null
         });
       }
     } catch (e) {
@@ -149,7 +188,7 @@ export default function ProjectDetailScreen({ route, navigation }) {
         status: 'pending',
         createdAt: serverTimestamp(),
       };
-      
+
       await addDoc(collection(db, 'applications'), newApplication);
       setMyApplication(newApplication);
 
@@ -188,53 +227,53 @@ export default function ProjectDetailScreen({ route, navigation }) {
   const handleChatPress = async () => {
     const user = authService.getCurrentUser();
     if (!user) {
-        Alert.alert("알림", "로그인이 필요합니다.");
-        return;
+      Alert.alert("알림", "로그인이 필요합니다.");
+      return;
     }
     if (user.uid === project.ownerId) {
-        Alert.alert("알림", "본인과는 채팅할 수 없습니다.");
-        return;
+      Alert.alert("알림", "본인과는 채팅할 수 없습니다.");
+      return;
     }
 
     try {
       const db = getFirestore();
-      
+
       // 1. 이미 존재하는 채팅방이 있는지 확인
       // Firestore 쿼리 한계로 participants 배열에 [A, B]가 정확히 일치하는지 찾기 어려움
       // 대신 'currentUser'가 포함된 방을 찾고, 그 중에서 'ownerId'도 포함된 방을 필터링함.
       const q = query(
-          collection(db, 'chatRooms'),
-          where('participants', 'array-contains', user.uid)
+        collection(db, 'chatRooms'),
+        where('participants', 'array-contains', user.uid)
       );
       const snapshot = await getDocs(q);
 
       let foundRoom = null;
       snapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.participants && data.participants.includes(project.ownerId)) {
-              foundRoom = { id: doc.id, ...data };
-          }
+        const data = doc.data();
+        if (data.participants && data.participants.includes(project.ownerId)) {
+          foundRoom = { id: doc.id, ...data };
+        }
       });
 
       // 2. 방이 있으면 이동, 없으면 생성 후 이동
       if (foundRoom) {
-          navigation.navigate('ChatDetail', {
-              chatId: foundRoom.id,
-              userName: ownerData?.displayName || ownerData?.nickname || "알 수 없음"
-          });
+        navigation.navigate('ChatDetail', {
+          chatId: foundRoom.id,
+          userName: ownerData?.displayName || ownerData?.nickname || "알 수 없음"
+        });
       } else {
-          const newRoomData = {
-              participants: [user.uid, project.ownerId],
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp(),
-              lastMessage: "대화가 시작되었습니다.",
-          };
-          const docRef = await addDoc(collection(db, 'chatRooms'), newRoomData);
-          
-          navigation.navigate('ChatDetail', {
-              chatId: docRef.id,
-              userName: ownerData?.displayName || ownerData?.nickname || "알 수 없음"
-          });
+        const newRoomData = {
+          participants: [user.uid, project.ownerId],
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          lastMessage: "대화가 시작되었습니다.",
+        };
+        const docRef = await addDoc(collection(db, 'chatRooms'), newRoomData);
+
+        navigation.navigate('ChatDetail', {
+          chatId: docRef.id,
+          userName: ownerData?.displayName || ownerData?.nickname || "알 수 없음"
+        });
       }
 
     } catch (e) {
@@ -247,24 +286,24 @@ export default function ProjectDetailScreen({ route, navigation }) {
   const [realtimeProject, setRealtimeProject] = React.useState(project);
 
   React.useEffect(() => {
-     if (!project.id) return;
-     const db = getFirestore();
-     const unsubscribe = onSnapshot(doc(db, 'projects', project.id), (docSnapshot) => {
-        if (docSnapshot.exists) {
-          setRealtimeProject({ id: docSnapshot.id, ...docSnapshot.data() });
-        }
-     });
-     
-     // [추가] 조회수 증가 (Mount 시 1회)
-     try {
-       updateDoc(doc(db, 'projects', project.id), {
-         views: increment(1)
-       });
-     } catch (e) {
-       console.error("View Increment Error:", e);
-     }
+    if (!project.id) return;
+    const db = getFirestore();
+    const unsubscribe = onSnapshot(doc(db, 'projects', project.id), (docSnapshot) => {
+      if (docSnapshot.exists) {
+        setRealtimeProject({ id: docSnapshot.id, ...docSnapshot.data() });
+      }
+    });
 
-     return () => unsubscribe();
+    // [추가] 조회수 증가 (Mount 시 1회)
+    try {
+      updateDoc(doc(db, 'projects', project.id), {
+        views: increment(1)
+      });
+    } catch (e) {
+      console.error("View Increment Error:", e);
+    }
+
+    return () => unsubscribe();
   }, [project.id]);
 
   if (!realtimeProject) return null;
@@ -287,16 +326,22 @@ export default function ProjectDetailScreen({ route, navigation }) {
           isLiked={isLiked}
           onLikePress={handleLikePress}
           onChatPress={handleChatPress}
+          onEditPress={() => navigation.navigate('ProjectEdit', { project: realtimeProject })}
         />
         <DetailAboutCard project={realtimeProject} />
 
         {realtimeProject.githubUrl && <DetailGitHubCard project={realtimeProject} />}
 
         <DetailLeaderCard project={realtimeProject} owner={owner} />
-        <DetailStatusCard 
-          project={realtimeProject} 
+
+        <DetailStatusCard
+          project={realtimeProject}
+          applicantCount={applicantCount}
           isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
-          onManagePress={() => setIsManageModalVisible(true)}
+          onManagePress={() => {
+            console.log("Manage Button Pressed");
+            setIsManageModalVisible(true);
+          }}
         />
 
         <DetailPriceCard
@@ -305,12 +350,6 @@ export default function ProjectDetailScreen({ route, navigation }) {
           onPurchasePress={() => setIsPaymentModalVisible(true)}
         />
       </ScrollView>
-
-      <PaymentModal
-        visible={isPaymentModalVisible}
-        onClose={() => setIsPaymentModalVisible(false)}
-        project={realtimeProject}
-      />
 
       <ApplicationModal
         visible={isAppModalVisible}

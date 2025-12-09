@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 17 * scale,
     paddingVertical: 17 * scale,
     flexGrow: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
   },
 });
 

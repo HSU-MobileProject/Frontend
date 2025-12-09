@@ -7,9 +7,10 @@ import {
   ScrollView,
   Image,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Image as LucideImage } from 'lucide-react-native';
 import styles from './ProfileSettingsTab.styles';
 import colors from '../../../assets/colors';
 
@@ -17,6 +18,9 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { authService } from '../../../services/authService';
 import { getFirestore, doc, updateDoc } from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+
+const { width } = Dimensions.get('window');
+const scale = width / 409;
 
 export default function ProfileSettingsTab({ user, navigation }) {
   const [loading, setLoading] = useState(false);
@@ -62,7 +66,7 @@ export default function ProfileSettingsTab({ user, navigation }) {
     }
   };
 
-  const uploadImage = async (uri) => {
+  const uploadImage = async uri => {
     try {
       setLoading(true);
       const currentUser = authService.getCurrentUser();
@@ -78,11 +82,17 @@ export default function ProfileSettingsTab({ user, navigation }) {
 
       setFormData(prev => ({ ...prev, photoURL: url }));
       setLoading(false);
-      Alert.alert("알림", "이미지가 업로드되었습니다. '변경사항 저장'을 눌러 완료하세요.");
+      Alert.alert(
+        '알림',
+        "이미지가 업로드되었습니다. '변경사항 저장'을 눌러 완료하세요.",
+      );
     } catch (e) {
-      console.error("Upload Error:", e);
+      console.error('Upload Error:', e);
       setLoading(false);
-      Alert.alert("업로드 실패", "이미지 업로드 중 문제가 발생했습니다.\n" + e.message);
+      Alert.alert(
+        '업로드 실패',
+        '이미지 업로드 중 문제가 발생했습니다.\n' + e.message,
+      );
     }
   };
 
@@ -97,7 +107,7 @@ export default function ProfileSettingsTab({ user, navigation }) {
         bio: formData.bio,
         website: formData.website,
         location: formData.location,
-        photoURL: formData.photoURL
+        photoURL: formData.photoURL,
       };
 
       // 1. Firestore 업데이트
@@ -112,13 +122,13 @@ export default function ProfileSettingsTab({ user, navigation }) {
       });
 
       setLoading(false);
-      Alert.alert("성공", "프로필이 수정되었습니다.", [
-        { text: "확인", onPress: () => navigation?.goBack() }
+      Alert.alert('성공', '프로필이 수정되었습니다.', [
+        { text: '확인', onPress: () => navigation?.goBack() },
       ]);
     } catch (e) {
-      console.error("Profile Update Error:", e);
+      console.error('Profile Update Error:', e);
       setLoading(false);
-      Alert.alert("오류", "프로필 수정 중 문제가 발생했습니다.");
+      Alert.alert('오류', '프로필 수정 중 문제가 발생했습니다.');
     }
   };
 
@@ -135,20 +145,44 @@ export default function ProfileSettingsTab({ user, navigation }) {
         <View style={styles.profilePictureSection}>
           <View style={styles.avatarContainer}>
             {formData.photoURL ? (
-              <Image source={{ uri: formData.photoURL }} style={{ width: 60, height: 60, borderRadius: 30 }} />
+              <Image
+                source={{ uri: formData.photoURL }}
+                style={{
+                  width: 80 * scale,
+                  height: 80 * scale,
+                  borderRadius: 40 * scale,
+                }}
+              />
             ) : (
-              <Text style={styles.avatarText}>{formData.name ? formData.name[0] : 'U'}</Text>
+              <Text style={styles.avatarText}>
+                {formData.name ? formData.name[0] : 'U'}
+              </Text>
             )}
             {loading && (
-              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 30 }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(0,0,0,0.3)',
+                  borderRadius: 30,
+                }}
+              >
                 <ActivityIndicator color="#fff" />
               </View>
             )}
           </View>
           <View style={styles.uploadSection}>
-            <TouchableOpacity style={styles.uploadButton} onPress={handleImagePick} disabled={loading}>
-              <Icon
-                name="image"
+            <TouchableOpacity
+              style={styles.uploadButton}
+              onPress={handleImagePick}
+              disabled={loading}
+            >
+              <LucideImage
                 size={14}
                 color={colors.black}
                 style={styles.uploadIcon}
@@ -244,8 +278,14 @@ export default function ProfileSettingsTab({ user, navigation }) {
       </View>
 
       {/* Save Button */}
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
-        <Text style={styles.saveButtonText}>{loading ? "저장 중..." : "변경사항 저장"}</Text>
+      <TouchableOpacity
+        style={styles.saveButton}
+        onPress={handleSave}
+        disabled={loading}
+      >
+        <Text style={styles.saveButtonText}>
+          {loading ? '저장 중...' : '변경사항 저장'}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );

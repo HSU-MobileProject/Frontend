@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from './styles/NavigationBar.styles';
+import { useChat } from '../contexts/ChatContext';
 
 export default function NavigationBar({
   activeTab,
@@ -9,6 +10,7 @@ export default function NavigationBar({
   onLayoutNavBar,
 }) {
   const navigation = useNavigation();
+  const { totalUnreadCount } = useChat();
 
   const menuItems = [
     // ProjectDetail 수정하여 사용
@@ -50,14 +52,37 @@ export default function NavigationBar({
           ]}
           onPress={() => handlePress(item)}
         >
-          <Text
-            style={[
-              styles.menuText,
-              activeTab === item.key && styles.activeText,
-            ]}
-          >
-            {item.label}
-          </Text>
+          <View>
+            <Text
+              style={[
+                styles.menuText,
+                activeTab === item.key && styles.activeText,
+              ]}
+            >
+              {item.label}
+            </Text>
+            {/* Chat Badge */}
+            {item.key === '채팅' && totalUnreadCount > 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -8,
+                  backgroundColor: '#FF4D4D',
+                  borderRadius: 10,
+                  minWidth: 16,
+                  height: 16,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 3,
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
+                  {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
+                </Text>
+              </View>
+            )}
+          </View>
         </TouchableOpacity>
       ))}
     </View>

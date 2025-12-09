@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 import colors from '../../../assets/colors';
 import styles from './GitHubCard.styles';
 
@@ -26,14 +26,14 @@ export default function GitHubCard({
         <View style={styles.githubInfo}>
           <Icon
             name="github"
-            size={24}
+            size={30}
             color={colors.black}
             style={styles.githubIcon}
           />
 
           <View style={styles.infoText}>
             <Text style={styles.username}>
-              {isGitHubConnected ? (gitHubUsername || 'GitHub User') : 'GitHub'}
+              {isGitHubConnected ? gitHubUsername || 'GitHub User' : 'GitHub'}
             </Text>
             <Text style={styles.status}>
               {isGitHubConnected ? '연동됨' : '연동하지 않음'}

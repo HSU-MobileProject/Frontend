@@ -5,6 +5,10 @@ import {
   createNavigationContainerRef,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { LogBox } from 'react-native';
+
+// Ignore specific warnings
+LogBox.ignoreLogs(['HEADERS_TIMEOUT_ERROR', 'Headers Timeout Error']);
 
 import ProjectListScreen from './src/screens/project/list/ProjectListScreen';
 import ProjectListAllScreen from './src/screens/project/list/ProjectListAllScreen';
@@ -25,9 +29,15 @@ import SettingsScreen from './src/screens/settings/SettingsScreen';
 import ChatListScreen from './src/screens/chat/ChatListScreen';
 import ChatScreen from './src/screens/chat/ChatScreen';
 
+import PaymentHistoryScreen from './src/screens/payment/PaymentHistoryScreen';
+import PaymentScreen from './src/screens/payment/PaymentScreen';
+
 import NavigationBar from './src/components/NavigationBar';
 import ProjectAddButton from './src/components/ProjectAddButton';
 import Header from './src/components/HeaderBar';
+
+import { NotificationProvider } from './src/contexts/NotificationContext';
+import { ChatProvider } from './src/contexts/ChatContext';
 
 export const navigationRef = createNavigationContainerRef();
 const Stack = createNativeStackNavigator();
@@ -94,12 +104,12 @@ export default function App() {
         break;
       }
     }
-    
+
     // 만약 스택에 매핑되는 게 하나도 없다면(초기화 등), 변경하지 않음
     setActiveTab(newTab);
 
     // 2. 플로팅 버튼 숨김 처리
-    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification'].includes(currentRouteName)) {
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification', 'Payment', 'PaymentHistory'].includes(currentRouteName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
@@ -121,123 +131,130 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer ref={navigationRef} onStateChange={handleStateChange}>
-      <View style={{ flex: 1 }}>
-        {/* 로그인 / 회원가입 */}
-        {!isLoggedIn ? (
-          showSignup ? (
-            <SignupScreen
-              setShowSignup={setShowSignup}
-              setIsLoggedIn={setIsLoggedIn}
-            />
-          ) : (
-            <LoginScreen
-              setShowSignup={setShowSignup}
-              setIsLoggedIn={setIsLoggedIn}
-            />
-          )
-        ) : (
-          <>
-            {!hideHeader && <Header />}
-
-            {/* 메인 네비게이션 */}
-            <View style={{ flex: 1 }}>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="ProjectList">
-                  {props => (
-                    <ProjectListScreen
-                      {...props}
-                      setHideHeader={setHideHeader}
-                    />
-                  )}
-                </Stack.Screen>
-
-                <Stack.Screen name="ProjectListAll">
-                  {props => <ProjectListAllScreen {...props} />}
-                </Stack.Screen>
-
-                <Stack.Screen name="ProjectLike">
-                  {props => <ProjectLikeScreen {...props} />}
-                </Stack.Screen>
-
-                <Stack.Screen name="ProjectSearch">
-                  {props => <ProjectSearchScreen {...props} />}
-                </Stack.Screen>
-
-                <Stack.Screen name="ProjectDetail">
-                  {props => (
-                    <ProjectDetailScreen
-                      {...props}
-                      setHideHeader={setHideHeader}
-                    />
-                  )}
-                </Stack.Screen>
-
-                <Stack.Screen name="ProjectEdit">
-                  {props => <ProjectEditScreen {...props} />}
-                </Stack.Screen>
-
-                <Stack.Screen name="ProjectCreate">
-                  {props => <ProjectCreateScreen {...props} />}
-                </Stack.Screen>
-
-                <Stack.Screen name="MyPage">
-                  {props => (
-                    <MyPageScreen
-                      {...props}
-                      setIsLoggedIn={setIsLoggedIn}
-                      setHideHeader={setHideHeader}
-                    />
-                  )}
-                </Stack.Screen>
-
-                <Stack.Screen name="Settings">
-                  {props => (
-                    <SettingsScreen {...props} setHideHeader={setHideHeader} />
-                  )}
-                </Stack.Screen>
-
-                <Stack.Screen
-                  name="ChatList"
-                  component={ChatListScreen}
+    <NotificationProvider>
+      <ChatProvider>
+        <NavigationContainer ref={navigationRef} onStateChange={handleStateChange}>
+          <View style={{ flex: 1 }}>
+            {/* 로그인 / 회원가입 */}
+            {!isLoggedIn ? (
+              showSignup ? (
+                <SignupScreen
+                  setShowSignup={setShowSignup}
+                  setIsLoggedIn={setIsLoggedIn}
                 />
-
-                <Stack.Screen
-                  name="ChatDetail"
-                  component={ChatScreen}
+              ) : (
+                <LoginScreen
+                  setShowSignup={setShowSignup}
+                  setIsLoggedIn={setIsLoggedIn}
                 />
+              )
+            ) : (
+              <>
+                {!hideHeader && <Header />}
 
-                <Stack.Screen name="Notification">
-                  {props => <NotificationScreen {...props} />}
-                </Stack.Screen>
-              </Stack.Navigator>
-            </View>
+                {/* 메인 네비게이션 */}
+                <View style={{ flex: 1 }}>
+                  <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="ProjectList">
+                      {props => (
+                        <ProjectListScreen
+                          {...props}
+                          setHideHeader={setHideHeader}
+                        />
+                      )}
+                    </Stack.Screen>
 
-            {/* 플로팅 프로젝트 등록 버튼 */}
-            {showAddButton && (
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 12,
-                  bottom: navBarHeight + 16,
-                  zIndex: 99,
-                }}
-              >
-                <ProjectAddButton />
-              </View>
+                    <Stack.Screen name="ProjectListAll">
+                      {props => <ProjectListAllScreen {...props} />}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="ProjectLike">
+                      {props => <ProjectLikeScreen {...props} />}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="ProjectSearch">
+                      {props => <ProjectSearchScreen {...props} />}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="ProjectDetail">
+                      {props => (
+                        <ProjectDetailScreen
+                          {...props}
+                          setHideHeader={setHideHeader}
+                        />
+                      )}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="ProjectEdit">
+                      {props => <ProjectEditScreen {...props} />}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="ProjectCreate">
+                      {props => <ProjectCreateScreen {...props} />}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="MyPage">
+                      {props => (
+                        <MyPageScreen
+                          {...props}
+                          setIsLoggedIn={setIsLoggedIn}
+                          setHideHeader={setHideHeader}
+                        />
+                      )}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="Settings">
+                      {props => (
+                        <SettingsScreen {...props} setHideHeader={setHideHeader} />
+                      )}
+                    </Stack.Screen>
+
+                    <Stack.Screen
+                      name="ChatList"
+                      component={ChatListScreen}
+                    />
+
+                    <Stack.Screen
+                      name="ChatDetail"
+                      component={ChatScreen}
+                    />
+
+                    <Stack.Screen name="Notification">
+                      {props => <NotificationScreen {...props} />}
+                    </Stack.Screen>
+
+                    <Stack.Screen name="PaymentHistory" component={PaymentHistoryScreen} />
+                    <Stack.Screen name="Payment" component={PaymentScreen} />
+                  </Stack.Navigator>
+                </View>
+
+                {/* 플로팅 프로젝트 등록 버튼 */}
+                {showAddButton && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: 12,
+                      bottom: navBarHeight + 16,
+                      zIndex: 99,
+                    }}
+                  >
+                    <ProjectAddButton />
+                  </View>
+                )}
+
+                {/* 하단 네비게이션 */}
+                {!hideNavBar && (
+                  <NavigationBar
+                    activeTab={activeTab}
+                    onPress={setActiveTab}
+                    onLayoutNavBar={setNavBarHeight}
+                  />
+                )}
+              </>
             )}
-
-            {/* 하단 네비게이션 */}
-            {!hideNavBar && (
-              <NavigationBar
-                activeTab={activeTab}
-                onPress={setActiveTab}
-                onLayoutNavBar={setNavBarHeight}
-              />
-            )}
-          </>
-        )}
-      </View>
-    </NavigationContainer>
+          </View>
+        </NavigationContainer>
+      </ChatProvider>
+    </NotificationProvider>
   );
 }

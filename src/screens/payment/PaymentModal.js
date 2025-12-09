@@ -15,10 +15,7 @@ import usePaymentForm from "../../hooks/usePaymentForm";
 import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore';
 
 // Sub-components
-import PaymentMethodSelector from "./components/PaymentMethodSelector";
-import PaymentCardForm from "./components/PaymentCardForm";
-import PaymentTransferInfo from "./components/PaymentTransferInfo";
-import PaymentEasyPay from "./components/PaymentEasyPay";
+// import PaymentMethodSelector removed
 import PaymentProjectInfo from "./components/PaymentProjectInfo";
 import PaymentPriceSummary from "./components/PaymentPriceSummary";
 
@@ -65,9 +62,6 @@ export default function PaymentModal({ visible, onClose, project }) {
     easyPayProvider, setEasyPayProvider,
     agreed, setAgreed,
     isProcessing,
-    cardNumber, setCardNumber,
-    expiry, setExpiry,
-    cvc, setCvc,
     ownerName, setOwnerName,
     totalPrice, price, fee,
     handlePay
@@ -97,61 +91,40 @@ export default function PaymentModal({ visible, onClose, project }) {
               </TouchableOpacity>
             </View>
 
-            <ScrollView 
-              style={styles.scrollContent} 
+            <ScrollView
+              style={styles.scrollContent}
               showsVerticalScrollIndicator={false}
             >
               {/* Project Info */}
-              <PaymentProjectInfo 
-                project={project} 
-                totalPrice={totalPrice} 
+              <PaymentProjectInfo
+                project={project}
+                totalPrice={totalPrice}
                 ownerName={owner?.displayName || "알 수 없음"}
               />
 
-              {/* Payment Method Selector */}
-              <PaymentMethodSelector 
-                paymentMethod={paymentMethod} 
-                setPaymentMethod={setPaymentMethod} 
-              />
+              {/* Payment Method Selector Removed */}
 
-              {/* Payment Forms */}
-              {paymentMethod === "card" && (
-                <PaymentCardForm 
-                  cardNumber={cardNumber} setCardNumber={setCardNumber}
-                  expiry={expiry} setExpiry={setExpiry}
-                  cvc={cvc} setCvc={setCvc}
-                  ownerName={ownerName} setOwnerName={setOwnerName}
-                />
-              )}
-
-              {paymentMethod === "transfer" && (
-                <PaymentTransferInfo totalPrice={totalPrice} />
-              )}
-
-              {paymentMethod === "easy" && (
-                <PaymentEasyPay 
-                  easyPayProvider={easyPayProvider} 
-                  setEasyPayProvider={setEasyPayProvider} 
-                />
-              )}
+              {/* Payment Forms Removed - Handled by PG */}
+              {/* Just a visual spacer if needed, or nothing */}
+              <View style={{ marginBottom: 20 }} />
 
               <View style={styles.divider} />
 
               {/* Price Summary */}
-              <PaymentPriceSummary 
-                price={price} 
-                fee={fee} 
-                totalPrice={totalPrice} 
+              <PaymentPriceSummary
+                price={price}
+                fee={fee}
+                totalPrice={totalPrice}
               />
 
               {/* Terms */}
-              <TouchableOpacity 
-                style={styles.termsContainer} 
+              <TouchableOpacity
+                style={styles.termsContainer}
                 onPress={() => setAgreed(!agreed)}
                 activeOpacity={1}
               >
                 <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
-                   {agreed && <Check size={10} color="#FFF" />}
+                  {agreed && <Check size={10} color="#FFF" />}
                 </View>
                 <Text style={styles.termsText}>
                   ToyLink의 <Text style={styles.linkText}>이용약관</Text> 및 <Text style={styles.linkText}>개인정보 처리방침</Text>에{"\n"}동의합니다.
@@ -163,8 +136,8 @@ export default function PaymentModal({ visible, onClose, project }) {
                 <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
                   <Text style={styles.cancelText}>취소</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.payBtn, (!agreed || isProcessing) && styles.payBtnDisabled]} 
+                <TouchableOpacity
+                  style={[styles.payBtn, (!agreed || isProcessing) && styles.payBtnDisabled]}
                   onPress={handlePay}
                   disabled={!agreed || isProcessing}
                 >
