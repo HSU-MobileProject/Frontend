@@ -19,7 +19,7 @@ import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore';
 import PaymentProjectInfo from "./components/PaymentProjectInfo";
 import PaymentPriceSummary from "./components/PaymentPriceSummary";
 
-import { usersDummy } from "../../utils/usersDummy";
+
 
 export default function PaymentModal({ visible, onClose, project }) {
   const [owner, setOwner] = React.useState(null);
@@ -33,13 +33,6 @@ export default function PaymentModal({ visible, onClose, project }) {
 
     const fetchOwner = async () => {
       try {
-        // 1. Try to find in dummy data first (optional, maybe skip if fully migrating)
-        const dummy = usersDummy.find(u => u.id === project.ownerId);
-        if (dummy) {
-          setOwner(dummy);
-          return;
-        }
-
         // 2. Fetch from Firestore
         const db = getFirestore();
         const userDoc = await getDoc(doc(db, 'users', project.ownerId));

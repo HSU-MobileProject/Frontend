@@ -4,8 +4,6 @@ import { MessageCircle, Heart, GitCommit, UserPlus, CheckCircle, Bell, X } from 
 import { theme } from "../../../styles/theme";
 import styles from "./NotificationItem.styles";
 
-import { usersDummy } from "../../../utils/notificationsDummy";
-
 const { scale } = theme;
 
 export default function NotificationItem({ item }) {
@@ -23,10 +21,9 @@ export default function NotificationItem({ item }) {
   };
 
   const itemColor = getColorByType(item.type);
-  // [수정] 백엔드에서 전달된 userName 사용, 없으면 dummy fallback (혹은 "알 수 없음")
   const userInfo = {
-    name: item.userName || usersDummy[item.userId]?.name || "알 수 없음",
-    profileImage: usersDummy[item.userId]?.profileImage || null
+    name: item.userName || "알 수 없음",
+    profileImage: null // 추후 알림 생성 시 프로필 이미지도 저장하거나 별도 조회 필요
   };
 
   const getIcon = () => {
