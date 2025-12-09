@@ -23,7 +23,11 @@ export default function NotificationItem({ item }) {
   };
 
   const itemColor = getColorByType(item.type);
-  const userInfo = usersDummy[item.userId] || { name: "알 수 없음", profileImage: null };
+  // [수정] 백엔드에서 전달된 userName 사용, 없으면 dummy fallback (혹은 "알 수 없음")
+  const userInfo = {
+    name: item.userName || usersDummy[item.userId]?.name || "알 수 없음",
+    profileImage: usersDummy[item.userId]?.profileImage || null
+  };
 
   const getIcon = () => {
     switch (item.type) {
