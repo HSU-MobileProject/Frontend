@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { Star, Eye, Calendar } from "lucide-react-native";
+import { Heart, Eye, Calendar } from "lucide-react-native";
 import styles from "../../ProjectDetail.styles";
 
 export default function MainStats({ likes, views, createdAt }) {
@@ -13,7 +13,7 @@ export default function MainStats({ likes, views, createdAt }) {
   return (
     <View style={styles.mainStatsRow}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Star size={16} color="#6B7280" />
+        <Heart size={16} color="#6B7280" />
         <Text style={styles.mainStatText}> {likes}</Text>
       </View>
 
