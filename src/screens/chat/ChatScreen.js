@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './ChatScreen.styles';
@@ -6,13 +6,25 @@ import ChatHeader from './components/ChatHeader';
 import ChatMessage from './components/ChatMessage';
 import MessageInput from './components/MessageInput';
 import { authService } from '../../services/authService';
-import { getFirestore, collection, doc, query, orderBy, onSnapshot, addDoc, updateDoc, serverTimestamp, writeBatch } from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  doc,
+  query,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  serverTimestamp,
+  writeBatch,
+} from '@react-native-firebase/firestore';
 import storage, { getDownloadURL } from '@react-native-firebase/storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 export default function ChatScreen({ route, navigation }) {
   const { chatId, userName } = route.params;
   const [messages, setMessages] = useState([]);
+  const scrollViewRef = useRef(null);
   const currentUser = authService.getCurrentUser();
 
   // 메시지 로드 및 읽음 처리
@@ -23,7 +35,7 @@ export default function ChatScreen({ route, navigation }) {
     const messagesRef = collection(db, 'chatRooms', chatId, 'messages');
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
 
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
+    const unsubscribe = onSnapshot(q, async snapshot => {
       if (!snapshot) return;
 
       const msgs = [];
@@ -37,17 +49,32 @@ export default function ChatScreen({ route, navigation }) {
           text: data.text,
           imageUrl: data.imageUrl,
           type: data.type || 'text',
-          timestamp: data.timestamp ? data.timestamp.toDate().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '',
+          timestamp: data.timestamp
+            ? data.timestamp
+                .toDate()
+                .toLocaleTimeString('ko-KR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+            : '',
           isLink: false,
-          readBy: data.readBy || []
+          readBy: data.readBy || [],
         });
 
         // 내가 읽지 않은 상대방 메시지 수집
-        if (data.senderId !== currentUser.uid && (!data.readBy || !data.readBy.includes(currentUser.uid))) {
+        if (
+          data.senderId !== currentUser.uid &&
+          (!data.readBy || !data.readBy.includes(currentUser.uid))
+        ) {
           unreadDocs.push({ ref: docSnapshot.ref, data: data });
         }
       });
       setMessages(msgs);
+
+      // 스크롤을 하단으로 이동
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
 
       // 읽음 처리 (Batch) - Snapshot 수신 시 처리
       if (unreadDocs.length > 0) {
@@ -59,14 +86,14 @@ export default function ChatScreen({ route, navigation }) {
           }
         });
 
-        batch.commit().catch(e => console.error("Read Receipt Error:", e));
+        batch.commit().catch(e => console.error('Read Receipt Error:', e));
       }
     });
 
     return () => unsubscribe();
   }, [chatId]);
 
-  const handleSendMessage = async (text) => {
+  const handleSendMessage = async text => {
     if (!text.trim()) return;
 
     try {
@@ -77,16 +104,15 @@ export default function ChatScreen({ route, navigation }) {
         senderId: currentUser.uid,
         timestamp: serverTimestamp(),
         readBy: [currentUser.uid],
-        type: 'text'
+        type: 'text',
       });
 
       await updateDoc(doc(db, 'chatRooms', chatId), {
         lastMessage: text,
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
-
     } catch (error) {
-      console.error("Message Send Error:", error);
+      console.error('Message Send Error:', error);
     }
   };
 
@@ -99,7 +125,7 @@ export default function ChatScreen({ route, navigation }) {
 
       if (result.didCancel) return;
       if (result.errorCode) {
-        console.error("Image Picker Error:", result.errorMessage);
+        console.error('Image Picker Error:', result.errorMessage);
         return;
       }
 
@@ -108,7 +134,9 @@ export default function ChatScreen({ route, navigation }) {
       const filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
 
       // Upload to Storage
-      const storageRef = storage().ref(`chat/${chatId}/${filename}_${Date.now()}`);
+      const storageRef = storage().ref(
+        `chat/${chatId}/${filename}_${Date.now()}`,
+      );
       await storageRef.putFile(uploadUri);
 
       // Fix: Use modular getDownloadURL to avoid deprecation warning
@@ -127,11 +155,10 @@ export default function ChatScreen({ route, navigation }) {
 
       await updateDoc(doc(db, 'chatRooms', chatId), {
         lastMessage: '사진',
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
-
     } catch (e) {
-      console.error("Image Upload Error:", e);
+      console.error('Image Upload Error:', e);
     }
   };
 
@@ -148,6 +175,7 @@ export default function ChatScreen({ route, navigation }) {
       />
 
       <ScrollView
+        ref={scrollViewRef}
         style={styles.messagesContainer}
         contentContainerStyle={styles.messagesContent}
         showsVerticalScrollIndicator={false}
