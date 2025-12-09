@@ -6,7 +6,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import { Star, Eye } from 'lucide-react-native';
+import { Heart , Eye } from 'lucide-react-native';
 import colors from '../../../assets/colors';
 import styles from './ProjectTabPanel.styles';
 import { authService } from '../../../services/authService';
@@ -227,7 +227,7 @@ export default function ProjectTabPanel({ navigation }) {
                 {/* 좋아요 및 조회수 */}
                 <View style={styles.statsRow}>
                   <View style={styles.stat}>
-                    <Star size={12} color={colors.grayDark} />
+                    <Heart size={12} color={colors.grayDark} />
                     <Text style={styles.statText}>{project.likes}</Text>
                   </View>
                   <View style={styles.stat}>

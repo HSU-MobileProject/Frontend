@@ -6,12 +6,9 @@ import styles from "../ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
 export default function DetailLeaderCard({ project, owner }) {
-  // If 'owner' is passed from parent (e.g. dummy), use it.
-  // Otherwise fetch from Firestore using project.ownerId
   const [leader, setLeader] = useState(owner || null);
 
   useEffect(() => {
-    // If owner is already provided or no project, skip
     if (owner || !project?.ownerId) return;
 
     const fetchLeader = async () => {
