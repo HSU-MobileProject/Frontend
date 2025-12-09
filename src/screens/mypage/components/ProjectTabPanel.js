@@ -35,10 +35,22 @@ export default function ProjectTabPanel({ navigation }) {
         return;
       }
 
+      const db = getFirestore();
+
+      // 0. 내가 찜한 프로젝트 ID 목록 조회 (모든 탭 공통)
+      let likedIds = [];
+      try {
+        const likesSnapshot = await getDocs(
+          collection(db, 'userLikes', user.uid, 'projects'),
+        );
+        likedIds = likesSnapshot.docs.map(d => d.id);
+      } catch (e) {
+        console.error("Fetch Likes Error:", e);
+      }
+
       if (activeTab === 'registered') {
         try {
           // Index Error 방지를 위해 orderBy 제거 후 Client-side sort
-          const db = getFirestore();
           const q = query(
             collection(db, 'projects'),
             where('ownerId', '==', user.uid),
@@ -51,6 +63,7 @@ export default function ProjectTabPanel({ navigation }) {
             statusColor:
               doc.data().status === '완료' ? colors.grayDark : colors.green,
             status: doc.data().status || '진행중',
+            isLiked: likedIds.includes(doc.id), // 좋아요 여부 반영
           }));
 
           // 최신순 정렬
@@ -67,7 +80,6 @@ export default function ProjectTabPanel({ navigation }) {
       } else if (activeTab === 'supported') {
         // [수정] 지원한 프로젝트 조회
         try {
-          const db = getFirestore();
           const q = query(
             collection(db, 'applications'),
             where('applicantId', '==', user.uid),
@@ -88,6 +100,7 @@ export default function ProjectTabPanel({ navigation }) {
                     : colors.green,
                 status: pDoc.data().status || '진행중',
                 applicationStatus: appData.status, // 지원 상태 표시용 (필요시)
+                isLiked: likedIds.includes(pDoc.id), // 좋아요 여부 반영
               };
             }
             return null;
@@ -110,27 +123,21 @@ export default function ProjectTabPanel({ navigation }) {
       } else if (activeTab === 'liked') {
         try {
           // [찜한 프로젝트 조회]
-          const db = getFirestore();
           // userLikes/{userId}/projects 컬렉션 조회
-          const likesSnapshot = await getDocs(
-            collection(db, 'userLikes', user.uid, 'projects'),
-          );
-
-          const projectPromises = likesSnapshot.docs.map(async likeDoc => {
-            const projectId = likeDoc.id; // 문서 ID가 projectId임
-            const pDoc = await getDoc(doc(db, 'projects', projectId));
-            if (pDoc.exists()) {
-              return {
-                id: pDoc.id,
-                ...pDoc.data(),
-                statusColor:
-                  pDoc.data().status === '완료'
-                    ? colors.grayDark
-                    : colors.green,
-                status: pDoc.data().status || '진행중',
-              };
-            }
-            return null;
+          // 이미 likedIds 갖고 있지만, 프로젝트 정보를 가져와야 함
+          
+          const projectPromises = likedIds.map(async pid => {
+             const pDoc = await getDoc(doc(db, 'projects', pid));
+             if(pDoc.exists()){
+                 return {
+                    id: pDoc.id,
+                    ...pDoc.data(),
+                    statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
+                    status: pDoc.data().status || '진행중',
+                    isLiked: true, // 찜한 탭이므로 무조건 true
+                 }
+             }
+             return null;
           });
 
           const pResults = await Promise.all(projectPromises);
@@ -227,11 +234,15 @@ export default function ProjectTabPanel({ navigation }) {
                 {/* 좋아요 및 조회수 */}
                 <View style={styles.statsRow}>
                   <View style={styles.stat}>
-                    <Heart size={12} color={colors.grayDark} />
+                    <Heart 
+                      size={14} 
+                      color={project.isLiked ? colors.accent : colors.grayDark} 
+                      fill={project.isLiked ? colors.accent : 'none'}
+                    />
                     <Text style={styles.statText}>{project.likes}</Text>
                   </View>
                   <View style={styles.stat}>
-                    <Eye size={12} color={colors.grayDark} />
+                    <Eye size={14} color={colors.grayDark} />
                     <Text style={styles.statText}>{project.views}</Text>
                   </View>
                 </View>

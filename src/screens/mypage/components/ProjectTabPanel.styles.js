@@ -113,6 +113,7 @@ export default StyleSheet.create({
 
   statsRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 16 * scale,
   },
 
