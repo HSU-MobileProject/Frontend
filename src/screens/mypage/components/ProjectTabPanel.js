@@ -171,9 +171,6 @@ export default function ProjectTabPanel({ navigation }) {
                     <TouchableOpacity style={styles.editButton}>
                       <Text style={styles.editButtonText}>수정</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.manageButton}>
-                      <Text style={styles.manageButtonText}>관리</Text>
-                    </TouchableOpacity>
                   </>
                 ) : (
                   <TouchableOpacity style={styles.detailButton}>

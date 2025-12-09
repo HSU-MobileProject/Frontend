@@ -38,7 +38,7 @@ export default function ProjectEditScreen({ route, navigation, setHideAddButton 
 
   return (
     <SafeAreaView style={styles.screenWrapper}>
-      <View style={styles.createHeader}>
+      <View style={styles.editHeader}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <ChevronLeft size={24} color={Colors.black} />
         </TouchableOpacity>
