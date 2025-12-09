@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { User, Lock, Bell, Info, ArrowLeft } from 'lucide-react-native';
 import styles from './SettingsScreen.styles';
 import colors from '../../assets/colors';
 import ProfileSettingsTab from './components/ProfileSettingsTab';
@@ -10,7 +10,11 @@ import NotificationSettingsTab from './components/NotificationSettingsTab';
 import PrivacySettingsTab from './components/PrivacySettingsTab';
 
 import { authService } from '../../services/authService';
-import { getFirestore, doc, onSnapshot } from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  onSnapshot,
+} from '@react-native-firebase/firestore';
 
 export default function SettingsScreen({ navigation, setHideHeader }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -26,22 +30,26 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
     const db = getFirestore();
     const userDocRef = doc(db, 'users', user.uid);
 
-    const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
-      if (docSnapshot.exists) {
-        setUserData(docSnapshot.data());
-      }
-    }, (error) => {
-      console.error("User Fetch Error:", error);
-    });
+    const unsubscribe = onSnapshot(
+      userDocRef,
+      docSnapshot => {
+        if (docSnapshot.exists) {
+          setUserData(docSnapshot.data());
+        }
+      },
+      error => {
+        console.error('User Fetch Error:', error);
+      },
+    );
 
     return () => unsubscribe();
   }, [setHideHeader]);
 
   const tabs = [
-    { id: 'profile', label: '프로필', icon: 'user' },
-    { id: 'security', label: '보안', icon: 'lock' },
-    { id: 'notification', label: '알림', icon: 'bell' },
-    { id: 'privacy', label: '개인정보', icon: 'info-circle' },
+    { id: 'profile', label: '프로필', icon: User },
+    { id: 'security', label: '보안', icon: Lock },
+    { id: 'notification', label: '알림', icon: Bell },
+    { id: 'privacy', label: '개인정보', icon: Info },
   ];
 
   const renderTabContent = () => {
@@ -71,12 +79,7 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
           style={styles.backButton}
           onPress={() => navigation?.goBack()}
         >
-          <Icon
-            name="arrow-left"
-            size={14}
-            color={colors.black}
-            style={styles.backIcon}
-          />
+          <ArrowLeft size={14} color={colors.black} style={styles.backIcon} />
           <Text style={styles.backButtonText}>마이페이지로 돌아가기</Text>
         </TouchableOpacity>
 
@@ -85,28 +88,30 @@ export default function SettingsScreen({ navigation, setHideHeader }) {
 
         {/* Tab Navigation */}
         <View style={styles.tabContainer}>
-          {tabs.map(tab => (
-            <TouchableOpacity
-              key={tab.id}
-              style={[styles.tab, activeTab === tab.id && styles.tabActive]}
-              onPress={() => setActiveTab(tab.id)}
-            >
-              <Icon
-                name={tab.icon}
-                size={14}
-                color={colors.black}
-                style={styles.tabIcon}
-              />
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab.id && styles.tabTextActive,
-                ]}
+          {tabs.map(tab => {
+            const IconComponent = tab.icon;
+            return (
+              <TouchableOpacity
+                key={tab.id}
+                style={[styles.tab, activeTab === tab.id && styles.tabActive]}
+                onPress={() => setActiveTab(tab.id)}
               >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <IconComponent
+                  size={14}
+                  color={colors.black}
+                  style={styles.tabIcon}
+                />
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === tab.id && styles.tabTextActive,
+                  ]}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Tab Content */}

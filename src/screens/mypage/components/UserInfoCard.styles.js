@@ -12,6 +12,12 @@ export default StyleSheet.create({
     paddingHorizontal: 16 * scale,
     paddingVertical: 20 * scale,
     marginBottom: 16 * scale,
+    // Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
 
   // ===== 프로필 섹션 =====
@@ -121,7 +127,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16 * scale,
     borderWidth: 1,
     borderColor: colors.beige,
-    gap: 16 * scale,
+    gap: 10 * scale,
   },
 
   buttonText: {

@@ -6,11 +6,19 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Star, Eye } from 'lucide-react-native';
 import colors from '../../../assets/colors';
 import styles from './ProjectTabPanel.styles';
 import { authService } from '../../../services/authService';
-import { getFirestore, collection, query, where, getDocs, doc, getDoc } from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from '@react-native-firebase/firestore';
 
 const { width } = Dimensions.get('window');
 const scale = width / 409;
@@ -31,14 +39,18 @@ export default function ProjectTabPanel({ navigation }) {
         try {
           // Index Error 방지를 위해 orderBy 제거 후 Client-side sort
           const db = getFirestore();
-          const q = query(collection(db, 'projects'), where('ownerId', '==', user.uid));
+          const q = query(
+            collection(db, 'projects'),
+            where('ownerId', '==', user.uid),
+          );
           const snapshot = await getDocs(q);
 
           const data = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-            statusColor: doc.data().status === '완료' ? colors.grayDark : colors.green,
-            status: doc.data().status || '진행중'
+            statusColor:
+              doc.data().status === '완료' ? colors.grayDark : colors.green,
+            status: doc.data().status || '진행중',
           }));
 
           // 최신순 정렬
@@ -50,26 +62,32 @@ export default function ProjectTabPanel({ navigation }) {
 
           setProjects(data);
         } catch (e) {
-          console.error("MyProjects Fetch Error:", e);
+          console.error('MyProjects Fetch Error:', e);
         }
       } else if (activeTab === 'supported') {
         // [수정] 지원한 프로젝트 조회
         try {
           const db = getFirestore();
-          const q = query(collection(db, 'applications'), where('applicantId', '==', user.uid));
+          const q = query(
+            collection(db, 'applications'),
+            where('applicantId', '==', user.uid),
+          );
           const appSnapshot = await getDocs(q);
 
           // Application에서 projectId 추출 후 프로젝트 정보 조회
-          const projectPromises = appSnapshot.docs.map(async (appDoc) => {
+          const projectPromises = appSnapshot.docs.map(async appDoc => {
             const appData = appDoc.data();
             const pDoc = await getDoc(doc(db, 'projects', appData.projectId));
             if (pDoc.exists()) {
               return {
                 id: pDoc.id,
                 ...pDoc.data(),
-                statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
+                statusColor:
+                  pDoc.data().status === '완료'
+                    ? colors.grayDark
+                    : colors.green,
                 status: pDoc.data().status || '진행중',
-                applicationStatus: appData.status // 지원 상태 표시용 (필요시)
+                applicationStatus: appData.status, // 지원 상태 표시용 (필요시)
               };
             }
             return null;
@@ -87,24 +105,29 @@ export default function ProjectTabPanel({ navigation }) {
 
           setProjects(validProjects);
         } catch (e) {
-          console.error("Supported Projects Fetch Error:", e);
+          console.error('Supported Projects Fetch Error:', e);
         }
       } else if (activeTab === 'liked') {
         try {
           // [찜한 프로젝트 조회]
           const db = getFirestore();
           // userLikes/{userId}/projects 컬렉션 조회
-          const likesSnapshot = await getDocs(collection(db, 'userLikes', user.uid, 'projects'));
+          const likesSnapshot = await getDocs(
+            collection(db, 'userLikes', user.uid, 'projects'),
+          );
 
-          const projectPromises = likesSnapshot.docs.map(async (likeDoc) => {
+          const projectPromises = likesSnapshot.docs.map(async likeDoc => {
             const projectId = likeDoc.id; // 문서 ID가 projectId임
             const pDoc = await getDoc(doc(db, 'projects', projectId));
             if (pDoc.exists()) {
               return {
                 id: pDoc.id,
                 ...pDoc.data(),
-                statusColor: pDoc.data().status === '완료' ? colors.grayDark : colors.green,
-                status: pDoc.data().status || '진행중'
+                statusColor:
+                  pDoc.data().status === '완료'
+                    ? colors.grayDark
+                    : colors.green,
+                status: pDoc.data().status || '진행중',
               };
             }
             return null;
@@ -123,7 +146,7 @@ export default function ProjectTabPanel({ navigation }) {
 
           setProjects(validProjects);
         } catch (e) {
-          console.error("Liked Projects Fetch Error:", e);
+          console.error('Liked Projects Fetch Error:', e);
         }
       }
     };
@@ -204,11 +227,11 @@ export default function ProjectTabPanel({ navigation }) {
                 {/* 좋아요 및 조회수 */}
                 <View style={styles.statsRow}>
                   <View style={styles.stat}>
-                    <Icon name="star-o" size={12} color={colors.grayDark} />
+                    <Star size={12} color={colors.grayDark} />
                     <Text style={styles.statText}>{project.likes}</Text>
                   </View>
                   <View style={styles.stat}>
-                    <Icon name="eye" size={12} color={colors.grayDark} />
+                    <Eye size={12} color={colors.grayDark} />
                     <Text style={styles.statText}>{project.views}</Text>
                   </View>
                 </View>
@@ -225,21 +248,28 @@ export default function ProjectTabPanel({ navigation }) {
                   <>
                     <TouchableOpacity
                       style={styles.editButton}
-                      onPress={() => navigation?.navigate('ProjectEdit', { project })}
+                      onPress={() =>
+                        navigation?.navigate('ProjectEdit', { project })
+                      }
                     >
                       <Text style={styles.editButtonText}>수정</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.manageButton}
-                      onPress={() => navigation?.navigate('ProjectDetail', { project })}
+                      onPress={() =>
+                        navigation?.navigate('ProjectDetail', { project })
+                      }
                     >
                       <Text style={styles.manageButtonText}>관리</Text>
                     </TouchableOpacity>
                   </>
-                ) : ( // supported or liked
+                ) : (
+                  // supported or liked
                   <TouchableOpacity
                     style={styles.detailButton}
-                    onPress={() => navigation?.navigate('ProjectDetail', { project })}
+                    onPress={() =>
+                      navigation?.navigate('ProjectDetail', { project })
+                    }
                   >
                     <Text style={styles.detailButtonText}>상세보기</Text>
                   </TouchableOpacity>

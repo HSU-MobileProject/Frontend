@@ -10,43 +10,46 @@ export default function ChatListScreen({ navigation }) {
 
   // No need for local fetching effect
 
-
   const handleChatItemPress = chat => {
     navigation?.navigate('ChatDetail', {
       chatId: chat.id,
       userName: chat.name,
-      otherUserId: chat.otherUserId
+      otherUserId: chat.otherUserId,
     });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      {/* Card Container */}
+      <View style={styles.card}>
         <Text style={styles.title}>채팅</Text>
 
-        {chatRooms.length === 0 ? (
-          <View style={{ padding: 20, alignItems: 'center' }}>
-            <Text style={{ color: '#888' }}>진행 중인 채팅이 없습니다.</Text>
-          </View>
-        ) : (
-          chatRooms.map(chat => (
-            <ChatListItem
-              key={chat.id}
-              chatId={chat.id}
-              name={chat.name}
-              lastMessage={chat.lastMessage}
-              lastMessageTime={chat.lastMessageTime}
-              unreadCount={chat.unreadCount}
-              avatarColor={chat.avatarColor}
-              onPress={() => handleChatItemPress(chat)}
-            />
-          ))
-        )}
-      </ScrollView>
+        {/* Chat List with Inner Scroll */}
+        <ScrollView
+          style={styles.chatListScroll}
+          contentContainerStyle={styles.chatListContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {chatRooms.length === 0 ? (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <Text style={{ color: '#888' }}>진행 중인 채팅이 없습니다.</Text>
+            </View>
+          ) : (
+            chatRooms.map(chat => (
+              <ChatListItem
+                key={chat.id}
+                chatId={chat.id}
+                name={chat.name}
+                lastMessage={chat.lastMessage}
+                lastMessageTime={chat.lastMessageTime}
+                unreadCount={chat.unreadCount}
+                avatarColor={chat.avatarColor}
+                onPress={() => handleChatItemPress(chat)}
+              />
+            ))
+          )}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

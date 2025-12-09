@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { ArrowLeft, MoreVertical } from 'lucide-react-native';
 import styles from './ChatHeader.styles';
 
 const { width } = Dimensions.get('window');
@@ -17,7 +17,7 @@ export default function ChatHeader({
     <View style={styles.container}>
       <View style={styles.leftContent}>
         <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
-          <Icon name="arrow-left" size={17 * scale} color="#000" />
+          <ArrowLeft size={17 * scale} color="#000" />
         </TouchableOpacity>
 
         <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
@@ -33,7 +33,7 @@ export default function ChatHeader({
       </View>
 
       <TouchableOpacity style={styles.menuButton} onPress={onMenuPress}>
-        <Icon name="ellipsis-v" size={17 * scale} color="#000" />
+        <MoreVertical size={17 * scale} color="#000" />
       </TouchableOpacity>
     </View>
   );

@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './SignupScreen.styles';
 import colors from '../../assets/colors';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 import { authService } from '../../services/authService';
 
 const { width } = Dimensions.get('window');
@@ -49,11 +49,11 @@ export default function SignupScreen({ setShowSignup, setIsLoggedIn }) {
         name,
         userType,
         companyName: userType === 'business' ? companyName : '',
-        role: userType === 'personal' ? '개인 개발자' : '기업 담당자'
+        role: userType === 'personal' ? '개인 개발자' : '기업 담당자',
       });
 
       Alert.alert('가입 성공', '회원가입이 완료되었습니다.', [
-        { text: '확인', onPress: () => setIsLoggedIn(true) }
+        { text: '확인', onPress: () => setIsLoggedIn(true) },
       ]);
     } catch (error) {
       console.error(error);
@@ -62,7 +62,10 @@ export default function SignupScreen({ setShowSignup, setIsLoggedIn }) {
       } else if (error.code === 'auth/weak-password') {
         Alert.alert('오류', '비밀번호는 6자리 이상이어야 합니다.');
       } else {
-        Alert.alert('오류', '회원가입 중 문제가 발생했습니다: ' + error.message);
+        Alert.alert(
+          '오류',
+          '회원가입 중 문제가 발생했습니다: ' + error.message,
+        );
       }
     }
   };
@@ -225,13 +228,13 @@ export default function SignupScreen({ setShowSignup, setIsLoggedIn }) {
                     await authService.loginWithGithub();
                     setIsLoggedIn(true);
                   } catch (e) {
-                    Alert.alert("GitHub 로그인 실패", e.message);
+                    Alert.alert('GitHub 로그인 실패', e.message);
                   }
                 }}
               >
                 <Icon
                   name="github"
-                  size={14 * scale}
+                  size={15 * scale}
                   color={colors.black}
                   style={styles.oauthIcon}
                 />
