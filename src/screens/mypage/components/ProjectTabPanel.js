@@ -254,14 +254,6 @@ export default function ProjectTabPanel({ navigation }) {
                     >
                       <Text style={styles.editButtonText}>수정</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.manageButton}
-                      onPress={() =>
-                        navigation?.navigate('ProjectDetail', { project })
-                      }
-                    >
-                      <Text style={styles.manageButtonText}>관리</Text>
-                    </TouchableOpacity>
                   </>
                 ) : (
                   // supported or liked
