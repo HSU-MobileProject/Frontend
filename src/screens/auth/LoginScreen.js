@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './LoginScreen.styles';
 import colors from '../../assets/colors';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 import { authService } from '../../services/authService';
 
 const { width } = Dimensions.get('window');
@@ -33,7 +33,10 @@ export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
     } catch (error) {
       console.error(error);
       let message = '로그인에 실패했습니다.';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      if (
+        error.code === 'auth/user-not-found' ||
+        error.code === 'auth/wrong-password'
+      ) {
         message = '이메일 또는 비밀번호가 올바르지 않습니다.';
       } else if (error.code === 'auth/invalid-email') {
         message = '유효하지 않은 이메일 형식입니다.';
@@ -117,10 +120,7 @@ export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
               onChangeText={setPassword}
             />
 
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
-            >
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginButtonText}>로그인</Text>
             </TouchableOpacity>
 
@@ -137,13 +137,13 @@ export default function LoginScreen({ setShowSignup, setIsLoggedIn }) {
                   await authService.loginWithGithub();
                   setIsLoggedIn(true);
                 } catch (e) {
-                  Alert.alert("GitHub 로그인 실패", e.message);
+                  Alert.alert('GitHub 로그인 실패', e.message);
                 }
               }}
             >
               <Icon
                 name="github"
-                size={14 * scale}
+                size={15 * scale}
                 color={colors.black}
                 style={styles.oauthIcon}
               />

@@ -121,7 +121,7 @@ export default StyleSheet.create({
     paddingHorizontal: 16 * scale,
     borderWidth: 1,
     borderColor: colors.beige,
-    gap: 16 * scale,
+    gap: 10 * scale,
   },
 
   buttonText: {
