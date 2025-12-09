@@ -1,5 +1,5 @@
-import React from "react";
-import { View, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, ScrollView, Text } from "react-native";
 import styles from "./ProjectDetail.styles";
 import DetailHeader from "./components/DetailHeader";
 import DetailMainCard from "./components/DetailMainCard";
@@ -8,15 +8,36 @@ import DetailPriceCard from "./components/DetailPriceCard";
 import DetailLeaderCard from "./components/DetailLeaderCard";
 import DetailGitHubCard from "./components/DetailGitHubCard";
 import DetailStatusCard from "./components/DetailStatusCard";
-import PaymentModal from "../../payment/PaymentModal";
 import ApplicationModal from "./components/ApplicationModal";
 import ProjectManageModal from "./components/ProjectManageModal";
 import { authService } from "../../../services/authService";
+import { getFirestore, doc, onSnapshot } from "@react-native-firebase/firestore";
 
 export default function ProjectDetailScreen({ route, navigation }) {
-  const project = route?.params?.project || {};
+  const initialProject = route?.params?.project || {};
+  const [project, setProject] = useState(initialProject);
+  const owner = route?.params?.ownerData || { displayName: "알 수 없음", profileImage: null };
 
-  const owner = ownerData || { displayName: "알 수 없음", profileImage: null };
+  const [isAppModalVisible, setIsAppModalVisible] = useState(false);
+  const [isManageModalVisible, setIsManageModalVisible] = useState(false);
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
+  
+  // Placeholder for missing states/functions based on the view
+  const [myApplication, setMyApplication] = useState(null);
+  const [isLiked, setIsLiked] = useState(false);
+  
+  // Real-time update for project
+  useEffect(() => {
+    if (!initialProject.id) return;
+    const db = getFirestore();
+    const unsubscribe = onSnapshot(doc(db, "projects", initialProject.id), (docSnapshot) => {
+        if (docSnapshot.exists) {
+            setProject({ id: docSnapshot.id, ...docSnapshot.data() });
+        }
+    });
+    return () => unsubscribe();
+  }, [initialProject.id]);
+
 
   if (!project || !project.id) {
     return (
@@ -26,44 +47,42 @@ export default function ProjectDetailScreen({ route, navigation }) {
     );
   }
 
-  const [isAppModalVisible, setIsAppModalVisible] = React.useState(false);
-  const [isManageModalVisible, setIsManageModalVisible] = React.useState(false);
-  const [myApplication, setMyApplication] = React.useState(null);
+  const applicantCount = project.applicantCount || 0;
 
-  const [applicantCount, setApplicantCount] = React.useState(project.applicantCount || 0);
-
-  if (!realtimeProject) return null;
-
-  const [isPaymentModalVisible, setIsPaymentModalVisible] = React.useState(false);
+  // Dummy handlers for now to prevent crash if not defined
+  const handleApplyPress = () => setIsAppModalVisible(true);
+  const handleLikePress = () => setIsLiked(!isLiked);
+  const handleChatPress = () => console.log("Chat Pressed");
+  const handleConfirmApply = () => setIsAppModalVisible(false);
 
   return (
     <View style={styles.screenWrapper}>
-      <DetailHeader project={realtimeProject} currentUser={authService.getCurrentUser()} />
+      <DetailHeader project={project} currentUser={authService.getCurrentUser()} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
         <DetailMainCard
-          project={realtimeProject}
-          isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
+          project={project}
+          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
           onApplyPress={handleApplyPress}
           myApplication={myApplication}
           isLiked={isLiked}
           onLikePress={handleLikePress}
           onChatPress={handleChatPress}
-          onEditPress={() => navigation.navigate('ProjectEdit', { project: realtimeProject })}
+          onEditPress={() => navigation.navigate('ProjectEdit', { project: project })}
         />
-        <DetailAboutCard project={realtimeProject} />
+        <DetailAboutCard project={project} />
 
-        {realtimeProject.githubUrl && <DetailGitHubCard project={realtimeProject} />}
+        {project.githubUrl && <DetailGitHubCard project={project} />}
 
-        <DetailLeaderCard project={realtimeProject} owner={owner} />
+        <DetailLeaderCard project={project} owner={owner} />
 
         <DetailStatusCard
-          project={realtimeProject}
+          project={project}
           applicantCount={applicantCount}
-          isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
+          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
           onManagePress={() => {
             console.log("Manage Button Pressed");
             setIsManageModalVisible(true);
@@ -71,8 +90,8 @@ export default function ProjectDetailScreen({ route, navigation }) {
         />
 
         <DetailPriceCard
-          project={realtimeProject}
-          isOwner={authService.getCurrentUser()?.uid === realtimeProject.ownerId}
+          project={project}
+          isOwner={authService.getCurrentUser()?.uid === project.ownerId}
           onPurchasePress={() => setIsPaymentModalVisible(true)}
         />
       </ScrollView>
@@ -80,14 +99,14 @@ export default function ProjectDetailScreen({ route, navigation }) {
       <ApplicationModal
         visible={isAppModalVisible}
         onClose={() => setIsAppModalVisible(false)}
-        roles={realtimeProject.roles || []}
+        roles={project.roles || []}
         onApply={handleConfirmApply}
       />
 
       <ProjectManageModal
         visible={isManageModalVisible}
         onClose={() => setIsManageModalVisible(false)}
-        project={realtimeProject}
+        project={project}
       />
     </View>
   );

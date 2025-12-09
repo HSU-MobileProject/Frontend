@@ -97,16 +97,21 @@ export default function App() {
     let newTab = activeTab; // 기본값: 현재 탭 유지
     const routes = state.routes; // Root Stack routes
 
-    for (let i = routes.length - 1; i >= 0; i--) {
-      const route = routes[i];
-      if (tabMapping[route.name]) {
-        newTab = tabMapping[route.name];
-        break;
-      }
+    // 0. 명시적 탭 지정 확인 (UI Override)
+    if (currentRoute?.params?.targetTab) {
+      newTab = currentRoute.params.targetTab;
+      setActiveTab(newTab);
+      // 플로팅 버튼/NavBar 숨김 처리는 아래 로직 계속 수행
+    } else {
+        for (let i = routes.length - 1; i >= 0; i--) {
+          const route = routes[i];
+          if (tabMapping[route.name]) {
+            newTab = tabMapping[route.name];
+            break;
+          }
+        }
+        setActiveTab(newTab);
     }
-
-    // 만약 스택에 매핑되는 게 하나도 없다면(초기화 등), 변경하지 않음
-    setActiveTab(newTab);
 
     // 2. 플로팅 버튼 숨김 처리
     if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification', 'Payment', 'PaymentHistory'].includes(currentRouteName)) {
