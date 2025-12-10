@@ -34,7 +34,6 @@ export default function MyPageScreen({
           const unsubscribe = onSnapshot(doc(db, 'users', currentUser.uid), async (docSnap) => {
             if (docSnap.exists()) {
               const data = docSnap.data();
-              console.log("MyPage User Data:", JSON.stringify(data, null, 2)); // Debug Log
               if (!data) return;
 
               // 1. 등록된 프로젝트 수 및 받은 즐겨찾기 수 계산
@@ -118,9 +117,7 @@ export default function MyPageScreen({
 
   const handleLinkGitHub = async () => {
     try {
-      console.log("Starting Direct GitHub Link...");
       await authService.linkGitHub();
-      // 성공 시 별도 처리 불필요 (onSnapshot이 자동 업데이트)
     } catch (e) {
       console.error("Link Error:", e);
       const { Alert } = require('react-native');

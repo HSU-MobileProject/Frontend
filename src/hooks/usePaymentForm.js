@@ -4,9 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import { paymentService } from "../services/paymentService";
 
 export default function usePaymentForm(project, onClose) {
-  // Debug Log
-  console.log("💰 usePaymentForm Project:", JSON.stringify(project, null, 2));
-
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [easyPayProvider, setEasyPayProvider] = useState(null);
   const [agreed, setAgreed] = useState(false);

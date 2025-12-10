@@ -14,14 +14,11 @@ import { X, Check, XCircle } from 'lucide-react-native';
 import Colors from '../../../../assets/colors';
 import { getFirestore, collection, query, where, getDocs, doc, updateDoc, getDoc } from '@react-native-firebase/firestore';
 
-export default function ProjectManageModal({ visible, onClose, project }) {
+const ProjectManageModal = ({ visible, onClose, project }) => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  console.log("ProjectManageModal Render: visible=", visible, "project=", project?.id);
-
   useEffect(() => {
-    console.log("ProjectManageModal Effect: visible=", visible);
     if (visible && project?.id) {
       fetchApplications();
     }
@@ -161,7 +158,7 @@ export default function ProjectManageModal({ visible, onClose, project }) {
       </View >
     </Modal >
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -274,3 +271,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default React.memo(ProjectManageModal);

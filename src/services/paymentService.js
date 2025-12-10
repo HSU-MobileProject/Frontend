@@ -14,8 +14,6 @@ export const paymentService = {
    * @returns {Promise<Object>} - Resolves with transaction result
    */
   processPayment: async (paymentData) => {
-    console.log("Processing payment...", paymentData);
-
     // Simulate API delay
     return new Promise((resolve, reject) => {
       setTimeout(() => {

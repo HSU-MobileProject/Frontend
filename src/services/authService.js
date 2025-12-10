@@ -54,7 +54,7 @@ export const authService = {
                 role: role || '신규 회원',
                 skills: skills || [],
                 bio: bio || '',
-                profileImage: null, // 초기값 null
+                photoURL: null, // 초기값 null
                 createdAt: serverTimestamp(),
             });
 
@@ -68,41 +68,56 @@ export const authService = {
     loginWithGithub: async () => {
         try {
             // 1. AppAuth로 GitHub 인증 (토큰 받아오기)
-            // 동적 import로 네이티브 모듈 의존성 문제 방지
             const { authorize } = require('react-native-app-auth');
             const { GITHUB_CONFIG } = require('../config');
 
             const authState = await authorize(GITHUB_CONFIG);
+            const accessToken = authState.accessToken;
 
-            // 2. Firebase 자격 증명 생성
-            const credential = GithubAuthProvider.credential(authState.accessToken);
+            // 2. GitHub API로 유저 정보 가져오기 (추가된 로직)
+            const response = await fetch('https://api.github.com/user', {
+                headers: {
+                    Authorization: `token ${accessToken}`,
+                    Accept: 'application/json'
+                }
+            });
+            const githubData = await response.json();
+            
+            // 3. Firebase 자격 증명 생성
+            const credential = GithubAuthProvider.credential(accessToken);
 
-            // 3. Firebase 로그인
+            // 4. Firebase 로그인
             const userCredential = await signInWithCredential(auth, credential);
             const user = userCredential.user;
 
-            // 4. Firestore에 유저 정보 저장 (존재하지 않을 경우만 생성)
+            // 5. Firestore에 유저 정보 저장
             const userDocRef = doc(db, 'users', user.uid);
             const userDoc = await getDoc(userDocRef);
 
             if (!userDoc.exists()) {
                 await setDoc(userDocRef, {
                     id: user.uid,
-                    email: user.email || '',
-                    displayName: user.displayName || 'GitHub User',
-                    nickname: user.displayName || 'GitHub User', // Initial nickname same as displayName
+                    email: user.email || githubData.email || '',
+                    displayName: user.displayName || githubData.name || githubData.login || 'GitHub User',
+                    nickname: user.displayName || githubData.name || githubData.login || 'GitHub User',
                     userType: 'personal',
                     role: 'GitHub 개발자',
                     skills: [],
-                    bio: 'GitHub 계정으로 가입된 사용자입니다.',
-                    profileImage: user.photoURL,
-                    githubToken: authState.accessToken, // [추가] GitHub API 사용을 위해 토큰 저장
+                    bio: githubData.bio || 'GitHub 계정으로 가입된 사용자입니다.',
+                    photoURL: user.photoURL || githubData.avatar_url,
+                    githubId: githubData.id,
+                    githubUsername: githubData.login,
+                    githubUrl: githubData.html_url,
+                    githubToken: accessToken,
                     createdAt: serverTimestamp(),
                 });
             } else {
-                // [추가] 기존 유저라면 토큰 업데이트 (토큰이 달라졌을 수 있으므로)
+                // 기존 유저라면 정보 업데이트
                 await userDocRef.update({
-                    githubToken: authState.accessToken
+                    githubToken: accessToken,
+                    githubUsername: githubData.login,
+                    githubUrl: githubData.html_url,
+                    photoURL: user.photoURL 
                 });
             }
 
@@ -126,30 +141,26 @@ export const authService = {
             const { authorize } = require('react-native-app-auth');
             const { GITHUB_CONFIG } = require('../config');
             const authState = await authorize(GITHUB_CONFIG);
+            const accessToken = authState.accessToken;
 
-            // 2. Firestore에 토큰 저장
+            // 2. GitHub API로 유저 정보 가져오기
+            const response = await fetch('https://api.github.com/user', {
+                headers: {
+                    Authorization: `token ${accessToken}`,
+                    Accept: 'application/json'
+                }
+            });
+            const githubData = await response.json();
+
+            // 3. Firestore에 토큰 및 정보 저장
             const userDocRef = doc(db, 'users', user.uid);
             await userDocRef.update({
-                githubToken: authState.accessToken
+                githubToken: accessToken,
+                githubId: githubData.id,
+                githubUsername: githubData.login,
+                githubUrl: githubData.html_url,
+                // photoURL: githubData.avatar_url // 기존 프로필 유지를 위해 주석 처리 (선택사항)
             });
-
-            // 3. (옵션) Firebase Auth에도 credential 연동 시도
-            // 실패하더라도(이미 다른 계정에 연동된 경우 등) 토큰 저장은 성공했으므로 API 사용은 가능함.
-            try {
-                const credential = GithubAuthProvider.credential(authState.accessToken);
-                // v9 modular SDK: linkWithCredential(user, credential)
-                // But specifically for namespaced 'auth.currentUser' (which is Compat User usually if strictly modular not used everywhere)
-                // However, user obtained from getAuth() in modular is UserImpl.
-                // We need to import linkWithCredential from firebase/auth
-                const { linkWithCredential } = require('@react-native-firebase/auth'); 
-                // Note: @react-native-firebase/auth exports linkWithCredential in modular style? 
-                // Actually rnfirebase v18+ supports modular. 
-                // Let's check imports. We already imported other modular functions.
-                // We need to add 'linkWithCredential' to the top imports or use it here.
-                // Let's rely on stored token for now to avoid complexity with linking errors.
-            } catch (linkError) {
-                console.log("Credential linking skipped or failed:", linkError);
-            }
 
             return true;
         } catch (error) {

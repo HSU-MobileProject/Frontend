@@ -23,7 +23,7 @@ export default function NotificationItem({ item }) {
   const itemColor = getColorByType(item.type);
   const userInfo = {
     name: item.userName || "알 수 없음",
-    profileImage: null // 추후 알림 생성 시 프로필 이미지도 저장하거나 별도 조회 필요
+    photoURL: null // 추후 알림 생성 시 프로필 이미지도 저장하거나 별도 조회 필요
   };
 
   const getIcon = () => {
@@ -39,12 +39,11 @@ export default function NotificationItem({ item }) {
 
   const getTitle = () => {
     switch (item.type) {
-      case "message": return "새로운 메시지";
+      case "message": return `${userInfo.name}님이 메시지를 보냈습니다.`;
       case "like": return "즐겨찾기";
       case "system": return "GitHub 업데이트";
-      case "apply": return "새로운 지원자";
+      case "apply": return "지원자";
       case "approve": return "지원 승인";
-      case "interest": return "새로운 관심";
       default: return "알림";
     }
   };
@@ -70,7 +69,7 @@ export default function NotificationItem({ item }) {
     <View style={[styles.card, isReadStyle]}>
       {/* Icon Container */}
       <View style={[styles.iconContainer, { backgroundColor: item.isRead ? "#E0E0E0" : getBackgroundColor(itemColor) }]}>
-        {userInfo.profileImage ? (
+        {userInfo.photoURL ? (
           <View style={[styles.profileWrapper, { backgroundColor: item.isRead ? "#BDBDBD" : itemColor }]}>
              <Text style={styles.profileText}>{userInfo.name.charAt(0)}</Text>
           </View>
@@ -91,12 +90,14 @@ export default function NotificationItem({ item }) {
         </View>
 
         {/* Message */}
-        <Text style={styles.message} numberOfLines={2}>
-          {userInfo.name !== "System" && <Text style={{ fontWeight: "bold" }}>{userInfo.name}님이 </Text>}
-          {item.target && <Text style={{ fontWeight: "bold" }}>'{item.target}' </Text>}
-          {item.role && <Text>의 {item.role} </Text>}
-          {item.action}
-        </Text> 
+        {item.type !== 'message' && (
+          <Text style={styles.message} numberOfLines={2}>
+            {userInfo.name !== "System" && <Text style={{ fontWeight: "bold" }}>{userInfo.name}님이 </Text>}
+            {item.target && <Text style={{ fontWeight: "bold" }}>'{item.target}' </Text>}
+            {item.role && <Text>의 {item.role} </Text>}
+            {item.action}
+          </Text>
+        )} 
         {/* Action Buttons */}
         <View style={styles.actionContainer}>
           <TouchableOpacity 

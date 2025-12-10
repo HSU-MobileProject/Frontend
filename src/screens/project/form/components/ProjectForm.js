@@ -48,7 +48,6 @@ export default function ProjectForm({ initialValues, onSubmit, submitLabel = "�
         if (response.didCancel) return;
 
         if (response.errorCode) {
-          console.log("Image Picker Error:", response.errorMessage);
           Alert.alert("이미지 오류", "이미지를 불러오는 동안 문제가 발생했습니다.");
           return;
         }

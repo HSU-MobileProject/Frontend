@@ -378,7 +378,6 @@ export default StyleSheet.create({
     width: 42 * scale,
     height: 42 * scale,
     borderRadius: 42 * scale,
-    backgroundColor: colors.grayLight,
   },
 
   /* --- 프로필 이미지가 없을 때 (이니셜 원형) --- */
@@ -417,6 +416,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(0,0,0,0.1)",
     backgroundColor: colors.beige,
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

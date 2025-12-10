@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
-import { User } from "lucide-react-native";
+import { View, Text, TouchableOpacity, Image, Linking } from "react-native";
+import { User, Github } from "lucide-react-native";
 import { getFirestore, doc, getDoc } from '@react-native-firebase/firestore'; // Import Firestore Modular SDK
 import styles from "../ProjectDetail.styles";
 import Colors from "../../../../assets/colors";
 
-export default function DetailLeaderCard({ project, owner }) {
+export default function DetailLeaderCard({ project, owner, onProfilePress }) {
   const [leader, setLeader] = useState(owner || null);
 
   useEffect(() => {
-    if (owner || !project?.ownerId) return;
+    if (owner && owner.uid) {
+        setLeader(owner);
+        return;
+    }
+    
+    if (!project?.ownerId) return;
 
     const fetchLeader = async () => {
       try {
@@ -36,9 +41,9 @@ export default function DetailLeaderCard({ project, owner }) {
     <View style={styles.card}>
       <View style={styles.leaderRow}>
         {/* 프로필 이미지가 있을 때 */}
-        {displayUser.profileImage ? (
+        {displayUser.photoURL ? (
           <Image
-            source={{ uri: displayUser.profileImage }}
+            source={{ uri: displayUser.photoURL }}
             style={styles.leaderAvatarImage}
           />
         ) : (
@@ -55,11 +60,24 @@ export default function DetailLeaderCard({ project, owner }) {
         </View>
       </View>
 
-      {/* 프로필 보기 버튼 */}
-      <TouchableOpacity style={styles.profileBtn}>
-        <User size={16} color={Colors.Black} />
-        <Text style={styles.profileBtnText}>프로필 보기</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        {/* GitHub Link Button */}
+        {displayUser.githubUrl && (
+             <TouchableOpacity 
+                style={[styles.profileBtn, { backgroundColor: '#24292E', borderColor: '#24292E' }]} 
+                onPress={() => Linking.openURL(displayUser.githubUrl)}
+             >
+               <Github size={16} color="white" />
+               <Text style={[styles.profileBtnText, { color: 'white' }]}>GitHub</Text>
+             </TouchableOpacity>
+        )}
+
+        {/* 프로필 보기 버튼 */}
+        <TouchableOpacity style={styles.profileBtn} onPress={onProfilePress}>
+            <User size={16} color={Colors.black} />
+            <Text style={styles.profileBtnText}>프로필 보기</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

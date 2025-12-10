@@ -7,7 +7,7 @@ import styles from "../ProjectDetail.styles";
 export default function DetailHeader({ project, currentUser }) {
   const navigation = useNavigation();
 
-  const isMyProject = currentUser && project.ownerId === currentUser.id;
+  const isMyProject = currentUser && project.ownerId === currentUser.uid;
 
   return (
     <View style={styles.headerWrap}>
@@ -25,8 +25,8 @@ export default function DetailHeader({ project, currentUser }) {
       {/* 수정하기 */}
       {isMyProject && (
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("ProjectEdit", { projectId: project.id })
+           onPress={() =>
+            navigation.navigate("ProjectEdit", { project: project })
           }
           style={styles.headerEditBtn}
           activeOpacity={0.8}

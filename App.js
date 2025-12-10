@@ -24,6 +24,7 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
 
 import MyPageScreen from './src/screens/mypage/MyPageScreen';
+import UserProfileScreen from './src/screens/mypage/UserProfileScreen';
 import SettingsScreen from './src/screens/settings/SettingsScreen';
 
 import ChatListScreen from './src/screens/chat/ChatListScreen';
@@ -114,7 +115,7 @@ export default function App() {
     }
 
     // 2. 플로팅 버튼 숨김 처리
-    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification', 'Payment', 'PaymentHistory'].includes(currentRouteName)) {
+    if (['ProjectDetail', 'ProjectEdit', 'ProjectCreate', 'Notification', 'Payment', 'PaymentHistory', 'UserProfile'].includes(currentRouteName)) {
       setHideAddButton(true);
     } else {
       setHideAddButton(false);
@@ -230,6 +231,8 @@ export default function App() {
 
                     <Stack.Screen name="PaymentHistory" component={PaymentHistoryScreen} />
                     <Stack.Screen name="Payment" component={PaymentScreen} />
+                    
+                    <Stack.Screen name="UserProfile" component={UserProfileScreen} />
                   </Stack.Navigator>
                 </View>
 
