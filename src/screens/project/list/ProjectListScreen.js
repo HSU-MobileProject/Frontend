@@ -10,14 +10,14 @@ import usePaymentModal from "../../../hooks/usePaymentModal";
 
 import PaymentModal from "../../payment/PaymentModal";
 
-import { dummyCurrentUser } from "../../../utils/usersDummy";
+
 import { getFirestore, collection, onSnapshot } from '@react-native-firebase/firestore';
 import { authService } from "../../../services/authService";
 
 export default function ProjectListScreen() {
   const navigation = useNavigation();
   const { recommendedProjects, latestProjects } = useProjects();
-  const currentUser = dummyCurrentUser;
+  const currentUser = authService.getCurrentUser();
 
   const { 
     isPaymentModalVisible, 

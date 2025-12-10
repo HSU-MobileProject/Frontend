@@ -10,7 +10,7 @@ import {
 import styles from "./ProjectCard.styles";
 import categoryColors from "../../../../assets/categoryColors";
 import Colors from "../../../../assets/colors";
-import { Star, Eye } from "lucide-react-native";
+import { Heart, Eye } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");
 const scale = width / 409;
@@ -62,10 +62,10 @@ export default function ProjectCard({
 
             <View style={styles.statsRow}>
               <View style={styles.statItem}>
-                <Star 
+                <Heart 
                   size={16 * scale} 
-                  color={isLiked ? "#FFD700" : Colors.grayDark} 
-                  fill={isLiked ? "#FFD700" : "transparent"}
+                  color={isLiked ? "#E91E63" : Colors.grayDark} 
+                  fill={isLiked ? "#E91E63" : "transparent"}
                 />
                 <Text style={styles.statTextOutline}>{likes}</Text>
               </View>

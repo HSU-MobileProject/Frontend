@@ -6,7 +6,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import styles from "./ProjectEdit.styles";
 import Colors from "../../../assets/colors";
 import ProjectForm from "./components/ProjectForm";
-import { dummyProjects } from "../../../utils/dummyProjects";
 import { getFirestore, doc, updateDoc, serverTimestamp, deleteDoc } from '@react-native-firebase/firestore';
 
 export default function ProjectEditScreen({ route, navigation, setHideAddButton }) {
@@ -62,7 +61,7 @@ export default function ProjectEditScreen({ route, navigation, setHideAddButton 
 
   return (
     <SafeAreaView style={styles.screenWrapper}>
-      <View style={styles.createHeader}>
+      <View style={styles.editHeader}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <ChevronLeft size={24} color={Colors.black} />
         </TouchableOpacity>

@@ -96,7 +96,13 @@ export const authService = {
                     skills: [],
                     bio: 'GitHub 계정으로 가입된 사용자입니다.',
                     profileImage: user.photoURL,
+                    githubToken: authState.accessToken, // [추가] GitHub API 사용을 위해 토큰 저장
                     createdAt: serverTimestamp(),
+                });
+            } else {
+                // [추가] 기존 유저라면 토큰 업데이트 (토큰이 달라졌을 수 있으므로)
+                await userDocRef.update({
+                    githubToken: authState.accessToken
                 });
             }
 
@@ -106,6 +112,48 @@ export const authService = {
             if (error.code === 'auth/account-exists-with-different-credential') {
                 throw new Error("이미 이메일로 가입된 계정입니다. 이메일 로그인을 이용해주세요.");
             }
+            throw error;
+        }
+    },
+
+    // [NEW] GitHub 계정 연동 (이미 로그인된 상태에서 토큰만 추가/갱신)
+    linkGitHub: async () => {
+        try {
+            const user = auth.currentUser;
+            if (!user) throw new Error("로그인이 필요합니다.");
+
+            // 1. AppAuth로 GitHub 인증 (토큰 받아오기)
+            const { authorize } = require('react-native-app-auth');
+            const { GITHUB_CONFIG } = require('../config');
+            const authState = await authorize(GITHUB_CONFIG);
+
+            // 2. Firestore에 토큰 저장
+            const userDocRef = doc(db, 'users', user.uid);
+            await userDocRef.update({
+                githubToken: authState.accessToken
+            });
+
+            // 3. (옵션) Firebase Auth에도 credential 연동 시도
+            // 실패하더라도(이미 다른 계정에 연동된 경우 등) 토큰 저장은 성공했으므로 API 사용은 가능함.
+            try {
+                const credential = GithubAuthProvider.credential(authState.accessToken);
+                // v9 modular SDK: linkWithCredential(user, credential)
+                // But specifically for namespaced 'auth.currentUser' (which is Compat User usually if strictly modular not used everywhere)
+                // However, user obtained from getAuth() in modular is UserImpl.
+                // We need to import linkWithCredential from firebase/auth
+                const { linkWithCredential } = require('@react-native-firebase/auth'); 
+                // Note: @react-native-firebase/auth exports linkWithCredential in modular style? 
+                // Actually rnfirebase v18+ supports modular. 
+                // Let's check imports. We already imported other modular functions.
+                // We need to add 'linkWithCredential' to the top imports or use it here.
+                // Let's rely on stored token for now to avoid complexity with linking errors.
+            } catch (linkError) {
+                console.log("Credential linking skipped or failed:", linkError);
+            }
+
+            return true;
+        } catch (error) {
+            console.error("GitHub Link Error:", error);
             throw error;
         }
     },

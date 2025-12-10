@@ -76,10 +76,12 @@ export default function MyPageScreen({
               });
 
               const githubProvider = currentUser.providerData.find(p => p.providerId === 'github.com');
-              const isGithub = !!githubProvider;
+              // providerData에 있거나, Firestore에 토큰이 저장되어 있으면 연동된 것으로 간주
+              const isGithub = !!githubProvider || !!data.githubToken;
+              
               setIsGitHubConnected(isGithub);
               if (isGithub) {
-                setGitHubUsername(githubProvider.displayName || data.displayName || 'GitHub User');
+                setGitHubUsername(githubProvider?.displayName || data.displayName || 'GitHub User');
               }
             }
           });
@@ -114,6 +116,18 @@ export default function MyPageScreen({
     navigation?.navigate('Settings');
   };
 
+  const handleLinkGitHub = async () => {
+    try {
+      console.log("Starting Direct GitHub Link...");
+      await authService.linkGitHub();
+      // 성공 시 별도 처리 불필요 (onSnapshot이 자동 업데이트)
+    } catch (e) {
+      console.error("Link Error:", e);
+      const { Alert } = require('react-native');
+      Alert.alert("연동 오류", "GitHub 연결 중 문제가 발생했습니다.\n" + e.message);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -132,6 +146,7 @@ export default function MyPageScreen({
         {/* GitHub 연동 카드 */}
         <GitHubCard
           onOpenGitHubModal={openGitHubModal}
+          onLinkGitHub={handleLinkGitHub}
           isGitHubConnected={isGitHubConnected}
           gitHubUsername={gitHubUsername}
         />
@@ -144,6 +159,8 @@ export default function MyPageScreen({
       <GitHubConnectModal
         visible={gitHubModalVisible}
         onClose={closeGitHubModal}
+        isConnected={isGitHubConnected}
+        username={gitHubUsername}
       />
     </SafeAreaView>
   );

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  StyleSheet
 } from "react-native";
-import { Plus, X } from "lucide-react-native";
+import { Plus, X, Github } from "lucide-react-native";
 import styles from "../ProjectCreate.styles";
+import GitHubRepositoryModal from "./GitHubRepositoryModal";
 
 export default function FormDetailInfo({
   intro,
@@ -21,6 +23,14 @@ export default function FormDetailInfo({
   githubUrl,
   setGithubUrl,
 }) {
+  const [isGithubModalOpen, setIsGithubModalOpen] = useState(false);
+
+  const handleGitHubSelect = (repo) => {
+    // repo.html_url 을 githubUrl에 설정
+    setGithubUrl(repo.html_url);
+    // 필요하다면 제목이나 설명도 채울 수 있지만, 현재는 URL만
+  };
+
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>상세 정보</Text>
@@ -79,9 +89,18 @@ export default function FormDetailInfo({
         </View>
       </View>
 
-      {/* GitHub */}
+      {/* GitHub - With Link Button */}
       <View style={styles.fieldGroup}>
-        <Text style={styles.fieldLabel}>GitHub URL</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <Text style={styles.fieldLabel}>GitHub URL</Text>
+            <TouchableOpacity 
+                onPress={() => setIsGithubModalOpen(true)}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+            >
+                <Github size={16} color="#333" />
+                <Text style={{ fontSize: 13, color: '#333', fontWeight: 'bold' }}>불러오기</Text>
+            </TouchableOpacity>
+        </View>
 
         <TextInput
           style={styles.textInput}
@@ -91,6 +110,12 @@ export default function FormDetailInfo({
           autoCapitalize="none"
         />
       </View>
+
+      <GitHubRepositoryModal 
+        visible={isGithubModalOpen}
+        onClose={() => setIsGithubModalOpen(false)}
+        onSelect={handleGitHubSelect}
+      />
     </View>
   );
 }

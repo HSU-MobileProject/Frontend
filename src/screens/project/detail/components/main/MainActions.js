@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { MessageCircle, Star, Share2 } from "lucide-react-native";
+import { MessageCircle, Heart, } from "lucide-react-native";
 import styles from "../../ProjectDetail.styles";
 
 export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyPress, myApplication, isLiked, onLikePress, onChatPress }) {
@@ -57,10 +57,10 @@ export default function MainActions({ isFree, onPurchasePress, isOwner, onApplyP
         activeOpacity={0.8}
         onPress={onLikePress}
       >
-        <Star 
+        <Heart   
           size={18} 
-          color={isLiked ? "#FFD700" : "#1A1A1A"} 
-          fill={isLiked ? "#FFD700" : "transparent"}
+          color={isLiked ? "#E91E63" : "#1A1A1A"} 
+          fill={isLiked ? "#E91E63" : "transparent"}
         />
       </TouchableOpacity>
     </View>

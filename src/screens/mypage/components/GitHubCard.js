@@ -9,11 +9,17 @@ const scale = width / 409;
 
 export default function GitHubCard({
   onOpenGitHubModal,
+  onLinkGitHub,
   isGitHubConnected = true,
   gitHubUsername,
 }) {
   const handleConnect = () => {
-    onOpenGitHubModal?.();
+    if (isGitHubConnected) {
+      onOpenGitHubModal?.();
+    } else {
+      // 연동 안 되어 있으면 바로 연동 시도
+      onLinkGitHub?.();
+    }
   };
 
   return (

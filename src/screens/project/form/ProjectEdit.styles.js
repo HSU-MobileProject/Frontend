@@ -38,18 +38,18 @@ export default StyleSheet.create({
   },
 
   deleteBtn: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
-    width: 40 * scale,
-    height: 40 * scale,
+    justifyContent: "center",
+    borderRadius: 8 * scale,
+    width: 50 * scale,
+    height: 36 * scale,
+    backgroundColor: Colors.accent,
   },
 
   deleteText: {
-    color: Colors.accent,
+    color: Colors.white,
     fontWeight: Typography.weight.semibold,
     fontSize: Typography.size.body2,
-    marginRight: 8 * scale,
   },
 
   rightSpacer: {
