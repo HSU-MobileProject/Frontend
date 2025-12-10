@@ -80,3 +80,7 @@ ios/Runner/GoogleService-Info.plist
 
 # VSCode
 .vscode/
+
+# Environment variables
+.env
+.env.*
